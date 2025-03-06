@@ -302,5 +302,24 @@ gradle-app.setting
 # Java heap dump
 *.hprof
 
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,eclipse,intellij+all,gradle,maven,java,visualstudiocode
 
