@@ -27,18 +27,31 @@ public class MemberEntity implements Serializable{
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "member_member_code")
-	private String member_code;
+	private String member_code;	//회원 고유번호
 	
 	@Column(nullable = true)
-	private String member_type;
-	@Column(nullable = true)
-	private String member_id;
+	private String member_id;	//로그인 id
 	@Column(nullable = false)
-	private String member_password;
+	private String member_password;//pw
 	@Column(nullable = false)
 	private String member_name;
 	@Column(nullable = true)
-	private String member_phone;
+	private String member_phone;//휴대폰
+	
+	
+	@Column(nullable = true)
+	private String member_type;	//회원타입
+	
+	//강사
+	@Column(nullable = false)
+	private String in_charge_crs_code;	//담당과정
+
+	//훈련생
+	@Column(nullable = false)
+	private String request_crs_code;	//신청과정
+	@Column(nullable = false)
+	private Integer student_image;		//학생사진
+	
 	
 	@CurrentTimestamp(event = EventType.INSERT, source = SourceType.DB)
 	@Column(nullable = false)
