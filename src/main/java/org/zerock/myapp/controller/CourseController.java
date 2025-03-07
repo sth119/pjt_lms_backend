@@ -15,14 +15,15 @@ import lombok.extern.slf4j.Slf4j;
 
 @RequestMapping("/course/*") // Base URI
 
+// 과정 URI 컨트롤러
 //@RestController
 @Controller
 public class CourseController {
-	@Resource(name = "jdbcTemplate", type=JdbcTemplate.class)
-	private JdbcTemplate jdbcTemplate;
+	@Resource(name = "jdbcTemplate", type=JdbcTemplate.class) // 의존성 주입
+	private JdbcTemplate jdbcTemplate; 
 
 	@PostConstruct
-	void postConstruct() {
+	void postConstruct() { // 전처리
 		log.debug("postConstruct() invoked.");
 		log.info("\t+ this.jdbcTemplate: {}",this.jdbcTemplate);
 	} // postConstruct

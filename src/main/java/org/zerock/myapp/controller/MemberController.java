@@ -15,20 +15,22 @@ import lombok.extern.slf4j.Slf4j;
 
 @RequestMapping("/member/*") // Base URI
 
+// 회원 URI 컨트롤러
 //@RestController
 @Controller
 public class MemberController {
-	@Resource(name = "jdbcTemplate", type=JdbcTemplate.class)
+	@Resource(name = "jdbcTemplate", type=JdbcTemplate.class) // 의존성 주입
 	private JdbcTemplate jdbcTemplate;
 	
 	@PostConstruct
-	void postConstruct() {
+	void postConstruct() { // 전처리
 		log.debug("postConstruct() invoked.");
 		log.info("\t+ this.jdbcTemplate: {}",this.jdbcTemplate);
 	} // postConstruct
 	
 	// 멤버도 main 을 만들어야 할 것 같다
 	
+	// 훈련생 강사 관리자 버튼은, 멤버 조회(/search)에 조건 추가한 방식으로 만들면 될 듯
 	@GetMapping("/student") // 훈련생
 	void student() {
 		log.debug("student() invoked.");

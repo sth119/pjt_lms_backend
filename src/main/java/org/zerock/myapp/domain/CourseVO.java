@@ -7,14 +7,18 @@ import lombok.Value;
 
 @Value
 public class CourseVO {
-	private final String crs_code;
-	private final String crs_type;
-	private final String crs_name;
-	private final Integer crs_capacity;
-	private final String start_date;
-	private final String end_date;
-	private final Integer crs_image;
+	// PK
+	private final String crs_code; // 과정번호
 	
-	private final Date crt_date;
-	private final Date udt_date;
+	private final String crs_type; // 과정구분
+	private final String crs_name; // 과정이름
+	private final Integer crs_capacity; // 수강정원
+	private final String start_date; // 시작일
+	private final String end_date; // 종료일
+	
+	// FK
+	private final Integer crs_image; // 이미지 파일 시퀀스(과정)
+	
+	private final Date crt_date; // 등록일
+	private final Date udt_date; // 수정일
 } // end class

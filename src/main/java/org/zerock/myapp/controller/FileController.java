@@ -15,14 +15,15 @@ import lombok.extern.slf4j.Slf4j;
 
 @RequestMapping("/file/*") // Base URI
 
+//파일 URI 컨트롤러
 //@RestController
 @Controller
 public class FileController {
-	@Resource(name = "jdbcTemplate", type=JdbcTemplate.class)
+	@Resource(name = "jdbcTemplate", type=JdbcTemplate.class) // 의존성 주입
 	private JdbcTemplate jdbcTemplate;
 
 	@PostConstruct
-	void postConstruct() {
+	void postConstruct() { // 전처리
 		log.debug("postConstruct() invoked.");
 		log.info("\t+ this.jdbcTemplate: {}",this.jdbcTemplate);
 	} // postConstruct

@@ -8,11 +8,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class FileDTO {
-	private Integer file_id;
-	private String file_original;
-	private String file_uuid;
-	private String file_menu;
+	// PK
+	private Integer file_id; // sequence 
 	
-	private Date crt_date;
-	private Date udt_date;
+	private String file_original; // 실제파일명.확장자
+	private String file_uuid; // uuid(저장될 파일명)
+	private String file_menu; // 파일경로
+	
+	private Date crt_date; // 등록일
+	private Date udt_date; // 수정일
 } // end class

@@ -26,18 +26,18 @@ public class FileEntity implements Serializable{// file + course 매핑, file + 
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "file_file_id")
-	private Integer file_id;
+	private Integer file_id; // sequence 
 	
 	@Column(nullable = false)
-	private String file_original;
+	private String file_original; // 실제파일명.확장자
 	@Column(nullable = false)
-	private String file_uuid;
+	private String file_uuid; // uuid(저장될 파일명)
 	@Column(nullable = false)
-	private String file_menu;
+	private String file_menu; // 파일경로
 	
 	@CurrentTimestamp(event = EventType.INSERT, source = SourceType.DB)
 	@Column(nullable = false)
-	private Date crt_date;
+	private Date crt_date; // 등록일
 	@UpdateTimestamp(source = SourceType.DB)
-	private Date udt_date;
+	private Date udt_date; // 수정일
 } // end class

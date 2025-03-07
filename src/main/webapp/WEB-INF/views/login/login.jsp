@@ -10,8 +10,8 @@
 	<h3><%= request.getRequestURI() %></h3>
 	<hr>
 	
-	<form action="/course/main">
-		<p>/course/main 으로 이동</p>
+	<form action="/login/loginCheck">
+		<p>/login/loginCheck -> /course/main 으로 이동</p>
 		<button>
 			로그인
 		</button>
