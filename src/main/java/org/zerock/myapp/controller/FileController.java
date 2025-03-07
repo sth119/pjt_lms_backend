@@ -33,6 +33,7 @@ public class FileController {
 	void choose() {
 		log.debug("choose() invoked.");
 		
+		// return 이미지데이터
 	} // choose
 	
 

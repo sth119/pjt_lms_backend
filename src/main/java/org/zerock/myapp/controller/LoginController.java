@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/login/*") // Base URI
 
 
+// 모든 컨트롤러마다 화면 + 기능을 나눠서 표현해야한다
 // 로그인 URI 컨트롤러
 //@RestController
 @Controller
