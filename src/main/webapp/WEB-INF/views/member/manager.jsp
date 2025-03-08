@@ -17,8 +17,8 @@
 		</button>
 	</form>
 	
-	<form action="/course/main">
-		<p>진행예정,진행중,종료 /course/main 으로 이동</p>
+	<form action="/course/list">
+		<p>진행예정,진행중,종료 /course/list 으로 이동</p>
 		<button>
 			진행예정,진행중,종료
 		</button>

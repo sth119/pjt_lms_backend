@@ -44,7 +44,7 @@ public class LoginController {
 	String loginCheck() {
 		log.debug("loginCheck() invoked.");
 		
-		return "redirect:/course/main";
+		return "redirect:/course/list";
 	} // loginCheck
 	
 	// 로그아웃 처리, 바로 /login 으로 넘어간다.

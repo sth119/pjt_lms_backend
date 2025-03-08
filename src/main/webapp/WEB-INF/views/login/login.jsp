@@ -11,7 +11,7 @@
 	<hr>
 	
 	<form action="/login/loginCheck">
-		<p>/login/loginCheck -> /course/main 으로 이동</p>
+		<p>/login/loginCheck -> /course/list(main에서) 으로 이동</p>
 		<button>
 			로그인
 		</button>

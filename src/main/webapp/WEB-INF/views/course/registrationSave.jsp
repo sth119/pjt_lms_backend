@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>instructor.jsp</title>
+<title>registration.jsp</title>
 </head>
 <body>
 	<h3><%= request.getRequestURI() %></h3>
@@ -17,8 +17,8 @@
 		</button>
 	</form>
 	
-	<form action="/course/list">
-		<p>진행예정,진행중,종료 /course/list 으로 이동</p>
+	<form action="/course/main">
+		<p>진행예정,진행중,종료 /course/main 으로 이동</p>
 		<button>
 			진행예정,진행중,종료
 		</button>
@@ -46,33 +46,26 @@
 	</form>
 	
 	
-	// ============================================
+	// ===========================
 	
-	<form action="/member/registration">
-		<p>멤버등록 /member/registration 으로 이동</p>
+	<form action="/course/main">
+		<p>메인 /course/main 으로 이동</p>
 		<button>
-			멤버등록
+			등록완료
 		</button>
 	</form>
 	
-	<form action="/member/search">
-		<p>멤버검색 /member/search 으로 이동</p>
+	<form action="/course/main">
+		<p>메인 /course/main 으로 이동</p>
 		<button>
-			멤버검색
+			등록취소
 		</button>
 	</form>
 	
-	<form action="/member/modify">
-		<p>멤버수정 /member/modify 으로 이동</p>
+	<form action="/file/choose">
+		<p>파일선택 /file/choose 으로 이동</p>
 		<button>
-			멤버수정
-		</button>
-	</form>
-	
-	<form action="/member/delete">
-		<p>멤버삭제 /member/delete 으로 이동</p>
-		<button>
-			멤버삭제
+			파일선택
 		</button>
 	</form>
 	
