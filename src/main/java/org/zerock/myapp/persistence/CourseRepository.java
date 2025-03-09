@@ -16,6 +16,6 @@ public interface CourseRepository extends JpaRepository<Course, String> {
 //	
 //	public abstract  Course save(Course dto); 	//C, U
 	
-//	public abstract void dedeleteById(String id); 			//D	
+//	public abstract void deleteById(String id); 			//D	
 	
 }//end interface
