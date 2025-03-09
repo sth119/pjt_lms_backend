@@ -14,40 +14,43 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 
-@Entity
+@Entity(name = "Member")
 //(instructor, manager, student) ISA 매핑
-public class MemberEntity implements Serializable{ 
+public class Member implements Serializable{ 
 	@Serial private static final long serialVersionUID = 1L;
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "member_member_code")
+//	@Column(name = "member_member_code")
 	private String member_code;	// 회원번호
 	
-	@Column(nullable = true)
+	@Column(nullable = false)
 	private String member_id;	// 아이디
 	@Column(nullable = false)
 	private String member_password;// 비밀번호
 	@Column(nullable = false)
 	private String member_name; // 이름
-	@Column(nullable = true)
+//	@Column(nullable = true)
 	private String member_phone;// 전화번호(하이픈 제외 11자리)
 	
 	
-	@Column(nullable = true)
+	@Column(nullable = false)
 	private String member_type;	// 회원구분(강사{instructor}, 관리자{manager}, 훈련생{student})
 	
 	// FK
-	@Column(nullable = true)
+//	@Column(nullable = true)
+	@JoinColumn(name = "crsCode")
 	private String in_charge_crs_code;	// 과정번호(담당{강사})
-	@Column(nullable = true)
+	
+//	@Column(nullable = true)
 	private String request_crs_code;	// 과정번호(신청{훈련생})
-	@Column(nullable = true)
+//	@Column(nullable = true)
 	private Integer student_image;		// 이미지 파일 시퀀스(학생)
 	
 	
