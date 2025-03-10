@@ -11,7 +11,7 @@
 	<hr>
 	
 	<p>팝업</p>
-	<form action="/course/main">
+	<form action="/course/list">
 		<p>삭제완료 /course/main 으로 이동</p>
 		<button>
 			삭제완료

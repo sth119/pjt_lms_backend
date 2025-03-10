@@ -14,10 +14,6 @@
 		
 		<ul>
 			<li>File Uploader: <input type="text" name="uploader" size="10" maxlength="10"></li>
-			<li><input type="file" name="files" multiple="multiple"></li>
-			<li><input type="file" name="files"></li>
-			<li><input type="file" name="files"></li>
-			<li><input type="file" name="files"></li>
 			<li><input type="file" name="files"></li>
 		</ul>
 
