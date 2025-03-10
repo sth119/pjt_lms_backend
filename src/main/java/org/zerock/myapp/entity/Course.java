@@ -3,6 +3,8 @@ package org.zerock.myapp.entity;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 
 import org.hibernate.annotations.CurrentTimestamp;
 import org.hibernate.annotations.SourceType;
@@ -14,11 +16,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -33,9 +35,8 @@ public class Course implements Serializable{ // course + file 매핑
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "CourseGenerator")
 	@SequenceGenerator(name="CourseGenerator", sequenceName = "seq_course", initialValue = 1, allocationSize = 1)
-//	@Column(name = "course_crs_code")
-	private String crsCode; // 과정번호
-
+	private Integer crsCode; // 과정번호
+	
 	
 	@Column(nullable = false)	//not null 제약
 	private String crsType; 	// 과정구분
@@ -65,40 +66,42 @@ public class Course implements Serializable{ // course + file 매핑
 	private Date udtDate; // 수정일
 	
 	
-
 	// FK
-	@ManyToOne
-	@JoinColumn(name = "fileId")
-	private File crsImage; // 이미지 파일 시퀀스(과정)
+	@OneToMany(targetEntity = File.class)
+	//@JoinColumn(name = "fileId", referencedColumnName = "fileId")
+	@ToString.Exclude
+	private List<File> crsImage = new Vector<>(); // 이미지 파일 시퀀스(과정)
 	
-	// 이거 맞는 모델링일까???????
+	@OneToMany(mappedBy = "inChargeCrsCode")
+	//@JoinColumn(name = "inChargeCrsCode", referencedColumnName = "inChargeCrsCode")
+	@ToString.Exclude
+	private List<Member> inChargeCrsCode = new Vector<>(); // 과정번호(담당{강사})
 	
-	
-	
-//	//연관관계 편의 메소드 선언
-//	public void setCrsImage(FileEntity file) {
-//		log.info("setCrsImage({}) invoked.", file);
-//		
-//		//1. 현재 이미지를 얻는다.
-//		FileEntity oldImg = this.getCrsImage();
-//		
-//		//2. 이미 img가 있으면..
-//		if(oldImg != null) {	
-//			//기존 파일 에서 img 제거
-//			boolean isRemoved = oldImg.getFileId().remove(this); //이전 팀에서 현 회원 삭제
-//			log.info("isRemoved from oldImg ? {}", isRemoved);
-//
-//			log.info("oldImg members: {}", oldImg.getMembers());			
-//		}
-//		
-//		//3. 새로운 팀으로 설정
-//		this.myTeam = newTeam;
-//		
-//		//4. 새로운 팀 멤버(회원)으로 현 회훤 추가
-//		this.myTeam.getMembers().add(this);  	
-//		log.info("newTeam members: {}", myTeam.getMembers());
-//	}
+	@OneToMany(mappedBy = "requestCrsCode")
+	//@JoinColumn(name = "requestCrsCode", referencedColumnName = "requestCrsCode")
+	@ToString.Exclude
+	private List<Member> requestCrsCode = new Vector<>(); // 과정번호(신청{훈련생})
 	
 	
+	public void addRequestCrsCode(Member newMember) { // 편의메소드
+		log.debug("addRequestCrsCode({}) invoked.",newMember);
+		// Step1. 이전 팀에서 소속 제거(FK 필드가 있어야 함)
+		// List는 중복 허용: 즉, 같은 회원이 2번 이상 추가될 수 있음.
+		this.requestCrsCode.remove(newMember);
+		// Step2. 새로운 팀으로 소속 시킴
+		this.requestCrsCode.add(newMember);
+		// Step3. 자식(팀원)의 FK필드에 현재 팀 설정(FK 필드가 있어야 함)
+		// 새로운 팀원(Member)가 생성되어, 팀에 소속될 때, 자기의 팀(FK필드)을
+		// 아래와 같이 설정해줘야, 이 팀원을 em에 persist(저장)할 때, 소속팀 설정을
+		// 다시 할 필요가 없다.
+		newMember.setRequestCrsCode(this);
+	} // addRequestCrsCode
 	
+	public void addInChargeCrsCode(Member newMember) { // 편의메소드
+		log.debug("addMember({}) invoked.",newMember);
+		this.inChargeCrsCode.remove(newMember);
+		this.inChargeCrsCode.add(newMember);
+		newMember.setInChargeCrsCode(this);
+	} // addInChargeCrsCode
+
 } // end class

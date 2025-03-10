@@ -9,12 +9,13 @@ import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.generator.EventType;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -57,6 +58,10 @@ public class File implements Serializable{
 	@UpdateTimestamp(source = SourceType.DB)
 	private Date udt_date; // 수정일
 	
+	// FK
+	 @ManyToOne // File 엔티티에 Member를 참조하는 외래 키 설정
+	 @JoinColumn(name = "memberId", referencedColumnName = "memberCode") // Member의 기본 키 참조
+	 private Member member;
 	
 	
 	
