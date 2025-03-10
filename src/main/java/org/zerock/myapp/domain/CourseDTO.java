@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Data
 public class CourseDTO {
 	// PK
-	private String crsCode; // 과정번호
+	private Integer crsCode; // 과정번호
 	
-	private String crsType; // 과정구분
+	private String crsType; // 과정구분, search
 	private String crsName; // 과정이름
 	private Integer crsCapacity; // 수강정원
 	private String startDate; // 시작일
@@ -23,4 +23,8 @@ public class CourseDTO {
 	
 	private Date crtDate; // 등록일
 	private Date udtDate; // 수정일
+	
+	private String searchWord;
+	private String searchText;
+	private String runType;	//진행구분, search
 } // end class
