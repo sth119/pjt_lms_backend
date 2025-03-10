@@ -1,9 +1,9 @@
 package org.zerock.myapp.controller;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
@@ -16,8 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/file/*") // Base URI
 
 //파일 URI 컨트롤러
-@RestController
-//@Controller
+//@RestController //json을 반환하니깐 jsp는 안보여줌
+@Controller 
 public class FileController {
 	@Resource(name = "jdbcTemplate", type=JdbcTemplate.class) // 의존성 주입
 	private JdbcTemplate jdbcTemplate;

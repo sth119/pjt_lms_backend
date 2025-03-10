@@ -47,7 +47,7 @@
 	
 	// ==========================
 	
-	<form action="/course/main">
+	<form action="/course/list">
 		<p>목록페이지 /course/main 으로 이동</p>
 		<button>
 			목록페이지
