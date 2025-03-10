@@ -50,7 +50,10 @@ public class Course implements Serializable{ // course + file 매핑
 	private String startDate; 	// 과정 시작일
 
 	@Column(nullable = false)	//not null 제약
-	private String endDate; 	//과정 종료일
+	private String endDate; 	// 과정 종료일
+	
+	@Column(nullable = true)	//not null 제약
+	private String crsDetail; 	// 내용
 	
 	//정보통신망법 관련 2가지
 	

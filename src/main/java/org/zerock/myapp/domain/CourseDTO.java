@@ -9,17 +9,18 @@ import lombok.NoArgsConstructor;
 @Data
 public class CourseDTO {
 	// PK
-	private String crs_code; // 과정번호
+	private String crsCode; // 과정번호
 	
-	private String crs_type; // 과정구분
-	private String crs_name; // 과정이름
-	private Integer crs_capacity; // 수강정원
-	private String start_date; // 시작일
-	private String end_date; // 종료일
+	private String crsType; // 과정구분
+	private String crsName; // 과정이름
+	private Integer crsCapacity; // 수강정원
+	private String startDate; // 시작일
+	private String endDate; // 종료일
+	private String crsDetail; // 내용
 	
 	// FK
-	private Integer crs_image; // 이미지 파일 시퀀스(과정)
+	private Integer crsImage; // 이미지 파일 시퀀스(과정)
 	
-	private Date crt_date; // 등록일
-	private Date udt_date; // 수정일
+	private Date crtDate; // 등록일
+	private Date udtDate; // 수정일
 } // end class
