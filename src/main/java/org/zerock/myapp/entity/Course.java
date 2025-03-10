@@ -18,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Transient;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -46,7 +47,7 @@ public class Course implements Serializable{ // course + file 매핑
 
 	@Column(nullable = false)	//not null 제약
 	private Integer crsCapacity;// 수강정원
-
+	
 	@Column(nullable = false)	//not null 제약
 	private String startDate; 	// 과정 시작일
 
@@ -91,5 +92,11 @@ public class Course implements Serializable{ // course + file 매핑
 		// 다시 할 필요가 없다.
 		newMember.setRequestCrsCode(this);
 	} // addRequestCrsCode
+	
+	
+
+	@Transient	// DB 컬럼으로 매핑되지 않음
+	private Integer currCount;	//현재 수강 인원
+	
 	
 } // end class
