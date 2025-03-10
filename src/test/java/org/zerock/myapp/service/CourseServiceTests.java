@@ -1,11 +1,10 @@
 package org.zerock.myapp.service;
 
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,7 @@ import org.junit.jupiter.api.Timeout;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-import org.zerock.myapp.entity.Board;
+import org.zerock.myapp.domain.CourseDTO;
 import org.zerock.myapp.entity.Course;
 
 import jakarta.annotation.PostConstruct;
@@ -55,8 +54,8 @@ public class CourseServiceTests {
 		log.debug("testCreate() invoked.");
 		
 		// 1
-		Course dto = new Course();
-		dto.setCrsCode("A2025001-001");
+		CourseDTO dto = new CourseDTO();
+		dto.setCrsCode(1);
 		dto.setCrsType("A");
 		dto.setCrsType("과정 A 001");
 		dto.setCrsCapacity(20);
