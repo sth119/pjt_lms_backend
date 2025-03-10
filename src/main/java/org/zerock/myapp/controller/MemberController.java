@@ -1,5 +1,8 @@
 package org.zerock.myapp.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,116 +12,85 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.zerock.myapp.domain.CourseDTO;
 import org.zerock.myapp.domain.MemberDTO;
-import org.zerock.myapp.service.MemberServiceImpl;
+import org.zerock.myapp.service.MemberService;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-
+@NoArgsConstructor
 
 @RequestMapping("/member/*") // Base URI
 
 // 회원 URI 컨트롤러
 @RestController
-//@Controller
-@RequiredArgsConstructor
 public class MemberController {
-	private final MemberServiceImpl memberServiceimpl;
-	
-	
-	@Resource(name = "jdbcTemplate", type=JdbcTemplate.class) // 의존성 주입
-	private JdbcTemplate jdbcTemplate;
-	
-	@PostConstruct
-	void postConstruct() { // 전처리
-		log.debug("postConstruct() invoked.");
-		log.info("\t+ this.jdbcTemplate: {}",this.jdbcTemplate);
-	} // postConstruct
-	
-	// 멤버도 main 을 만들어야 할 것 같다
-	
-	// 훈련생 강사 관리자 버튼은, 멤버 조회(/search)에 조건 추가한 방식으로 만들면 될 듯
-	@GetMapping("/student") // 훈련생
-	void student() {
-		log.debug("student() invoked.");
+	@Autowired private MemberService service;
+
+    
+	@PostMapping("/list") // 멤버 리스트 LIST
+	List<String> list(String memberCode) {
+		log.debug("list({}) invoked.",memberCode);
 		
-	} // student
+		return null;
+	} // list
 	
-	@GetMapping("/instructor") // 강사
-	void instructor() {
-		log.debug("instructor() invoked.");
-		
-	} // instructor
-	
-	@GetMapping("/manager") // 관리자
-	void manager() {
-		log.debug("manager() invoked.");
-		
-	} // manager
-	
-	//=============================
-	
-    @PostMapping("/registration")
-    public ResponseEntity<?> register(@RequestBody MemberDTO dto) {
+    @PostMapping("/registration") // 회원등록
+    ResponseEntity<?> register(@RequestBody MemberDTO dto) {
+    	log.debug("register({}) invoked.",dto);
         
     	try {
-    		
-    	memberServiceimpl.registerMember(dto);
-    	return ResponseEntity.ok("회원가입이 완료되었습니다!");
+    	this.service.registerMember(dto);
     	
+    	return ResponseEntity.ok("회원가입이 완료되었습니다!");
     	} catch (IllegalArgumentException e) {
-    		
-    		   // 유효성 검사 실패 등 비즈니스 로직 예외 처리
+    		// 유효성 검사 실패 등 비즈니스 로직 예외 처리
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원가입 실패: " + e.getMessage());
-            
         } catch (Exception e) {
-        	
             // 예상치 못한 서버 오류 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류로 인해 회원가입에 실패했습니다.");
-            
-        }
+        } // try-catch
     } // 회원가입 
 	
-    @GetMapping("/check-id")
-    public ResponseEntity<String> checkIdDuplicate(@RequestParam String memberId) {
-        String resultMessage = memberServiceimpl.checkIdDuplicate(memberId);
+    @PostMapping(path = "/check-id") // Login 으로 옮길 것
+    ResponseEntity<String> checkIdDuplicate(@RequestParam String memberId) {// 아이디 중복 검증
+    	log.debug("checkIdDuplicate({}) invoked.",memberId);
+    	
+        String resultMessage = this.service.checkIdDuplicate(memberId);
         
         if("이미 사용 중인 아이디입니다.".equals(resultMessage)) {
         	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMessage);
-        }
-        
+        } // if
         return ResponseEntity.ok(resultMessage);
-    } // 아이디 중복 검증. 
+    } // checkIdDuplicate
     
-    
-	
-	
-	@GetMapping("/registration") // 멤버 등록, C
-	void registration() {
-		log.debug("registration() invoked.");
+	// 위의 회원가입 로직과 중복되면 삭제할 것
+	@PostMapping(path = {"/registrationPage", "/modifyPage"}) // 맴버 등록/수정 화면
+	String registrationPage(String memberCode) {
+		log.debug("registrationPage({}) invoked.",memberCode);
 		
+		// memberCode가 null 이면 /regist , 
+		// null 이 아니면 /modify 로 이동한다
+		
+		return null;
+	} // registrationPage
+	
+	@PostMapping(path = {"/registration", "/modify"}, params = "dto") // 맴버 등록/수정 처리 실행
+	Boolean registration(MemberDTO dto) {
+		log.debug("registration({}) invoked.",dto);
+		
+		 return true;
 	} // registration
 	
-	@GetMapping("/search") // 멤버 조회, R, LIST?
-	void search() {
-		log.debug("search() invoked.");
+	@PostMapping(path = "/delete", params = "memberCode") // 맴버 삭제, D , List로 이동
+	Boolean delete(String memberCode) {
+		log.debug("delete({}) invoked.",memberCode);
 		
-	} // search
-	
-	@GetMapping("/modify") // 멤버 수정, U
-	void modify() {
-		log.debug("modify() invoked.");
-		
-	} // modify
-	
-	@GetMapping("/delete") // 멤버 삭제, D
-	void delete() {
-		log.debug("delete() invoked.");
-		
+		 return true;
 	} // delete
 	
 } // end class

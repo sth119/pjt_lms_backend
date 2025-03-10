@@ -1,10 +1,11 @@
 package org.zerock.myapp.controller;
 
+import java.net.URI;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,62 +15,49 @@ import org.zerock.myapp.domain.MemberDTO;
 import org.zerock.myapp.entity.Member;
 import org.zerock.myapp.service.MemberServiceImpl;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.Resource;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-
+@NoArgsConstructor
 
 @RequestMapping("/login/*") // Base URI
-@RestController
-//@Controller
-@RequiredArgsConstructor
-public class LoginController {
-	
-	private final MemberServiceImpl memberServiceimpl;
-	
-	
-	@Resource(name = "jdbcTemplate", type=JdbcTemplate.class) // 의존성 주입
-	private JdbcTemplate jdbcTemplate;
-	
-	@PostConstruct
-	void postConstruct() { // 전처리
-		log.debug("postConstruct() invoked.");
-		log.info("\t+ this.jdbcTemplate: {}",this.jdbcTemplate);
-	} // postConstruct
-	
-	
-	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody MemberDTO dto){ // <MemberEntity> , 서로 다른 타입을 반환할 경우 <?> 를 사용.
-			
-	     try {
-	    	 
-	            Optional<Member> member = memberServiceimpl.login(dto.getMemberId(), dto.getMemberPassword());
-	            return ResponseEntity.ok(member); // 로그인 성공 시 회원 정보 반환 (회원 정보 수정때 사용할 정보들 )
-//	            return ResponseEntity
-//	            		.status(HttpStatus.FOUND)
-//	            		.location(URI.create("/home")) // redirect 주소
-//	            		.build(); // 백엔드 만 있을시 redirect 설정 
-	            
-	        } catch (IllegalArgumentException e) {
-	        	
-	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage()); // 예외 메시지 반환
-		}
 
-	} // 로그인 
+@RestController
+public class LoginController {
+	@Autowired private MemberServiceImpl memberServiceimpl;
+	
+
+	@GetMapping(path = "/login")
+	void login(){ // 로그인 화면
+	} // login 
 	
 	// 로그인 처리, /course/main 으로 이동
-	@GetMapping("/loginCheck")
-	String loginCheck() {
-		log.debug("loginCheck() invoked.");
+	@PostMapping(path = "/loginCheck")
+	ResponseEntity<?> loginCheck(@RequestBody MemberDTO dto) { // <MemberEntity> , 서로 다른 타입을 반환할 경우 <?> 를 사용.
+		log.debug("loginCheck({}) invoked.",dto);
 		
-		return "redirect:/course/list";
+		 try {
+		        Optional<Member> member = memberServiceimpl.login(dto.getMemberId(), dto.getMemberPassword());
+
+		        if (member.isPresent()) {
+		            // 로그인 성공 시 회원 정보 반환
+		            return ResponseEntity.ok(member.get());
+		        } else {
+		            // 로그인 실패 시 리다이렉트
+		            return ResponseEntity
+		                    .status(HttpStatus.FOUND)
+		                    .location(URI.create("/course/list")) // 리다이렉트 주소
+		                    .build();
+		        } // if-else
+		    } catch (IllegalArgumentException e) {
+		        // 예외 메시지 반환
+		        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+		    } // try-catch
 	} // loginCheck
 	
 	// 로그아웃 처리, 바로 /login 으로 넘어간다.
-	@GetMapping("/logout")
+	@GetMapping(path = "/logout")
 	String logout() {
 		log.debug("logout() invoked.");
 		

@@ -6,6 +6,5 @@ import org.zerock.myapp.entity.File;
 
 @Repository
 public interface FileRepository extends JpaRepository<File, Integer> {
-
-
+	;;
 }//end interface

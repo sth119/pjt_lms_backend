@@ -82,7 +82,6 @@ public class CourseServiceImpl implements CourseService {
 		log.debug("CourseServiceImpl -- deleteById({}) invoked", id);
 		
 		//dao.deleteById(id);
-		
 		return true;
 	}
 	

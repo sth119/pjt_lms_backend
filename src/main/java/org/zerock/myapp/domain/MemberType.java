@@ -19,17 +19,17 @@ public enum MemberType {
 	private MemberType(Integer code, String description) {
 		this.code = code;
 		this.description = description;
-	}
+	} // MemberType
 	
 	// 멤버타입을 코드로 비교 
 	public static MemberType fromCode(Integer code) {
 		for(MemberType type: MemberType.values()) {
 			if(type.getCode().equals(code)) {
 				return type;
-			}
-		}
+			} // if
+		} // for
 		throw new IllegalArgumentException("잘못된 회원코드 : " +code );
-	} 
+	} // fromCode
 	
 	
 	

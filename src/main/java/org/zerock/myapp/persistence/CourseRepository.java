@@ -6,6 +6,5 @@ import org.zerock.myapp.entity.Course;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Integer> {
-
-	
+	;;
 }//end interface

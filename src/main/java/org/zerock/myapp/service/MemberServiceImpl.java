@@ -14,18 +14,18 @@ import org.zerock.myapp.entity.Member;
 import org.zerock.myapp.persistence.MemberRepository;
 
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
+@NoArgsConstructor
 
 @Service
-@RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
-    private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
-	@Autowired MemberRepository dao;
+    private PasswordEncoder passwordEncoder;
+    @Autowired MemberRepository dao;
+	
 	
 	@PostConstruct
     void postConstruct(){
@@ -41,7 +41,7 @@ public class MemberServiceImpl implements MemberService {
 		List<Member> list = dao.findAll();
 		
 		return list;
-	}
+	} // getAllList
 	
 	@Override
 	public List<Member> getSearchList(MemberDTO dto) {	//검색 있는 전체 리스트
@@ -51,7 +51,7 @@ public class MemberServiceImpl implements MemberService {
 		log.debug("리포지토리 미 생성");
 		
 		return list;
-	}
+	} // getSearchList
 	
 	@Override
 	public Member create(MemberDTO dto) {	//등록 처리
@@ -61,7 +61,7 @@ public class MemberServiceImpl implements MemberService {
 		log.debug("create data: {}", data);
 		
 		return data;
-	}
+	} // create
 	
 	@Override
 	public Member getById(String id) {	// 단일 조회
@@ -71,7 +71,7 @@ public class MemberServiceImpl implements MemberService {
 		Member data = new Member();//dao.findById(id).orElse(new Member());
 		
 		return data;
-	}
+	} // getById
 	
 	@Override
 	public Boolean update(MemberDTO dto) {//수정 처리
@@ -81,32 +81,28 @@ public class MemberServiceImpl implements MemberService {
 //		log.debug("create data: {}", data);
 		Boolean isUpdate = true;
 		return isUpdate;
-	}
+	} // update
 
 	@Override
 	public Boolean deleteById(String id) { // 삭제 처리
 		log.debug("MemberServiceImpl -- deleteById({}) invoked", id);
 		
 		//dao.deleteById(id);
-		
 		return true;
-	}
-	
+	} // deleteById
 	
   // ================= 로그인 로직 =======================
     
     public Optional<Member> findByMemberId(String memberId) {
-    	return memberRepository.findByMemberId(memberId);
-    	
+    	return this.dao.findByMemberId(memberId);
     }  // 사용자의 id 가 db 에 저장이 되어 있는지 검색
 
-    public boolean checkPassword(String rawPassword, String encodedPassword) {
+    public Boolean checkPassword(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     } // 비번이 일치하는지 검증.
-    
 
     public Optional<Member> login(String memberId, String password) {
-    	Optional<Member> memberOptional = memberRepository.findByMemberId(memberId);
+    	Optional<Member> memberOptional = this.dao.findByMemberId(memberId);
     	
     	if (memberOptional.isEmpty()) {
     		throw new IllegalArgumentException("아이디 또는 패스워드를 입력해주세요.");
@@ -118,21 +114,14 @@ public class MemberServiceImpl implements MemberService {
     		throw new IllegalArgumentException("아이디 또는 패스워드가 틀립니다.");
     	} // 비밀번호 검증.
     	
-    	
     	if (member.getMemberTypeCode() != MemberType.MANAGER) {
     		throw new IllegalArgumentException("현재 관리자만 로그인 가능합니다.");
     	} // 관리자만 로그인 가능 
     	
-    	
     	return memberOptional;
-    	
     } // end Optional<MemberEntity> login
     
-    
-    // ===================================================
-    
-    
-    
+
     // ================= 회원가입 로직 =======================
 
 
@@ -154,12 +143,12 @@ public class MemberServiceImpl implements MemberService {
     	member.setMemberType(dto.getMemberType()); // 유저타입. (관리자/강사/훈련생)
     	member.setMemberTypeCode(MemberType.fromCode(dto.getMemberType())); // 로그인시 관리자만 로그인 되도록 비교.
     	
-    	memberRepository.save(member); // db에 저장.
+    	this.dao.save(member); // db에 저장.
     } // 회원가입 로직. 
 
     
     public String checkIdDuplicate(String memberId) {
-    	boolean isDuplicate = memberRepository.existsByMemberId(memberId);
+    	boolean isDuplicate = this.dao.existsByMemberId(memberId);
     	
     	if (isDuplicate) {
     		return "이미 사용 중인 아이디입니다";
