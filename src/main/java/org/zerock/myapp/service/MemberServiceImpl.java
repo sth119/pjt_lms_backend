@@ -1,25 +1,30 @@
 package org.zerock.myapp.service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Vector;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.zerock.myapp.domain.MemberDTO;
-import org.zerock.myapp.entity.Course;
+import org.zerock.myapp.domain.MemberType;
 import org.zerock.myapp.entity.Member;
 import org.zerock.myapp.persistence.MemberRepository;
 
 import jakarta.annotation.PostConstruct;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
-@NoArgsConstructor
 
 @Service
+@RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 	@Autowired MemberRepository dao;
 	
 	@PostConstruct
@@ -86,4 +91,88 @@ public class MemberServiceImpl implements MemberService {
 		
 		return true;
 	}
+	
+	
+  // ================= 로그인 로직 =======================
+    
+    public Optional<Member> findByMemberId(String memberId) {
+    	return memberRepository.findByMemberId(memberId);
+    	
+    }  // 사용자의 id 가 db 에 저장이 되어 있는지 검색
+
+    public boolean checkPassword(String rawPassword, String encodedPassword) {
+        return passwordEncoder.matches(rawPassword, encodedPassword);
+    } // 비번이 일치하는지 검증.
+    
+
+    public Optional<Member> login(String memberId, String password) {
+    	Optional<Member> memberOptional = memberRepository.findByMemberId(memberId);
+    	
+    	if (memberOptional.isEmpty()) {
+    		throw new IllegalArgumentException("아이디 또는 패스워드를 입력해주세요.");
+    	} // 아이디 & 비밀번호 창이 비어있는 경우 검증
+    	
+    	Member member = memberOptional.get();
+    	
+    	if (!checkPassword(password, member.getMemberPassword())) {
+    		throw new IllegalArgumentException("아이디 또는 패스워드가 틀립니다.");
+    	} // 비밀번호 검증.
+    	
+    	
+    	if (member.getMemberTypeCode() != MemberType.MANAGER) {
+    		throw new IllegalArgumentException("현재 관리자만 로그인 가능합니다.");
+    	} // 관리자만 로그인 가능 
+    	
+    	
+    	return memberOptional;
+    	
+    } // end Optional<MemberEntity> login
+    
+    
+    // ===================================================
+    
+    
+    
+    // ================= 회원가입 로직 =======================
+
+
+    public void registerMember(MemberDTO dto) {
+    	Member member = new Member();
+    	
+    	
+    	member.setMemberId(dto.getMemberId()); // 유저 아이디. 
+    	member.setMemberPassword(dto.getMemberPassword()); // 비밀번호.
+    	member.setMemberPassword(passwordEncoder.encode(member.getMemberPassword()));  // 비밀번호 암호화 저장
+    	
+    	member.setMemberName(dto.getMemberName()); // 유저 닉네임 
+    	member.setMemberPhone(dto.getMemberPhone()); // 전화번호
+    	member.setRequestCrsCode(dto.getRequestCrsCode()); // 코스.
+    	member.setStudentImage(dto.getStudentImage()); // 사진.
+    	member.setCrtDate(new Date()); // 생성날짜.
+    	
+   
+    	member.setMemberType(dto.getMemberType()); // 유저타입. (관리자/강사/훈련생)
+    	member.setMemberTypeCode(MemberType.fromCode(dto.getMemberType())); // 로그인시 관리자만 로그인 되도록 비교.
+    	
+    	memberRepository.save(member); // db에 저장.
+    } // 회원가입 로직. 
+
+    
+    public String checkIdDuplicate(String memberId) {
+    	boolean isDuplicate = memberRepository.existsByMemberId(memberId);
+    	
+    	if (isDuplicate) {
+    		return "이미 사용 중인 아이디입니다";
+    	} else  {
+    		return "사용 가능한 아이디 입니다.";
+    	}
+    	
+    } // 아이디 중복체크 로직 
+       
+    // ===================================================
+	
+	
+	
+	
+	
 }//end class

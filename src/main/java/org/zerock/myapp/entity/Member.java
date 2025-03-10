@@ -9,10 +9,13 @@ import org.hibernate.annotations.CurrentTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.generator.EventType;
+import org.zerock.myapp.domain.MemberType;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -46,18 +49,14 @@ public class Member implements Serializable{
 	
 	
 	@Column(nullable = false)
-	private String memberType;	// 회원구분(강사{instructor}, 관리자{manager}, 훈련생{student})
+	private Integer memberType;	// 회원구분(강사{instructor}, 관리자{manager}, 훈련생{student})
 	
 	// FK
 	@ManyToOne(optional = true, targetEntity = Course.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name = "inChargeCrsCode", referencedColumnName = "crsCode", insertable = false,
-			updatable = false)
-	private Course inChargeCrsCode;	// 과정번호(담당{강사})
-	
-	@ManyToOne(optional = true, targetEntity = Course.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "requestCrsCode", referencedColumnName = "crsCode", insertable = false,
 			updatable = false)
-	private Course requestCrsCode;	// 과정번호(신청{훈련생})
+	private Course requestCrsCode;	// 과정코드(강사 = 담당과정 , 훈련생 = 신청과정)
+	
 	
 	@OneToMany
 	//@JoinColumn(name = "fileId", referencedColumnName = "fileId", insertable = false, updatable = false)
@@ -70,5 +69,14 @@ public class Member implements Serializable{
 	private Date crtDate; // 등록일
 	@UpdateTimestamp(source = SourceType.DB)
 	private Date udtDate; // 수정일
+	
+	
+	@Enumerated(EnumType.ORDINAL) // 숫자 반환. (순서 변경시 문제 발생 가능성이 있으니 비추천). 
+	//우리의 경우 순서가 더 추가될 일이 없고 관리자의 번호만 필요하여 사용  
+	//EnumType.STRING 문자를 반환하는 이 방식이 더 안전
+	// ORDINAL : 1 , 2 , 3 반환.
+	// STRING : MANAGER, TEACHER , STUDENT 반환.
+	
+	private MemberType memberTypeCode;
 	
 } // end class

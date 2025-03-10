@@ -72,17 +72,12 @@ public class Course implements Serializable{ // course + file 매핑
 	@ToString.Exclude
 	private List<File> crsImage = new Vector<>(); // 이미지 파일 시퀀스(과정)
 	
-	@OneToMany(mappedBy = "inChargeCrsCode")
-	//@JoinColumn(name = "inChargeCrsCode", referencedColumnName = "inChargeCrsCode")
-	@ToString.Exclude
-	private List<Member> inChargeCrsCode = new Vector<>(); // 과정번호(담당{강사})
-	
 	@OneToMany(mappedBy = "requestCrsCode")
-	//@JoinColumn(name = "requestCrsCode", referencedColumnName = "requestCrsCode")
+	//@JoinColumn(name = "memberList", referencedColumnName = "memberList")
 	@ToString.Exclude
-	private List<Member> requestCrsCode = new Vector<>(); // 과정번호(신청{훈련생})
+	private List<Member> requestCrsCode = new Vector<>(); // 과정번호(담당{강사})
 	
-	
+
 	public void addRequestCrsCode(Member newMember) { // 편의메소드
 		log.debug("addRequestCrsCode({}) invoked.",newMember);
 		// Step1. 이전 팀에서 소속 제거(FK 필드가 있어야 함)
@@ -97,11 +92,4 @@ public class Course implements Serializable{ // course + file 매핑
 		newMember.setRequestCrsCode(this);
 	} // addRequestCrsCode
 	
-	public void addInChargeCrsCode(Member newMember) { // 편의메소드
-		log.debug("addMember({}) invoked.",newMember);
-		this.inChargeCrsCode.remove(newMember);
-		this.inChargeCrsCode.add(newMember);
-		newMember.setInChargeCrsCode(this);
-	} // addInChargeCrsCode
-
 } // end class

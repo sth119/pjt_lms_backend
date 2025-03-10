@@ -1,24 +1,35 @@
 package org.zerock.myapp.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.zerock.myapp.domain.MemberDTO;
+import org.zerock.myapp.service.MemberServiceImpl;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@NoArgsConstructor
+
 
 @RequestMapping("/member/*") // Base URI
 
 // 회원 URI 컨트롤러
-//@RestController
-@Controller
+@RestController
+//@Controller
+@RequiredArgsConstructor
 public class MemberController {
+	private final MemberServiceImpl memberServiceimpl;
+	
+	
 	@Resource(name = "jdbcTemplate", type=JdbcTemplate.class) // 의존성 주입
 	private JdbcTemplate jdbcTemplate;
 	
@@ -50,6 +61,41 @@ public class MemberController {
 	} // manager
 	
 	//=============================
+	
+    @PostMapping("/registration")
+    public ResponseEntity<?> register(@RequestBody MemberDTO dto) {
+        
+    	try {
+    		
+    	memberServiceimpl.registerMember(dto);
+    	return ResponseEntity.ok("회원가입이 완료되었습니다!");
+    	
+    	} catch (IllegalArgumentException e) {
+    		
+    		   // 유효성 검사 실패 등 비즈니스 로직 예외 처리
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원가입 실패: " + e.getMessage());
+            
+        } catch (Exception e) {
+        	
+            // 예상치 못한 서버 오류 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류로 인해 회원가입에 실패했습니다.");
+            
+        }
+    } // 회원가입 
+	
+    @GetMapping("/check-id")
+    public ResponseEntity<String> checkIdDuplicate(@RequestParam String memberId) {
+        String resultMessage = memberServiceimpl.checkIdDuplicate(memberId);
+        
+        if("이미 사용 중인 아이디입니다.".equals(resultMessage)) {
+        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMessage);
+        }
+        
+        return ResponseEntity.ok(resultMessage);
+    } // 아이디 중복 검증. 
+    
+    
+	
 	
 	@GetMapping("/registration") // 멤버 등록, C
 	void registration() {
