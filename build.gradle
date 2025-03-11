@@ -50,8 +50,15 @@ dependencies {
 	// devtool
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	
-	// Configure JDBC Drivers
-	runtimeOnly 'com.mysql:mysql-connector-j'
+	// Configure JDBC Drivers ( Databases )
+	//runtimeOnly 'com.mysql:mysql-connector-j'
+	   runtimeOnly('com.oracle.database.jdbc:ojdbc11-production') {
+      exclude group: 'com.oracle.database.ha',    module: 'simplefan'
+      exclude group: 'com.oracle.database.ha',    module: 'ons'
+      exclude group: 'com.oracle.database.jdbc',  module: 'rsi'
+      exclude group: 'com.oracle.database.xml',   module: 'xdb'
+      exclude group: 'com.oracle.database.xml',   module: 'xmlparserv2'
+   }
 	
 	// junit-test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -77,8 +84,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	
 	// Spring Security
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	testImplementation 'org.springframework.security:spring-security-test'
+	//implementation 'org.springframework.boot:spring-boot-starter-security'
+	//testImplementation 'org.springframework.security:spring-security-test'
 	
 	// Thymeleaf	
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
