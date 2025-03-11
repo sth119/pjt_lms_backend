@@ -3,7 +3,6 @@ package org.zerock.myapp.controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.zerock.myapp.domain.CourseDTO;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
