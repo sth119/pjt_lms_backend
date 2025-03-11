@@ -19,13 +19,9 @@ public interface UserRepository extends JpaRepository<User, String> {
 	
 	
 //	public abstract Boolean insertUser(UserDTO dto);		// C 삽입
-	
 	public abstract User findByUserId(Integer userId); 	// R 단건 조회, 수강생 수는 member에서....
-	
 //	public abstract Boolean updateUser(UserDTO dto);		// U 수정
-	
 	public abstract Boolean deleteByUserId(Integer userId);	// D 삭제
-	
 	
 
 	//로그인 처리
@@ -34,5 +30,8 @@ public interface UserRepository extends JpaRepository<User, String> {
 	//아이디 중복확인
 	public abstract boolean existsByUserId(String userId);
 	
+//	public Optional<User> findByMemberId(String memberId);
+//	public Boolean checkPassword(String rawPassword, String encodedPassword);
+//	public Optional<User> login(String memberId, String password);
 	
 } // end class

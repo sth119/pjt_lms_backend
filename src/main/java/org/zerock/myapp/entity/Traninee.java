@@ -1,31 +1,51 @@
 package org.zerock.myapp.entity;
 
-import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+
 
 @Data
-@NoArgsConstructor
 
-@Entity(name = "Traninee")
+@Entity
+@Table(name="T_TRANINEES")
+public class Traninee implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-@Table(name = "t_traninees")
-public class Traninee implements Serializable{ 
-	@Serial private static final long serialVersionUID = 1L;
-	
-	
-	
-	//
 	@Id
-	private String tra_code;	// 회원ID FK
-	
-//	private String ; // 이름
-	
-	private String memberPhone;// 전화번호(하이픈 제외 11자리)
-	
-} // end class
+	@Column(name="TRA_CODE", unique=true, nullable=false, precision=38)
+	private long traCode;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name="CRT_DATE", nullable=false)
+	private Date crtDate;
+
+	@Column(nullable=false, precision=38)
+	private BigDecimal enabled;
+
+	@Column(name="TRA_NAME", nullable=false, length=500)
+	private String traName;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name="UDT_DATE")
+	private Date udtDate;
+
+	//bi-directional many-to-one association to TCours
+	@ManyToOne
+	@JoinColumn(name="CRS_CODE")
+	private Course course;
+
+
+
+}//class

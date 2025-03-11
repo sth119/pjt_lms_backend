@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.zerock.myapp.entity.User;
 
 
-public interface MemberRepository extends JpaRepository<User, Integer> {
+public interface MemberRepository extends JpaRepository<User, String> {
 	Optional<User> findByMemberId(String memberId);
 	boolean existsByMemberId(String memberId);
 } // end class
