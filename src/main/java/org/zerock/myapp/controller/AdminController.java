@@ -21,12 +21,14 @@ public class AdminController {  // 관리자 관리
 
 	@PostMapping("/list")
 	String adminList() {
+		log.debug("adminList() invoked.");
 		
 		return "admin List return";
 	} // adminList
 	
 	@PostMapping("/list")
 	String adminSearchedList() {
+		log.debug("adminSearchedList() invoked.");
 		
 		return "admin Searched List return";
 	} // adminSearchedList

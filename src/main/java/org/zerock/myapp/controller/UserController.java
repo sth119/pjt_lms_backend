@@ -19,23 +19,27 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController { // 회원관리
 
 	@PostMapping("/registration")
-	String userRegistration() {
+	String userRegistration() { // 회원 등록
+		log.debug("userRegistration() invoked.");
 		
 		return "userRegistration return";
 	} // adminList
 	
 	
 	@PostMapping("/modification")
-	String userModification() {
+	String userModification() { // 회원 수정
+		log.debug("userModification() invoked.");
 		
 		return "user Modification return";
 	} // adminSearchedList
 	
 	
 	@PostMapping("/deletion")
-	String userDeletion() {
+	String userDeletion() { // 회원 삭제
+		log.debug("userDeletion() invoked.");
 		
 		return "user Deletion return";
 	} // userDeletion
 
 } // end class
+

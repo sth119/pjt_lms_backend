@@ -18,13 +18,16 @@ public class InstructorController { // 강사 관리
 
 	
 	@PostMapping("/list")
-	String instructorList() {
+	String instructorList() { // 관리자 리스트
+		
+		log.debug("instructorList() invoked.");
 		
 		return "instructor List return";
 	} // instructorList
 	
 	@PostMapping("/list")
-	String instructorSearchedList() {
+	String instructorSearchedList() { // 관리자 검색
+		log.debug("instructorSearchedList() invoked.");
 		
 		return "instructorSearched List return";
 	} // instructorSearchedList
