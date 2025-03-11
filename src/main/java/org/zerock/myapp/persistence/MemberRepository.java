@@ -3,11 +3,11 @@ package org.zerock.myapp.persistence;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.zerock.myapp.entity.Member;
+import org.zerock.myapp.entity.User;
 
 
-public interface MemberRepository extends JpaRepository<Member, Integer> {
-	Optional<Member> findByMemberId(String memberId);
+public interface MemberRepository extends JpaRepository<User, Integer> {
+	Optional<User> findByMemberId(String memberId);
 	boolean existsByMemberId(String memberId);
 } // end class
 

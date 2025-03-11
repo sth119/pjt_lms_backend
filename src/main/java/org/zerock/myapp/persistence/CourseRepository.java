@@ -1,7 +1,8 @@
 package org.zerock.myapp.persistence;
 
-import java.util.List;
+import java.awt.print.Pageable;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.zerock.myapp.entity.Course;
@@ -9,148 +10,42 @@ import org.zerock.myapp.entity.Course;
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Integer> {
 	
-	// 로그인 하고 들어왔을 때 화면. 과정구분 X , 검색항목 X
-	public abstract List<Course> findAllOrderByStartDateDescEndDateDesc();
+	/* 검색
+	 * ** 상태 => 기본 조건
+	 * 1. 과정구분 : 선택 X / O
+	 * 2. 검색어 입력 : X / O
+	 * 		- 과정명
+	 *  	- 강사명
+	 * */
+	//검색 리스트: 진행상태, 다른 검색 없음 
+	public abstract Page<Course> findByState(Integer state, Pageable paging);
+		
+	//검색 리스트: 진행상태 + 과정구분
+	public abstract Page<Course> findByStateAndCrsType(Integer state, String crsType, Pageable paging);
 	
-	//1. 예정, 중, 완료 를 한번에 구현 가능한지?
-	//2. 검색항목 word, 검색어 text 를 이용하여 동적 조회 가능한지?
-	//3. 검색 항목을 선택하지 않은 조건 빈값을 경우 처리 여부
+	//검색 리스트: 진행상태 + 과정구분 + 과정명
+	public abstract Page<Course> findByStateAndCrsTypeAndCrsNameContaining(Integer state, String crsType, String crsName, Pageable paging);
 	
-	//진행예정 ( 내부바 )
-	// 과정구분 X , 검색 항목 X
-	public abstract List<Course> findByStartDateGreaterThanAndCrsTypeOrderByStartDateDescEndDateDesc0(
-				 String today		//'2025-03-11'
-			, String crsType	//'java'
-		);
+	//검색 리스트: 진행상태 + 과정구분 + 강사명   => 강사명은 강사 테이블에......?????
+//	public abstract Page<Course> findByStateAndCrsType(Integer state, String crsType, Pageable paging);
 	
+	//검색 리스트: 진행상태 + 과정명
+	public abstract Page<Course> findByStateAndCrsNameContaining(Integer state, String crsName, Pageable paging);
 	
+	//검색 리스트: 진행상태 + 강사명   => 강사명은 강사 테이블에......?????
+//	public abstract Page<Course> findByState(Integer state, Pageable paging);
 	
-	//진행예정 ( 내부바 )
-	// 과정구분 O , 검색 항목 X
-	public abstract List<Course> findByStartDateGreaterThanAndCrsTypeOrderByStartDateDescEndDateDesc1(
-			  String today		//'2025-03-11'
-			, String crsType	//'java'
-		);
+
+
+
 	
-	//진행예정 ( 내부바 )
-	// 과정구분 O , 검색 항목 O
-	public abstract List<Course> findByStartDateGreaterThanAndCrsTypeOrderByStartDateDescEndDateDesc2(
-			  String today		//'2025-03-11'
-			, String crsType	//'java'
-		);
+//	public abstract Boolean insertCourse(CourseDTO dto);	// C 삽입
 	
-	//진행예정 ( 내부바 )
-	// 과정구분 X , 검색 항목 O
-	public abstract List<Course> findByStartDateGreaterThanAndCrsTypeOrderByStartDateDescEndDateDesc3(
-			  String today		//'2025-03-11'
-			, String crsType	//'java'
-		);
+	public abstract Course findByCrsCode(Integer crsCode); 	// R 단건 조회, 수강생 수는 member에서....
 	
-	//진행예정 ( 내부바 )
-	// 과정구분 X , 검색 항목 X
-	public abstract List<Course> findByStartDateGreaterThanAndCrsTypeOrderByStartDateDescEndDateDesc4(
-			  String today		//'2025-03-11'
-			, String crsType	//'java'
-		);
+//	public abstract Boolean updateCourse(CourseDTO dto);	// U 수정
 	
-	//진행예정 ( 내부바 )
-	// 과정구분 X , 검색 항목 X
-	public abstract List<Course> findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndCrsTypeOrderByStartDateDescEndDateDesc0(
-				 String today		//'2025-03-11'
-			, String crsType	//'java'
-		);
+	public abstract Boolean deleteByCrsCode(Integer crsCode);	// D 삭제
 	
-	
-	
-	//진행예정 ( 내부바 )
-	// 과정구분 O , 검색 항목 X
-	public abstract List<Course> findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndCrsTypeOrderByStartDateDescEndDateDesc1(
-			  String today		//'2025-03-11'
-			, String crsType	//'java'
-		);
-	
-	//진행예정 ( 내부바 )
-	// 과정구분 O , 검색 항목 O
-	public abstract List<Course> findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndCrsTypeOrderByStartDateDescEndDateDesc2(
-			  String today		//'2025-03-11'
-			, String crsType	//'java'
-		);
-	
-	//진행예정 ( 내부바 )
-	// 과정구분 X , 검색 항목 O
-	public abstract List<Course> findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndCrsTypeOrderByStartDateDescEndDateDesc3(
-			  String today		//'2025-03-11'
-			, String crsType	//'java'
-		);
-	
-	//진행예정 ( 내부바 )
-	// 과정구분 X , 검색 항목 X
-	public abstract List<Course> findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndCrsTypeOrderByStartDateDescEndDateDesc4(
-			  String today		//'2025-03-11'
-			, String crsType	//'java'
-		);
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	//진행중
-	//검색항목 미 구현
-	public abstract List<Course> findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndCrsTypeOrderByStartDateDescEndDateDesc(
-			  String today		//'2025-03-11'
-			, String crsType	//'java'
-		);
-	
-	//진행완료
-	//검색항목 미 구현
-	public abstract List<Course> findByEndDateLessThanAndCrsTypeOrderByStartDateDescEndDateDesc(
-			  String today		//'2025-03-11'
-			, String crsType	//'java'
-		);
-	
-	public abstract Course findByCrsCode(Integer id);
-	
-//	public abstract	
-	
-	public abstract void deleteByCrsCode(Integer id);
 	
 }//end interface
