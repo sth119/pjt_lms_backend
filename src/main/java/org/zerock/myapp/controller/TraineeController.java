@@ -16,18 +16,39 @@ import lombok.extern.slf4j.Slf4j;
 public class TraineeController {  // 훈련생 관리
 
 	@PostMapping("/list")
-	String traineeList() {  // 훈련생 리스트
-		log.debug("Trainee list() invoked.");
+	String list() {  // 훈련생 리스트
+		log.debug("list() invoked.");
 		
-		return "trainee List return";
-	} // traineeList
+		return "/list";
+	} // list
 	
 	
-	@PostMapping("/searched_list")
-	String traineeSearchedList() { // 검색 기능
-		log.debug("searched_list() invoked.");
+	@PostMapping("/register")
+	String register() { // 검색 기능
+		log.debug("register() invoked.");
 		
-		return "trainee SearchedList return";
-	} // traineeSearchedList
+		return "/register";
+	} // register
+	
+	@PostMapping("/read")
+	String read() { // 검색 기능
+		log.debug("read() invoked.");
+		
+		return "/read";
+	} // read
 
+	@PostMapping("/update")
+	String update() { // 검색 기능
+		log.debug("update() invoked.");
+		
+		return "/update";
+	}
+	
+	@PostMapping("/delete")
+	String delete() { // 검색 기능
+		log.debug("delete() invoked.");
+		
+		return "/delete";
+	} // delete
+	
 } // end class

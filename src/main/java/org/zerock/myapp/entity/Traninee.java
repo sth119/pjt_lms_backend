@@ -22,7 +22,7 @@ public class Traninee implements Serializable{
 	
 	//
 	@Id
-	private String userId;	// 회원ID FK
+	private String tra_code;	// 회원ID FK
 	
 //	private String ; // 이름
 	
