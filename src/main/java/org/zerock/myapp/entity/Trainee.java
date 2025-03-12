@@ -66,14 +66,24 @@ public class Trainee implements Serializable {
 	private Date udtDate;						//수정일
 	
 
+<<<<<<< Updated upstream
 	@JsonBackReference("course-trainee")
 	@ToString.Exclude
+=======
+//	@JsonBackReference
+//	@ToString.Exclude
+>>>>>>> Stashed changes
 	// 3. Bi-directional Many-To-One Association
 	@ManyToOne
 	@JoinColumn(name="CRS_ID")
 	private Course course;				//소속과정번호(FK)
 	
+<<<<<<< Updated upstream
 	@JsonManagedReference("trainee-upfile")
+=======
+	@JsonManagedReference
+	@ToString.Exclude
+>>>>>>> Stashed changes
 	//4. Bi-directional One-To-Many Association
 	@OneToMany(mappedBy="trainee")
 	private List<Upfile> upfiles = new Vector<>();

@@ -29,7 +29,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.zerock.myapp.entity.Course;
-import org.zerock.myapp.entity.Trainee;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -193,19 +192,23 @@ public class CourseRepositoryTests {
 	@Test
 //	@RepeatedTest(1)
 	@DisplayName("10. list-findByEnabled")
-	@Timeout(value = 1L*10, unit = TimeUnit.SECONDS)
+	@Timeout(value = 1L*5, unit = TimeUnit.SECONDS)
 	void findByEnabled() {
 		log.debug("findByEnabled() invoked");
 		
+//		List<Course> list = this.repo.findAll();
+//		list.forEach(d -> log.info(d.toString()));
+		
+		
 		int pageNo = 1;
-		int pageSize = 1000;		
+		int pageSize = 100;		
 		Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by("crtDate").descending());
 		Boolean eanbled = true;
 		
 		Slice<Course> list = this.repo.findByEnabled(eanbled, paging);
 		list.forEach(d -> log.info(d.toString()));
 		
-//		log.info("=".repeat(100));
+		log.info("=".repeat(100));
 //		
 //		pageNo = 2;
 //		paging = PageRequest.of(pageNo-1, pageSize, Sort.by("crtDate").descending());

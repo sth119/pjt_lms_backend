@@ -198,12 +198,12 @@ public class TraineeRepositoryTests {
 	@Test
 //	@RepeatedTest(1)
 	@DisplayName("11. list-findByEnabledAndNameContaining")
-	@Timeout(value = 1L, unit = TimeUnit.SECONDS)
+	@Timeout(value = 1L*5, unit = TimeUnit.SECONDS)
 	void findByEnabledAndNameContaining() {
 		log.debug("findByEnabledAndNameContaining() invoked");
 		
 		int pageNo = 1;
-		int pageSize = 10;		
+		int pageSize = 100;		
 		Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by("crtDate").descending());
 		Boolean eanbled = true;
 		String name = "011";

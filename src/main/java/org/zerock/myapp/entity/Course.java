@@ -86,12 +86,22 @@ public class Course implements Serializable {
 	@OneToOne(mappedBy="course")
 	private Instructor instructor;				//강사
 
+<<<<<<< Updated upstream
 	@JsonManagedReference("course-trainee")
+=======
+	@JsonManagedReference
+	@ToString.Exclude
+>>>>>>> Stashed changes
 	//4. Bi-directional Many-To-One Association
 	@OneToMany(mappedBy="course")
 	private List<Trainee> traninees = new Vector<>();					//훈련생
 	
+<<<<<<< Updated upstream
 	@JsonManagedReference("course-upfile")
+=======
+	@JsonManagedReference
+	@ToString.Exclude
+>>>>>>> Stashed changes
 	@OneToMany(mappedBy="course")
 	private List<Upfile> upfiles = new Vector<>();
 
