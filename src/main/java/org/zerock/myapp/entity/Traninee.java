@@ -24,27 +24,34 @@ public class Traninee implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="TRA_CODE", unique=true, nullable=false, precision=38)
-	private long traCode;
+	@Column(name="ID", unique=true, nullable=false, precision=38)
+	private long tranineeId;				//아이디
 
+	@Column(nullable=false, length=100)
+	private String name;					//이름
+
+	@Column(nullable=false, length=50)
+	private String tel;						//전화번호
+
+	@Column(nullable=false)
+	private Integer status;					//상태(훈련중=1,중도탈락=2,중도포기=3,취업완료=4)
+	
+	
+	@Column(nullable=false, precision=38)
+	private BigDecimal enabled;				//삭제여부(1=유효,0=삭제된데이터)
+	
 	@Temporal(TemporalType.DATE)
-	@Column(name="CRT_DATE", nullable=false)
+	@Column(name="INSERT_TS", nullable=false)
 	private Date crtDate;
 
-	@Column(nullable=false, precision=38)
-	private BigDecimal enabled;
-
-	@Column(name="TRA_NAME", nullable=false, length=500)
-	private String traName;
-
 	@Temporal(TemporalType.DATE)
-	@Column(name="UDT_DATE")
+	@Column(name="UPDATE_TS")
 	private Date udtDate;
 
 	//bi-directional many-to-one association to TCours
 	@ManyToOne
 	@JoinColumn(name="CRS_CODE")
-	private Course course;
+	private Course course;				//소속과정번호(FK)
 
 
 

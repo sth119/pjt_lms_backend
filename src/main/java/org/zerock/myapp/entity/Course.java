@@ -24,49 +24,53 @@ public class Course implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="CRS_CODE", unique=true, nullable=false, precision=38)
-	private long crsCode;
+	@Column(unique=true, nullable=false, precision=38)
+	private long id;							//과정번호
 
-	@Column(name="CRS_CAPACITY", precision=38)
-	private BigDecimal crsCapacity;
+	@Column(length=500)
+	private String type;						//과정구분
 
-	@Column(name="CRS_DETAIL", length=500)
-	private String crsDetail;
+	@Column(length=500)
+	private String name;						//과정명
 
-	@Column(name="CRS_NAME", length=500)
-	private String crsName;
+	@Column(precision=3)
+	private Integer capacity;					//수강정원
 
-	@Column(name="CRS_TYPE", length=500)
-	private String crsType;
-
-	@Temporal(TemporalType.DATE)
-	@Column(name="CRT_DATE", nullable=false)
-	private Date crtDate;
-
-	@Column(nullable=false, precision=38)
-	private BigDecimal enabled;
-
-	@Column(name="END_DATE", length=500)
-	private String endDate;
+	@Column(name="DETAIL", length=4000)
+	private String detail;						//내용
 
 	@Column(name="START_DATE", length=500)
-	private String startDate;
+	private String startDate;					//시작일: '2024-10-18'
 
-	@Column(nullable=false, precision=38)
-	private BigDecimal status;
+	@Column(name="END_DATE", length=500)
+	private String endDate;						//종료일: '2025-04-17'
+
+	@Column(nullable=false)
+	private Integer status;						//진행여부(연기=3,예정=2,진행중=1,종료=0)
+
+	@Column(nullable=false)
+	private Boolean enabled;					//활성화상태(1=유효,0=삭제)
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name="INSERT_TS", nullable=false)
+	private Date crtDate;						//등록일
 
 	@Temporal(TemporalType.DATE)
-	@Column(name="UDT_DATE")
-	private Date udtDate;
+	@Column(name="UPDATE_TS")
+	private Date udtDate;						//수정일
 
-	//bi-directional many-to-one association to TInstructor
-	@OneToMany(mappedBy="TCours", fetch=FetchType.EAGER)
-	private List<Instructor> instructors;
 
-	//bi-directional many-to-one association to TTraninee
-	@OneToMany(mappedBy="TCours", fetch=FetchType.EAGER)
-	private List<Traninee> traninees;
+	
+	//bi-directional many-to-one association to Instructor
+	@OneToMany(mappedBy="Course", fetch=FetchType.EAGER)
+	private List<Instructor> instructors;				//강사
 
+	//bi-directional many-to-one association to Traninee
+	@OneToMany(mappedBy="Course", fetch=FetchType.EAGER)
+	private List<Traninee> traninees;					//훈련생
+
+	
+	
 	public Instructor addInstructor(Instructor instructor) {
 		this.instructors.add(instructor);
 		instructor.setCourse(this);
@@ -88,7 +92,7 @@ public class Course implements Serializable {
 		return traninee;
 	}
 
-	public Traninee removeTTraninee(Traninee traninee) {
+	public Traninee removeTraninee(Traninee traninee) {
 		getTraninees().remove(traninee);
 		traninee.setCourse(null);
 

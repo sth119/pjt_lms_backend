@@ -20,24 +20,24 @@ public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="USER_ID", unique=true, nullable=false, length=500)
+	@Column(name="ID", unique=true, nullable=false, length=500)
 	private String userId;
 
+	@Column(nullable=false, length=500)
+	private String passwd;
+
+	@Column(nullable=false, length=500)
+	private String name;
+
+	@Column(nullable=false)
+	private Boolean enabled;
+
 	@Temporal(TemporalType.DATE)
-	@Column(name="CRT_DATE", nullable=false)
+	@Column(name="INSERT_TS", nullable=false)
 	private Date crtDate;
 
-	@Column(nullable=false, precision=38)
-	private BigDecimal enabled;
-
 	@Temporal(TemporalType.DATE)
-	@Column(name="UDT_DATE")
+	@Column(name="UPDATE_TS")
 	private Date udtDate;
-
-	@Column(name="USER_NAME", nullable=false, length=500)
-	private String userName;
-
-	@Column(name="USER_PASSWORD", nullable=false, length=500)
-	private String userPassword;
 	
 } // end class
