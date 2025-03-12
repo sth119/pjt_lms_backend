@@ -1,12 +1,13 @@
 package org.zerock.myapp.entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -33,15 +34,6 @@ public class Upfile implements Serializable {
 	@Column(nullable=false, length=4000)
 	private String path;				//저장경로
 
-	@Column(name="CRS_ID", precision=38)
-	private long crsId;					//소속과정아이디(FK)
-
-	@Column(name="INS_ID", precision=38)
-	private long insId;					//소속훈련생아이디(FK)
-
-	@Column(name="TRN_ID", precision=38)
-	private long trnId;					//소속강사아이디(FK)
-
 	@Column(nullable=false)
 	private Boolean enabled;			//
 
@@ -52,5 +44,21 @@ public class Upfile implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name="UPDATE_TS")
 	private Date udtDate;				//
+	
+
+	//bi-directional many-to-one association to TCours
+	@ManyToOne
+	@JoinColumn(name="CRS_ID")
+	private Course course;
+
+	//bi-directional many-to-one association to TInstructor
+	@ManyToOne
+	@JoinColumn(name="INS_ID")
+	private Instructor instructor;
+
+	//bi-directional many-to-one association to TTrainee
+	@ManyToOne
+	@JoinColumn(name="TRN_ID")
+	private Traninee trainee;
 
 }

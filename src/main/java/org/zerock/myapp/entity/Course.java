@@ -1,7 +1,6 @@
 package org.zerock.myapp.entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -69,6 +68,10 @@ public class Course implements Serializable {
 	@OneToMany(mappedBy="Course", fetch=FetchType.EAGER)
 	private List<Traninee> traninees;					//훈련생
 
+	//bi-directional many-to-one association to Upfile
+	@OneToMany(mappedBy="Course", fetch=FetchType.EAGER)
+	private List<Upfile> upfiles;
+
 	
 	
 	public Instructor addInstructor(Instructor instructor) {
@@ -98,4 +101,22 @@ public class Course implements Serializable {
 
 		return traninee;
 	}
+
+	public Upfile addUpfile(Upfile upfile) {
+		getUpfiles().add(upfile);
+		upfile.setCourse(this);
+
+		return upfile;
+	}
+
+	public Upfile removeTUpfile(Upfile upfile) {
+		getUpfiles().remove(upfile);
+		upfile.setCourse(null);
+
+		return upfile;
+	}
+	
+	
+	
+	
 } // end class

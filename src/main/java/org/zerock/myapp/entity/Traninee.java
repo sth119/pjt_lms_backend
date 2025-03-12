@@ -3,12 +3,15 @@ package org.zerock.myapp.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -50,9 +53,27 @@ public class Traninee implements Serializable {
 
 	//bi-directional many-to-one association to TCours
 	@ManyToOne
-	@JoinColumn(name="CRS_CODE")
+	@JoinColumn(name="CRS_ID")
 	private Course course;				//소속과정번호(FK)
+	
+	//bi-directional many-to-one association to TUpfile
+	@OneToMany(mappedBy="Trainee", fetch=FetchType.EAGER)
+	private List<Upfile> upfiles;
 
+
+	public Upfile addTUpfile(Upfile upfiles) {
+		getUpfiles().add(upfiles);
+		upfiles.setTrainee(this);
+
+		return upfiles;
+	}
+
+	public Upfile removeTUpfile(Upfile upfiles) {
+		getUpfiles().remove(upfiles);
+		upfiles.setTrainee(null);
+
+		return upfiles;
+	}
 
 
 }//class
