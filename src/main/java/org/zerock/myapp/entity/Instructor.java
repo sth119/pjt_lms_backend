@@ -9,6 +9,7 @@ import java.util.Vector;
 import org.hibernate.annotations.CurrentTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.generator.EventType;
+import org.zerock.myapp.util.BooleanToIntegerConverter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -21,8 +22,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import lombok.Data;
 
 

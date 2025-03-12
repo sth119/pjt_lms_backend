@@ -9,6 +9,7 @@ import java.util.Vector;
 import org.hibernate.annotations.CurrentTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.generator.EventType;
+import org.zerock.myapp.util.BooleanToIntegerConverter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -77,8 +78,8 @@ public class Course implements Serializable {
 	@Transient	// DB 컬럼으로 매핑되지 않음
 	private Integer currCount = 0;	//현재 수강 인원
 
-	@ToString.Exclude
 	//3. Bi-directional One-To-One Association
+	@ToString.Exclude
 	@OneToOne(mappedBy="course")
 	private Instructor instructor;				//강사
 

@@ -7,6 +7,7 @@ import java.util.Date;
 import org.hibernate.annotations.CurrentTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.generator.EventType;
+import org.zerock.myapp.util.BooleanToIntegerConverter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -27,13 +28,13 @@ public class User implements Serializable {
 	@Serial private static final long serialVersionUID = 1L;
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="ID", unique=true, nullable=false, length=500)
+	@Column(name="ID", unique=true, nullable=false)
 	private String userId;
 
-	@Column(nullable=false, length=500)
+	@Column(nullable=false)
 	private String passwd;
 
-	@Column(nullable=false, length=500)
+	@Column(nullable=false)
 	private String name;
 
 	@Convert(converter = BooleanToIntegerConverter.class)
