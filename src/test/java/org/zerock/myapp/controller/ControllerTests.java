@@ -15,7 +15,6 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.Timeout;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.zerock.myapp.entity.Course;
@@ -35,17 +34,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @TestConfiguration
 
-@AutoConfigureMockMvc
+
 public class ControllerTests {
 
-//	@Autowired
-//	private MockMvc mockMvc;
 	
 	@Autowired
 	private CourseRepository crsRepo;
 	
-//	@Autowired 
-//	private ObjectMapper objectMapper;
+
 	
 	private Course testCourse; //테스트용 더미.
 	
