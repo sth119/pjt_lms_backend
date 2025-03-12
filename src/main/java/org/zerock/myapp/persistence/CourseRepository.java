@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.zerock.myapp.entity.Course;
 
 @Repository
-public interface CourseRepository extends JpaRepository<Course, String> {
+public interface CourseRepository extends JpaRepository<Course, Long> {
 	
 	/* 검색
 	 * ** 상태 => 기본 조건, 삭제여부 => 기본 조건

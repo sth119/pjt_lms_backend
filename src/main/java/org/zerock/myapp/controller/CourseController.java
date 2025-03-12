@@ -1,8 +1,10 @@
 package org.zerock.myapp.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.zerock.myapp.persistence.CourseRepository;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 // 과정 URI 컨트롤러
 
 public class CourseController {
+	@Autowired CourseRepository repo;
 	
 	
 	   @PostMapping("/list ")
