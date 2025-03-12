@@ -27,7 +27,7 @@ import lombok.Data;
 public class User implements Serializable {
 	@Serial private static final long serialVersionUID = 1L;
 
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id 
 	@Column(name="ID", unique=true, nullable=false)
 	private String userId;
 
