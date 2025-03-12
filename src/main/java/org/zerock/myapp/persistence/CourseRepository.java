@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.zerock.myapp.entity.Course;
 
 @Repository
-public interface CourseRepository extends JpaRepository<Course, Integer> {
+public interface CourseRepository extends JpaRepository<Course, String> {
 	
 	/* 검색
 	 * ** 상태 => 기본 조건, 삭제여부 => 기본 조건
@@ -17,39 +17,51 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 	 * 		- 과정명
 	 *  	- 강사명
 	 * */
-	//검색 리스트: 진행상태, 다른 검색 없음 
-	public abstract Page<Course> findByState(Integer state, Pageable paging);
+	//검색 리스트: 활성화상태(1) 
+	public abstract Page<Course> findByEnabled(
+			Boolean enabled, Pageable paging
+		);
+	
+	//검색 리스트: 활성화상태(1) + 진행여부 
+	public abstract Page<Course> findByEnabledAndStatus(
+			Boolean enabled, Integer status, Pageable paging
+		);
 		
-	//검색 리스트: 진행상태 + 과정구분
-	public abstract Page<Course> findByStateAndCrsType(Integer state, String crsType, Pageable paging);
+	//검색 리스트: 활성화상태(1) + 진행여부 + 과정구분
+	public abstract Page<Course> findByEnabledAndStatusAndCrsType(
+			Boolean enabled, Integer status, String crsType, Pageable paging
+		);
 	
-	//검색 리스트: 진행상태 + 과정구분 + 과정명
-	public abstract Page<Course> findByStateAndCrsTypeAndCrsNameContaining(Integer state, String crsType, String crsName, Pageable paging);
+	//검색 리스트: 활성화상태(1) + 진행여부 + 과정구분 + 과정명
+	public abstract Page<Course> findByEnabledAndStatusAndCrsTypeAndCrsNameContaining(
+			Boolean enabled, Integer status, String crsType, String crsName, Pageable paging
+		);
 	
-	//검색 리스트: 진행상태 + 과정구분 + 강사명   => 강사명은 강사 테이블에......?????
-//	public abstract Page<Course> findByStateAndCrsType(Integer state, String crsType, Pageable paging);
+	//검색 리스트: 활성화상태(1) + 진행여부 + 과정구분 + 강사명  => ????
+//	public abstract Page<Course> findByEnabledAndStatusAndCrsType(
+//			Boolean enabled, Integer state, String crsType, Pageable paging
+//		);
 	
 	//검색 리스트: 진행상태 + 과정명
-	public abstract Page<Course> findByStateAndCrsNameContaining(Integer state, String crsName, Pageable paging);
+	public abstract Page<Course> findByEnabledAndStatusAndCrsNameContaining(
+			Boolean enabled, Integer status, String crsName, Pageable paging
+		);
 	
-	//검색 리스트: 진행상태 + 강사명   => 강사명은 강사 테이블에......?????
-//	public abstract Page<Course> findByState(Integer state, Pageable paging);
+	//검색 리스트: 진행상태 + 강사명  => ????
+//	public abstract Page<Course> findByEnabledAndStatus(
+//			Boolean enabled, Integer status, Pageable paging
+//		);
 	
 	
-	//검색 리스트: 삭제된 리스트
-	public abstract Page<Course> findByDel(Boolean del, Pageable paging);
-	
-	//검색 리스트: 삭제된 리스트 + 과정명
-	public abstract Page<Course> findByDelAndCrsNameContaining(Boolean del, String crsName, Pageable paging);
 	
 
 //	public abstract Boolean insertCourse(CourseDTO dto);	// C 삽입
 	
-	public abstract Course findByCrsCode(Integer crsCode); 	// R 단건 조회, 수강생 수는 member에서....
+	public abstract Course findByCourseId(String courseId); // R 단건 조회
 	
 //	public abstract Boolean updateCourse(CourseDTO dto);	// U 수정
 	
-//	public abstract Boolean deleteByCrsCode(Integer crsCode);	// D 삭제
+//	public abstract Boolean deleteByCourseId(String courseId);	// D 삭제
 	
 	
 }//end interface
