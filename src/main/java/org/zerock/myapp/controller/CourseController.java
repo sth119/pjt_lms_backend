@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 // 과정 URI 컨트롤러
 
 public class CourseController {
-	@Autowired CourseRepository repo;
+//	@Autowired CourseRepository repo;
 	
 		
 	   @PostMapping("/list")

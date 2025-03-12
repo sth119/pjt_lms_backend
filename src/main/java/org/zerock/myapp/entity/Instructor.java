@@ -26,7 +26,7 @@ public class Instructor implements Serializable {
 	@Serial private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="INS_ID", unique=true, nullable=false)
+	@Column(name="ID", unique=true, nullable=false)
 	private Long instructorId;			//아이디
 
 	@Column(nullable=false, length=500)

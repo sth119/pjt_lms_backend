@@ -25,8 +25,8 @@ public class Course implements Serializable {
 	@Serial private static final long serialVersionUID = 1L;
 	
 	@Id
-	@Column(name = "CRS_ID", unique=true, nullable=false, precision=38)
-	private Long id;							//과정번호
+	@Column(name = "ID", unique=true, nullable=false, precision=38)
+	private Long courseId;							//과정번호
 
 	@Column(length=500)
 	private String type;						//과정구분

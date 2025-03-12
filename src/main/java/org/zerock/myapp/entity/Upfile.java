@@ -23,7 +23,7 @@ public class Upfile implements Serializable {
 	@Serial private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="UPFILE_ID", unique=true, nullable=false, precision=38)
+	@Column(name="ID", unique=true, nullable=false, precision=38)
 	private Long fileId;				//
 
 	@Column(nullable=false, length=1000)
@@ -59,7 +59,7 @@ public class Upfile implements Serializable {
 
 	//bi-directional many-to-one association to TTrainee
 	@ManyToOne
-	@JoinColumn(name="TRA_ID")
+	@JoinColumn(name="TRN_ID")
 	private Trainee trainee;
 
 }

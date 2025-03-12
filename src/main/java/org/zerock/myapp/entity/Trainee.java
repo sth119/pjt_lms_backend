@@ -28,7 +28,7 @@ public class Trainee implements Serializable {
 	@Serial private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="TRA_ID", unique=true, nullable=false, precision=38)
+	@Column(name="ID", unique=true, nullable=false, precision=38)
 	private Long tranineeId;				//아이디
 
 	@Column(nullable=false, length=100)
