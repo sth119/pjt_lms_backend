@@ -28,7 +28,7 @@ public class Trainee implements Serializable {
 	@Serial private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="ID", unique=true, nullable=false, precision=38)
+	@Column(name="TRA_ID", unique=true, nullable=false, precision=38)
 	private Long tranineeId;				//아이디
 
 	@Column(nullable=false, length=100)
@@ -58,7 +58,7 @@ public class Trainee implements Serializable {
 	private Course course;				//소속과정번호(FK)
 	
 	//bi-directional many-to-one association to TUpfile
-	@OneToMany(mappedBy="Trainee", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="trainee", fetch=FetchType.EAGER)
 	private List<Upfile> upfiles;
 
 

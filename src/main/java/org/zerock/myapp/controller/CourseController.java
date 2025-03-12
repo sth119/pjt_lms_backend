@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.zerock.myapp.entity.Course;
 import org.zerock.myapp.persistence.CourseRepository;
 
 import lombok.NoArgsConstructor;
@@ -27,10 +28,14 @@ public class CourseController {
 	   @PostMapping("/list")
 	   List<Object> list() { // 리스트
 	      log.debug("list() invoked.");
-	      //CourseDTO courseDTO = new CourseDTO();
+	      Course course = new Course();
+	      
 	      
 	      List<Object> list = new Vector<>();
-	      list.add(1);
+	      list.add(course.getStatus());
+	      list.add(course.getType());
+	      list.add(course.getName());
+	      list.add(course.getInstructors().getClass().getName());
 
 	      // Integer crsStatus, String crsType, String crsName, String insName
 	      

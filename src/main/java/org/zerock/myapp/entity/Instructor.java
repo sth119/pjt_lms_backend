@@ -26,7 +26,7 @@ public class Instructor implements Serializable {
 	@Serial private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="ID", unique=true, nullable=false)
+	@Column(name="INS_ID", unique=true, nullable=false)
 	private Long instructorId;			//아이디
 
 	@Column(nullable=false, length=500)
@@ -55,7 +55,7 @@ public class Instructor implements Serializable {
 	private Course course;		//담당과정번호(FK)
 	
 	//bi-directional many-to-one association to TUpfile
-	@OneToMany(mappedBy="Instructor", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="instructor", fetch=FetchType.EAGER)
 	private List<Upfile> upfiles;
 
 

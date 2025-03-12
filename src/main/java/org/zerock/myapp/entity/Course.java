@@ -23,9 +23,9 @@ import lombok.Data;
 @Table(name="T_COURSES")
 public class Course implements Serializable {
 	@Serial private static final long serialVersionUID = 1L;
-
+	
 	@Id
-	@Column(unique=true, nullable=false, precision=38)
+	@Column(name = "CRS_ID", unique=true, nullable=false, precision=38)
 	private Long id;							//과정번호
 
 	@Column(length=500)
@@ -67,15 +67,15 @@ public class Course implements Serializable {
 
 	
 	//bi-directional many-to-one association to Instructor
-	@OneToMany(mappedBy="Course", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="course", fetch=FetchType.EAGER)
 	private List<Instructor> instructors;				//강사
 
 	//bi-directional many-to-one association to Traninee
-	@OneToMany(mappedBy="Course", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="course", fetch=FetchType.EAGER)
 	private List<Trainee> traninees;					//훈련생
 
 	//bi-directional many-to-one association to Upfile
-	@OneToMany(mappedBy="Course", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="course", fetch=FetchType.EAGER)
 	private List<Upfile> upfiles;
 
 	

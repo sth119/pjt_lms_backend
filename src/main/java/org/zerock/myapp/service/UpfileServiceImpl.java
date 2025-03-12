@@ -5,7 +5,7 @@ import java.util.Vector;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.zerock.myapp.domain.FileDTO;
+import org.zerock.myapp.domain.UpfileDTO;
 import org.zerock.myapp.entity.Upfile;
 import org.zerock.myapp.persistence.FileRepository;
 
@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 
 @Service
-public class FileServiceImpl implements FileService {
+public class UpfileServiceImpl implements UpfileService {
 	@Autowired FileRepository dao;
 	
 	@PostConstruct
@@ -38,7 +38,7 @@ public class FileServiceImpl implements FileService {
 	}
 
 	@Override
-	public Upfile create(FileDTO dto) {	//등록 처리
+	public Upfile create(UpfileDTO dto) {	//등록 처리
 		log.debug("FileServiceImpl -- create({}) invoked", dto);
 		
 		Upfile data = new Upfile();//dao.save(dto);
@@ -58,7 +58,7 @@ public class FileServiceImpl implements FileService {
 	}
 
 	@Override
-	public Boolean update(FileDTO dto) {	//수정 처리
+	public Boolean update(UpfileDTO dto) {	//수정 처리
 		log.debug("FileServiceImpl -- update({}) invoked", dto);
 		
 		Boolean isUpdate = true;
@@ -73,5 +73,7 @@ public class FileServiceImpl implements FileService {
 		
 		return true;
 	}
+
+
 	
 }
