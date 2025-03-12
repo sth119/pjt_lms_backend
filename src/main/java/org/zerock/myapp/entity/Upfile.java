@@ -9,6 +9,8 @@ import org.hibernate.annotations.SourceType;
 import org.hibernate.generator.EventType;
 import org.zerock.myapp.util.BooleanToIntegerConverter;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -55,20 +57,20 @@ public class Upfile implements Serializable {
 	private Date udtDate;				//수정일
 	
 
+	@JsonBackReference
 	//bi-directional many-to-one association to Cours
-	@ToString.Exclude
 	@ManyToOne
 	@JoinColumn(name="CRS_ID")
 	private Course course;
 
+	@JsonBackReference
 	//bi-directional many-to-one association to Instructor
-	@ToString.Exclude
 	@ManyToOne
 	@JoinColumn(name="INS_ID")
 	private Instructor instructor;
 
+	@JsonBackReference
 	//bi-directional many-to-one association to Trainee
-	@ToString.Exclude
 	@ManyToOne
 	@JoinColumn(name="TRN_ID")
 	private Trainee trainee;

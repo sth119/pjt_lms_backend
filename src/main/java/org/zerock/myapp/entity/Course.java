@@ -79,17 +79,14 @@ public class Course implements Serializable {
 	private Integer currCount = 0;	//현재 수강 인원
 
 	//3. Bi-directional One-To-One Association
-	@ToString.Exclude
 	@OneToOne(mappedBy="course")
 	private Instructor instructor;				//강사
 
 	
 	//4. Bi-directional Many-To-One Association
-	@ToString.Exclude
 	@OneToMany(mappedBy="course")
 	private List<Trainee> traninees = new Vector<>();					//훈련생
-
-	@ToString.Exclude
+	
 	@OneToMany(mappedBy="course")
 	private List<Upfile> upfiles = new Vector<>();
 

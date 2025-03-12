@@ -11,6 +11,8 @@ import org.hibernate.annotations.SourceType;
 import org.hibernate.generator.EventType;
 import org.zerock.myapp.util.BooleanToIntegerConverter;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -57,9 +59,9 @@ public class Instructor implements Serializable {
 	@CurrentTimestamp(event = EventType.UPDATE, source = SourceType.DB)
 	@Column(name="UPDATE_TS")
 	private Date udtDate;
-
+	
+	@JsonBackReference
 	//bi-directional one-to-one association to TCours
-	@ToString.Exclude
 	@OneToOne
 	@JoinColumn(name="CRS_ID")
 	private Course course;		//담당과정번호(FK)

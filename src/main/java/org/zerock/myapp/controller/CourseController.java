@@ -53,25 +53,28 @@ public class CourseController {
 		// 기본적으로 모든 데이터를 조회
 	    Slice<Course> slice = this.repo.findByEnabled(true, paging);
 	    
+	    
+	    
 	    // 조건에 맞는 데이터 필터링, 필터링 필요한 양이 늘어나면 조건을 추가해야함
-	    List<Course> filteredList = slice.getContent().stream()
-	        .filter(s -> {
-	        	
-	        	if (q != null) {
-	                if (condition != null && condition.equals("id") && !String.valueOf(s.getCourseId()).equals(q)) return false;
-	                if (condition != null && condition.equals("name") && !s.getName().contains(q)) return false;
-	                if (condition == null || !condition.equals("id") && !condition.equals("name")) {
-	                    if (!s.getName().contains(q)) return false; // 기본적으로 이름으로 검색
-	                } // if
-	            } // if
-	            return true;
-	        }) // filteredList
-	        .toList();
-	    
-	    // Slice를 새로 생성하여 반환
-	    Slice<Course> result = new SliceImpl<>(filteredList, paging, false);
-	    
-	    result.forEach(seq -> log.info(seq.toString()));
+//	    List<Course> filteredList = slice.getContent().stream()
+//	        .filter(s -> {
+//	        	
+//	        	if (q != null) {
+//	                if (condition != null && condition.equals("id") && !String.valueOf(s.getCourseId()).equals(q)) return false;
+//	                if (condition != null && condition.equals("name") && !s.getName().contains(q)) return false;
+//	                if (condition == null || !condition.equals("id") && !condition.equals("name")) {
+//	                    if (!s.getName().contains(q)) return false; // 기본적으로 이름으로 검색
+//	                } // if
+//	            } // if
+//	        	
+//	            return true;
+//	        }) // filteredList
+//	        .toList();
+//	    
+//	    // Slice를 새로 생성하여 반환
+//	    Slice<Course> result = new SliceImpl<>(filteredList, paging, false);
+//	    
+//	    result.forEach(seq -> log.info(seq.toString()));
 	    
 		return slice;
 	} // list
@@ -105,9 +108,14 @@ public class CourseController {
 	@GetMapping("/{id}")
 	Course read(@PathVariable Long id){
 		log.info("read({}) invoked.",id);
-		Course course = this.repo.findByCourseId(id);
 		
-		log.info("course: {}",course);
+		Optional<Course> optional = this.repo.findById(1L);
+		
+		optional.ifPresent(foundCourse -> {
+			log.info("\t+ read data: {}", foundCourse);
+		});	// ifPresent
+		
+		Course course = optional.get();
 		return course;
 	} // read
 	
