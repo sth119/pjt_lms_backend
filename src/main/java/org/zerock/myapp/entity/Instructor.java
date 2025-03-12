@@ -23,6 +23,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.ToString;
 
 
 @Data
@@ -58,6 +59,7 @@ public class Instructor implements Serializable {
 	private Date udtDate;
 
 	//bi-directional one-to-one association to TCours
+	@ToString.Exclude
 	@OneToOne
 	@JoinColumn(name="CRS_ID")
 	private Course course;		//담당과정번호(FK)

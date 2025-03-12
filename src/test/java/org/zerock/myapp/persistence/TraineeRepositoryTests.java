@@ -201,6 +201,19 @@ public class TraineeRepositoryTests {
 	@Timeout(value = 1L, unit = TimeUnit.SECONDS)
 	void findByEnabledAndNameContaining() {
 		log.debug("findByEnabledAndNameContaining() invoked");
+		
+		int pageNo = 1;
+		int pageSize = 10;		
+		Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by("crtDate").descending());
+		Boolean eanbled = true;
+		String name = "011";
+		
+		Slice<Trainee> list = this.repo.findByEnabledAndNameContaining(eanbled, name, paging);
+		list.forEach(d -> log.info(d.toString()));
+		
+		
+		
+		
 	}//findByEnabledAndNameContaining
 	
 	@Disabled

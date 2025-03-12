@@ -1,6 +1,7 @@
 package org.zerock.myapp.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -21,9 +22,14 @@ import org.junit.jupiter.api.Timeout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.zerock.myapp.entity.Course;
+import org.zerock.myapp.entity.Trainee;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -181,32 +187,32 @@ public class CourseRepositoryTests {
 	
 	
 	
-////	@Disabled
-//	@Tag("Course-Repository-Test")
-//	@Order(10)
-//	@Test
-////	@RepeatedTest(1)
-//	@DisplayName("10. list-findByEnabled")
-//	@Timeout(value = 1L, unit = TimeUnit.SECONDS)
-//	void findByEnabled() {
-//		log.debug("findByEnabled() invoked");
+//	@Disabled
+	@Tag("Course-Repository-Test")
+	@Order(10)
+	@Test
+//	@RepeatedTest(1)
+	@DisplayName("10. list-findByEnabled")
+	@Timeout(value = 1L*10, unit = TimeUnit.SECONDS)
+	void findByEnabled() {
+		log.debug("findByEnabled() invoked");
+		
+		int pageNo = 1;
+		int pageSize = 1000;		
+		Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by("crtDate").descending());
+		Boolean eanbled = true;
+		
+		Slice<Course> list = this.repo.findByEnabled(eanbled, paging);
+		list.forEach(d -> log.info(d.toString()));
+		
+//		log.info("=".repeat(100));
 //		
-//		int pageNo = 1;
-//		int pageSize = 10;		
-//		Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by("crtDate").descending());
-//		Boolean eanbled = true;
-//		
-//		Slice<Trainee> list = this.repo.findByEnabled(eanbled, paging);
+//		pageNo = 2;
+//		paging = PageRequest.of(pageNo-1, pageSize, Sort.by("crtDate").descending());
+//		list = this.repo.findByEnabled(eanbled, paging);
 //		list.forEach(d -> log.info(d.toString()));
-//		
-////		log.info("=".repeat(100));
-////		
-////		pageNo = 2;
-////		paging = PageRequest.of(pageNo-1, pageSize, Sort.by("crtDate").descending());
-////		list = this.repo.findByEnabled(eanbled, paging);
-////		list.forEach(d -> log.info(d.toString()));
-//		
-//	}//findByEnabled
+		
+	}//findByEnabled
 //	
 //	@Disabled
 //	@Tag("Course-Repository-Test")
