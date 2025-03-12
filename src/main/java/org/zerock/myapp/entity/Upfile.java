@@ -58,18 +58,21 @@ public class Upfile implements Serializable {
 	
 
 	@JsonBackReference
+	@ToString.Exclude
 	//bi-directional many-to-one association to Cours
 	@ManyToOne
 	@JoinColumn(name="CRS_ID")
 	private Course course;
 
 	@JsonBackReference
+	@ToString.Exclude
 	//bi-directional many-to-one association to Instructor
 	@ManyToOne
 	@JoinColumn(name="INS_ID")
 	private Instructor instructor;
 
 	@JsonBackReference
+	@ToString.Exclude
 	//bi-directional many-to-one association to Trainee
 	@ManyToOne
 	@JoinColumn(name="TRN_ID")

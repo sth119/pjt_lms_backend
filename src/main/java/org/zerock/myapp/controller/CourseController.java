@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +36,8 @@ public class CourseController {
 	//RESTfull	
 	//@GetMapping // DTO로 받기 위해서는 Post(json) 방식으로 줘야 한다
 	@PostMapping
-	Slice<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){
+//	Slice<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){
+		List<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){
 		log.info("list({}) invoked.",dto);
 		
 		Integer page = dto.getPage();
@@ -47,36 +47,15 @@ public class CourseController {
 		//Integer type = dto.getType();
 		//log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
 		
-		
 		paging = PageRequest.of(page, pageSize);
 		
 		// 기본적으로 모든 데이터를 조회
-	    Slice<Course> slice = this.repo.findByEnabled(true, paging);
+	    //Slice<Course> slice = this.repo.findByEnabled(true, paging);
+		List<Course> list = this.repo.findByEnabled(true);
+		
+		//list.forEach(s -> log.info(s.toString()));
 	    
-	    
-	    
-	    // 조건에 맞는 데이터 필터링, 필터링 필요한 양이 늘어나면 조건을 추가해야함
-//	    List<Course> filteredList = slice.getContent().stream()
-//	        .filter(s -> {
-//	        	
-//	        	if (q != null) {
-//	                if (condition != null && condition.equals("id") && !String.valueOf(s.getCourseId()).equals(q)) return false;
-//	                if (condition != null && condition.equals("name") && !s.getName().contains(q)) return false;
-//	                if (condition == null || !condition.equals("id") && !condition.equals("name")) {
-//	                    if (!s.getName().contains(q)) return false; // 기본적으로 이름으로 검색
-//	                } // if
-//	            } // if
-//	        	
-//	            return true;
-//	        }) // filteredList
-//	        .toList();
-//	    
-//	    // Slice를 새로 생성하여 반환
-//	    Slice<Course> result = new SliceImpl<>(filteredList, paging, false);
-//	    
-//	    result.forEach(seq -> log.info(seq.toString()));
-	    
-		return slice;
+		return list;
 	} // list
 	
 	@PutMapping

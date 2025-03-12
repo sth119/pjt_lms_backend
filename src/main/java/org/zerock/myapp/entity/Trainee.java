@@ -12,6 +12,7 @@ import org.hibernate.generator.EventType;
 import org.zerock.myapp.util.BooleanToIntegerConverter;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -66,11 +67,13 @@ public class Trainee implements Serializable {
 	
 
 	@JsonBackReference
+	@ToString.Exclude
 	// 3. Bi-directional Many-To-One Association
 	@ManyToOne
 	@JoinColumn(name="CRS_ID")
 	private Course course;				//소속과정번호(FK)
 	
+	@JsonManagedReference
 	//4. Bi-directional One-To-Many Association
 	@OneToMany(mappedBy="trainee")
 	private List<Upfile> upfiles = new Vector<>();
