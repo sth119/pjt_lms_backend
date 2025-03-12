@@ -1,5 +1,6 @@
 package org.zerock.myapp.controller;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -43,27 +44,27 @@ public class ControllerTests {
 	
 
 	
-	private Course testCourse; //테스트용 더미.
+	private Course course; //테스트용 더미.
 	
 	@BeforeAll //한번만
 	void setup() {
 		crsRepo.deleteAll(); //기존데이터 삭제
 		
 		//테스트용 더미 데이터 만들기
-		testCourse=new Course();
-		testCourse.setCourseId(1L);
-		testCourse.setType("ING");
-		testCourse.setName("Test");
-		testCourse.setCapacity(5);
-		testCourse.setDetail("Testing...");
-		testCourse.setStartDate("2025/03");
-		testCourse.setEndDate("2025/10");
-		testCourse.setStatus(1);
-		testCourse.setEnabled(true); //리포 수정전 불린 값이라
+		course=new Course();
+		course.setCourseId(1L);
+		course.setType("ING");
+		course.setName("Test");
+		course.setCapacity(5);
+		course.setDetail("Testing...");
+		course.setStartDate("2025/03");
+		course.setEndDate("2025/10");
+		course.setStatus(1);
+		course.setEnabled(true); //리포 수정전 불린 값이라
 //		testCourse.setInsert_ts();//데이터 등록일
 //		testCourse.setUpdate_ts();//업데이트 날 
-		testCourse.setCrtDate(null);//이건 삭제될 예정
-		testCourse.setUdtDate(null);//이건 삭제될 예정
+		course.setCrtDate(new Date());//이건 삭제될 예정
+		course.setUdtDate(null);//이건 삭제될 예정
 		
 	}//@BeforeAll
 	
@@ -111,7 +112,7 @@ public class ControllerTests {
 		testCourse.setEnabled(true); //리포 수정전 불린 값이라
 //		testCourse.setInsert_ts();//데이터 등록일
 //		testCourse.setUpdate_ts();//업데이트 날 
-		testCourse.setCrtDate(null);//이건 삭제될 예정
+		testCourse.setCrtDate(new Date());//이건 삭제될 예정
 		testCourse.setUdtDate(null);//이건 삭제될 예정
 		
 		log.info("\t Before:{}",testCourse);
@@ -172,8 +173,8 @@ public class ControllerTests {
 			foundCrs.setEnabled(false); //리포 수정전 불린 값이라
 //			testCourse.setInsert_ts();//데이터 등록일
 //			testCourse.setUpdate_ts();//업데이트 날 
-			foundCrs.setCrtDate(null);//이건 삭제될 예정
-			foundCrs.setUdtDate(null);//이건 삭제될 예정
+			foundCrs.setCrtDate(new Date());//이건 삭제될 예정
+			foundCrs.setUdtDate(new Date());//이건 삭제될 예정
 			
 			Course modifiedCrs=this.crsRepo.save(foundCrs);
 			log.info("After:{}",modifiedCrs);
