@@ -32,11 +32,6 @@ public interface TraineeRepository extends JpaRepository<Trainee, Long> {
 			Boolean enabled, String tel, Pageable paging
 		);
 	
-	//검색 리스트: 활성화상태(1) + 소속과정 => ?????
-//	public abstract Slice<Trainee> findByEnabledAnd(
-//			Boolean enabled, String course.name, Pageable paging
-//		);
-	
 	
 	
 	
@@ -44,7 +39,7 @@ public interface TraineeRepository extends JpaRepository<Trainee, Long> {
 
 //	public abstract Boolean insertTrainee(TraineeDTO dto);	// C 삽입
 	
-	public abstract Course findByTraineeId(Long traineeId); 	// R 단건 조회, 수강생 수는 member에서....
+//	public abstract Course findByTraineeId(Long traineeId); 	// R 단건 조회, 수강생 수는 member에서....
 	
 //	public abstract Boolean updateTrainee(TraineeDTO dto);	// U 수정
 	

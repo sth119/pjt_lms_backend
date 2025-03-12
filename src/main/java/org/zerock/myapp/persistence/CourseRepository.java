@@ -37,27 +37,17 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 			Boolean enabled, Integer status, String type, String name, Pageable paging
 		);
 	
-	//검색 리스트: 활성화상태(1) + 진행여부 + 과정구분 + 강사명  => ????
-//	public abstract Slice<Course> findByEnabledAndStatusAndType(
-//			Boolean enabled, Integer status, String type, Pageable paging
-//		);
-	
 	//검색 리스트: 진행상태 + 과정명
 	public abstract Slice<Course> findByEnabledAndStatusAndNameContaining(
 			Boolean enabled, Integer status, String name, Pageable paging
 		);
-	
-	//검색 리스트: 진행상태 + 강사명  => ????
-//	public abstract Slice<Course> findByEnabledAndStatus(
-//			Boolean enabled, Integer status, Pageable paging
-//		);
 	
 	
 	
 
 //	public abstract Boolean insertCourse(CourseDTO dto);	// C 삽입
 	
-	public abstract Course findByCourseId(Long courseId); // R 단건 조회
+//	public abstract Course findByCourseId(Long courseId); // R 단건 조회
 	
 //	public abstract Boolean updateCourse(CourseDTO dto);	// U 수정
 	

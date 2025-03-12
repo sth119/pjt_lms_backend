@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 
 	
 //	public abstract Boolean insertUser(UserDTO dto);		// C 삽입
-	public abstract User findByUserId(String userId); 		// R 단건 조회 
+//	public abstract User findByUserId(String userId); 		// R 단건 조회 
 //	public abstract Boolean updateUser(UserDTO dto);		// U 수정
 //	public abstract Boolean deleteByUserId(String userId);	// D 삭제
 	

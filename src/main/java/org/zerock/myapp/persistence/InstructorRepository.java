@@ -33,17 +33,11 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> {
 			Boolean enabled, String tel, Pageable paging
 		);
 	
-	//검색 리스트: 활성화상태(1) + 담당과정 => ?????
-//	public abstract Slice<Instructor> findByEnabledAnd(
-//			Boolean enabled, String course.name, Pageable paging
-//		);
-	
-	
 	
 
 //	public abstract Boolean insertInstructor(InstructorDTO dto);	// C 삽입
 	
-	public abstract Course findByInstructorId(Long instructorId); 	// R 단건 조회
+//	public abstract Course findByInstructorId(Long instructorId); 	// R 단건 조회
 	
 //	public abstract Boolean updateInstructor(InstructorDTO dto);	// U 수정
 	
