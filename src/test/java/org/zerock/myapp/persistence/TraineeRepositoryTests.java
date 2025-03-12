@@ -192,7 +192,7 @@ public class TraineeRepositoryTests {
 		
 	}//findByEnabled
 	
-	@Disabled
+//	@Disabled
 	@Tag("Trainee-Repository-Test")
 	@Order(11)
 	@Test
