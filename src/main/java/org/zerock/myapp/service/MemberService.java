@@ -1,14 +1,7 @@
 package org.zerock.myapp.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-import org.zerock.myapp.domain.MemberDTO;
-import org.zerock.myapp.entity.Member;
-
 public interface MemberService {
-	
+	/*
 	public abstract List<Member> getAllList();     			// 전체 조회
 	public abstract List<Member> getSearchList(MemberDTO dto); // 전체 조회(검색)
 	
@@ -25,5 +18,5 @@ public interface MemberService {
 	// 회원등록 로직
 	public abstract void registerMember(MemberDTO dto);
 	public abstract String checkIdDuplicate(String memberId);
-	
+	*/
 }//end interface

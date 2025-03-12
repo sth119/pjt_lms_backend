@@ -1,5 +1,6 @@
 package org.zerock.myapp.entity;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -23,12 +24,12 @@ import lombok.Data;
 
 @Entity
 @Table(name="T_TRANINEES")
-public class Traninee implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Trainee implements Serializable {
+	@Serial private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name="ID", unique=true, nullable=false, precision=38)
-	private long tranineeId;				//아이디
+	private Long tranineeId;				//아이디
 
 	@Column(nullable=false, length=100)
 	private String name;					//이름

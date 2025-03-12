@@ -1,23 +1,17 @@
 package org.zerock.myapp.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity //커스텀 화면 구성시
+//@EnableWebSecurity //커스텀 화면 구성시
 public class SecurityConfig {
-
-    @Bean
+	/*
+    //@Bean
     public PasswordEncoder passwordEncoder() {return new BCryptPasswordEncoder();}
     
     
     
-    @Bean
+    //@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())  // CSRF 비활성화 (프론트엔드 연동 시 필요)
@@ -47,8 +41,5 @@ public class SecurityConfig {
 //        return new CorsFilter(source);
 //    }
     
-    
-    
-    
-   
+    */
 }

@@ -1,5 +1,6 @@
 package org.zerock.myapp.entity;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -19,11 +20,11 @@ import lombok.Data;
 @Entity
 @Table(name="T_UPFILES")
 public class Upfile implements Serializable {
-	private static final long serialVersionUID = 1L;
+	@Serial private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name="ID", unique=true, nullable=false, precision=38)
-	private long fileId;				//
+	private Long fileId;				//
 
 	@Column(nullable=false, length=1000)
 	private String original;			//원본파일명(확장자포함)
@@ -59,6 +60,6 @@ public class Upfile implements Serializable {
 	//bi-directional many-to-one association to TTrainee
 	@ManyToOne
 	@JoinColumn(name="TRN_ID")
-	private Traninee trainee;
+	private Trainee trainee;
 
 }

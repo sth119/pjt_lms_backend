@@ -1,15 +1,7 @@
 package org.zerock.myapp.service;
 
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.zerock.myapp.domain.MemberType;
-import org.zerock.myapp.entity.Member;
-import org.zerock.myapp.persistence.LoginRepository;
 
-import jakarta.annotation.PostConstruct;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 public class LoginServiceImpl implements LoginService {
-    private PasswordEncoder passwordEncoder;
+    /*
+	private PasswordEncoder passwordEncoder;
     @Autowired LoginRepository dao;
 	
 	
@@ -58,5 +51,5 @@ public class LoginServiceImpl implements LoginService {
     	
     	return memberOptional;
     } // end Optional<MemberEntity> login
-    
+    */
 }//end class

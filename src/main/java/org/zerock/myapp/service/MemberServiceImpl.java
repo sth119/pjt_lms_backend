@@ -1,19 +1,7 @@
 package org.zerock.myapp.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Vector;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.zerock.myapp.domain.MemberDTO;
-import org.zerock.myapp.domain.MemberType;
-import org.zerock.myapp.entity.Member;
-import org.zerock.myapp.persistence.MemberRepository;
 
-import jakarta.annotation.PostConstruct;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 public class MemberServiceImpl implements MemberService {
-    private PasswordEncoder passwordEncoder;
+    /*
+	private PasswordEncoder passwordEncoder;
     @Autowired MemberRepository dao;
 	
 	
@@ -163,5 +152,5 @@ public class MemberServiceImpl implements MemberService {
 	
 	
 	
-	
+	*/
 }//end class

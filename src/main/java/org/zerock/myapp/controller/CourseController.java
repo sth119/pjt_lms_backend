@@ -1,5 +1,8 @@
 package org.zerock.myapp.controller;
 
+import java.util.List;
+import java.util.Vector;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,23 +23,29 @@ import lombok.extern.slf4j.Slf4j;
 public class CourseController {
 	@Autowired CourseRepository repo;
 	
-	
-	   @PostMapping("/list ")
-	   String upcoming() { // 과정 진행예정 리스트
+		
+	   @PostMapping("/list")
+	   List<Object> list() { // 리스트
 	      log.debug("list() invoked.");
+	      //CourseDTO courseDTO = new CourseDTO();
 	      
-	      return "/list";
+	      List<Object> list = new Vector<>();
+	      list.add(1);
+
+	      // Integer crsStatus, String crsType, String crsName, String insName
+	      
+	      return list;
 	   } // list
 	   
 	   @PostMapping("/register")
-	   String registration() { // 과정 등록
+	   String register() { // 과정 등록
 	      log.debug("register() invoked.");
 	      
 	      return "/register";
 	   } // register
 	   	   
 	   @PostMapping("/read")
-	   String finished() { // 과정 종료 리스트
+	   String read() { // 과정 종료 리스트
 	      log.debug("read() invoked.");
 	      
 	      return "/read";
@@ -52,7 +61,7 @@ public class CourseController {
 	   
 	   
 	   @PostMapping("/delete ")
-	   String searched_list() { // 과정 검색
+	   String delete() { // 과정 삭제
 	      log.debug("delete() invoked.");
 	      
 	      return "/delete";

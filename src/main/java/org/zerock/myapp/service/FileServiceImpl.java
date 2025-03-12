@@ -1,13 +1,12 @@
 package org.zerock.myapp.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Vector;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zerock.myapp.domain.FileDTO;
-import org.zerock.myapp.entity.File;
+import org.zerock.myapp.entity.Upfile;
 import org.zerock.myapp.persistence.FileRepository;
 
 import jakarta.annotation.PostConstruct;
@@ -30,30 +29,30 @@ public class FileServiceImpl implements FileService {
 
 
 	@Override
-	public List<File> getList(String id) {	
+	public List<Upfile> getList(String id) {	
 		log.debug("FileServiceImpl -- getAllList() invoked");
 		
-		List<File> list = new Vector<>(); //dao.findAll();
+		List<Upfile> list = new Vector<>(); //dao.findAll();
 		
 		return list;
 	}
 
 	@Override
-	public File create(FileDTO dto) {	//등록 처리
+	public Upfile create(FileDTO dto) {	//등록 처리
 		log.debug("FileServiceImpl -- create({}) invoked", dto);
 		
-		File data = new File();//dao.save(dto);
+		Upfile data = new Upfile();//dao.save(dto);
 		log.debug("create data: {}", data);
 		
 		return data;
 	}
 
 	@Override
-	public File getById(Integer id) {	// 단일 조회
+	public Upfile getById(Integer id) {	// 단일 조회
 		log.debug("FileServiceImpl -- getById({}) invoked", id);
 		
 		//값이 존재하면 반환하고, 없으면 new File()와 같은 기본값을 반환합니다.
-		File data = dao.findById(id).orElse(new File());
+		Upfile data = dao.findById(id).orElse(new Upfile());
 		
 		return data;
 	}

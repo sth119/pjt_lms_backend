@@ -1,5 +1,6 @@
 package org.zerock.myapp.entity;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +23,7 @@ import lombok.Data;
 @Entity
 @Table(name="T_INSTRUCTORS")
 public class Instructor implements Serializable {
-	private static final long serialVersionUID = 1L;
+	@Serial private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name="ID", unique=true, nullable=false)

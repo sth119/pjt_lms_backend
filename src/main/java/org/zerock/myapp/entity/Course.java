@@ -1,5 +1,6 @@
 package org.zerock.myapp.entity;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -21,11 +22,11 @@ import lombok.Data;
 @Entity
 @Table(name="T_COURSES")
 public class Course implements Serializable {
-	private static final long serialVersionUID = 1L;
+	@Serial private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(unique=true, nullable=false, precision=38)
-	private long id;							//과정번호
+	private Long id;							//과정번호
 
 	@Column(length=500)
 	private String type;						//과정구분
@@ -71,7 +72,7 @@ public class Course implements Serializable {
 
 	//bi-directional many-to-one association to Traninee
 	@OneToMany(mappedBy="Course", fetch=FetchType.EAGER)
-	private List<Traninee> traninees;					//훈련생
+	private List<Trainee> traninees;					//훈련생
 
 	//bi-directional many-to-one association to Upfile
 	@OneToMany(mappedBy="Course", fetch=FetchType.EAGER)
@@ -93,14 +94,14 @@ public class Course implements Serializable {
 		return instructor;
 	}
 
-	public Traninee addTraninee(Traninee traninee) {
+	public Trainee addTraninee(Trainee traninee) {
 		getTraninees().add(traninee);
 		traninee.setCourse(this);
 
 		return traninee;
 	}
 
-	public Traninee removeTraninee(Traninee traninee) {
+	public Trainee removeTraninee(Trainee traninee) {
 		getTraninees().remove(traninee);
 		traninee.setCourse(null);
 
