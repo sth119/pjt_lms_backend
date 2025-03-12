@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -59,7 +60,7 @@ public class Trainee implements Serializable {
 	
 	//bi-directional many-to-one association to TUpfile
 	@OneToMany(mappedBy="trainee", fetch=FetchType.EAGER)
-	private List<Upfile> upfiles;
+	private List<Upfile> upfiles = new Vector<>();
 
 
 	public Upfile addTUpfile(Upfile upfiles) {

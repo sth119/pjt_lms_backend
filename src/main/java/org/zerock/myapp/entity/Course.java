@@ -4,12 +4,14 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -66,33 +68,18 @@ public class Course implements Serializable {
 
 
 	
-	//bi-directional many-to-one association to Instructor
-	@OneToMany(mappedBy="course", fetch=FetchType.EAGER)
-	private List<Instructor> instructors;				//강사
+	//bi-directional one-to-one association to Instructor
+	@OneToOne(mappedBy="course")
+	private Instructor instructor;				//강사
 
 	//bi-directional many-to-one association to Traninee
-	@OneToMany(mappedBy="course", fetch=FetchType.EAGER)
-	private List<Trainee> traninees;					//훈련생
+	@OneToMany(mappedBy="course")
+	private List<Trainee> traninees = new Vector<>();					//훈련생
 
 	//bi-directional many-to-one association to Upfile
-	@OneToMany(mappedBy="course", fetch=FetchType.EAGER)
-	private List<Upfile> upfiles;
+	@OneToMany(mappedBy="course")
+	private List<Upfile> upfiles = new Vector<>();
 
-	
-	
-	public Instructor addInstructor(Instructor instructor) {
-		this.instructors.add(instructor);
-		instructor.setCourse(this);
-
-		return instructor;
-	}
-
-	public Instructor removeInstructor(Instructor instructor) {
-		this.instructors.remove(instructor);
-		instructor.setCourse(null);
-
-		return instructor;
-	}
 
 	public Trainee addTraninee(Trainee traninee) {
 		getTraninees().add(traninee);

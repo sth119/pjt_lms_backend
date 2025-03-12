@@ -26,18 +26,19 @@ public class CourseController {
 	
 		
 	   @PostMapping("/list")
-	   List<Object> list() { // 리스트
+	   List<Object> list(String type) { // 리스트
 	      log.debug("list() invoked.");
 	      Course course = new Course();
 	      
+	      // 코스를 담당하는 강사 정보를 전부 찍고 싶을때 사용.
+	      // course.getInstructor();
 	      
 	      List<Object> list = new Vector<>();
 	      list.add(course.getStatus());
 	      list.add(course.getType());
 	      list.add(course.getName());
-	      list.add(course.getInstructors().getClass().getName());
-
-	      // Integer crsStatus, String crsType, String crsName, String insName
+	      
+	      list.add(course.getInstructor().getName());
 	      
 	      return list;
 	   } // list
