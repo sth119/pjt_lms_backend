@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @RequestMapping("/instructor/*") // Base URI
 @RestController
-
 public class InstructorController { // 강사 관리
 
 

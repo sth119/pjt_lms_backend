@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 
 @RequestMapping("/trainee/*") // Base URI
-
 @RestController
 public class TraineeController {  // 훈련생 관리
 

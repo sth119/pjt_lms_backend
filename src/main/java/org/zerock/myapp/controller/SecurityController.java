@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 
 @RequestMapping("/security/*") // Base URI
-
 @RestController
 public class SecurityController {  // 보안 관리 ( 로그인 & 로그아웃 )
 

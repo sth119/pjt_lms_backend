@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.zerock.myapp.domain.CourseDTO;
 import org.zerock.myapp.domain.CriteriaDTO;
 import org.zerock.myapp.entity.Course;
@@ -24,16 +26,17 @@ import lombok.extern.slf4j.Slf4j;
 
 //@RequestMapping("/course/*") // Base URI
 @RequestMapping("/course")//Resfull용 
-//@RestController
+@RestController
 // 과정 URI 컨트롤러
-
 public class CourseController {
 	@Autowired CourseRepository repo;
 	
 	//RESTfull	
-	@GetMapping
-	Slice<Course> list(CriteriaDTO dto, Pageable paging){
+	//@GetMapping // DTO로 받기 위해서는 Post(json) 방식으로 줘야 한다
+	@PostMapping
+	Slice<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){
 		log.info("list({}) invoked.",dto);
+		Course course = new Course();
 		
 		
 		Integer page = dto.getPage();
@@ -43,9 +46,10 @@ public class CourseController {
 		Integer type = dto.getType();
 		log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
 		
+		
 		paging = PageRequest.of(page, pageSize);
 		
-		Slice<Course> slice = this.repo.findByEnabled(true, paging);
+		Slice<Course> slice = this.repo.findByEnabled(course.getEnabled(), paging);
 		slice.forEach(seq -> log.info(seq.toString()));
 		
 		return slice;
