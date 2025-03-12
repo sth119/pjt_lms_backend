@@ -1,5 +1,6 @@
 package org.zerock.myapp.controller;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Timeout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.zerock.myapp.entity.Course;
 import org.zerock.myapp.persistence.CourseRepository;
 
@@ -31,6 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
 
+@TestConfiguration
+
 @AutoConfigureMockMvc
 public class ControllerTests {
 
@@ -38,7 +42,7 @@ public class ControllerTests {
 //	private MockMvc mockMvc;
 	
 	@Autowired
-	private CourseRepository coursRepo;
+	private CourseRepository crsRepo;
 	
 //	@Autowired 
 //	private ObjectMapper objectMapper;
@@ -47,11 +51,11 @@ public class ControllerTests {
 	
 	@BeforeAll //한번만
 	void setup() {
-		coursRepo.deleteAll(); //기존데이터 삭제
+		crsRepo.deleteAll(); //기존데이터 삭제
 		
 		//테스트용 더미 데이터 만들기
 		testCourse=new Course();
-		testCourse.setId(1L);
+		testCourse.setCourseId(1L);
 		testCourse.setType("ING");
 		testCourse.setName("Test");
 		testCourse.setCapacity(5);
@@ -59,7 +63,7 @@ public class ControllerTests {
 		testCourse.setStartDate("2025/03");
 		testCourse.setEndDate("2025/10");
 		testCourse.setStatus(1);
-		testCourse.setEnabled(null); //리포 수정전 불린 값이라
+		testCourse.setEnabled(true); //리포 수정전 불린 값이라
 //		testCourse.setInsert_ts();//데이터 등록일
 //		testCourse.setUpdate_ts();//업데이트 날 
 		testCourse.setCrtDate(null);//이건 삭제될 예정
@@ -78,12 +82,12 @@ public class ControllerTests {
 	void testFindAllList() {
 		log.debug("testFindAllList() invoked");
 		
-		long total=this.coursRepo.count();
+		long total=this.crsRepo.count();
 		log.info("\t+ total:{}",total);
 		
-		Iterable<Course> iter=this.coursRepo.findAll();
-		for(Course course :iter) {
-			log.info(course.toString());
+		Iterable<Course> iter=this.crsRepo.findAll();
+		for(Course testcourse :iter) {
+			log.info(testcourse.toString());
 		}
 				
 	}//testFindAllList
@@ -94,14 +98,115 @@ public class ControllerTests {
 	@Order(2)
 	@Test
 //	@RepeatedTest(1)
-	@DisplayName("1. testCreate")
+	@DisplayName("2. testCreate")
 	@Timeout(value=3L, unit =TimeUnit.SECONDS)
 	void testCreate() {
 		log.debug("testCreate() invoked");
 		
-//		Course course
+		Course testCourse=new Course();
+		testCourse.setCourseId(2L);
+		testCourse.setType("Comming");
+		testCourse.setName("Test2");
+		testCourse.setCapacity(6);
+		testCourse.setDetail("Testing2...");
+		testCourse.setStartDate("2025/04");
+		testCourse.setEndDate("2025/11");
+		testCourse.setStatus(2);
+		testCourse.setEnabled(true); //리포 수정전 불린 값이라
+//		testCourse.setInsert_ts();//데이터 등록일
+//		testCourse.setUpdate_ts();//업데이트 날 
+		testCourse.setCrtDate(null);//이건 삭제될 예정
+		testCourse.setUdtDate(null);//이건 삭제될 예정
+		
+		log.info("\t Before:{}",testCourse);
+		this.crsRepo.save(testCourse);
+		
+		log.info("\t After:{}",testCourse);
+		
+	}//testCreate
+			
+	
+//	@Disabled
+	@Tag("Controller-Test")
+	@Order(3)
+	@Test
+//	@RepeatedTest(1)
+	@DisplayName("3. testRead")
+	@Timeout(value=3L, unit =TimeUnit.SECONDS)
+	void testRead() {
+		log.debug("testRead() invoked");
+		
+		final Long courseId=2L;
+		Optional<Course> otn=this.crsRepo.findById(courseId);
+		if(! otn.isEmpty()) {
+			Course foundCrs=otn.get();
+			log.info("\t_ foundCrs:{}",foundCrs);
 				
-	}//testFindAllList
+		}
+		
+		otn.ifPresent(p-> log.info("\t+ foundCrs:{}",p));
+				
+	}//testRead
+	
+	
+//	@Disabled
+	@Tag("Controller-Test")
+	@Order(4)
+	@Test
+//	@RepeatedTest(1)
+	@DisplayName("4. testUpdate")
+	@Timeout(value=3L, unit =TimeUnit.SECONDS)
+	void testUpdate() {
+		log.debug("testUpdate() invoked");
+		
+		final Long courseId=2L;
+		
+		Optional<Course> otn=this.crsRepo.findById(courseId);
+		otn.ifPresent(foundCrs->{
+			log.info("Before:{}",foundCrs);
+			
+			foundCrs.setCourseId(2L);
+			foundCrs.setType("ComSoon");
+			foundCrs.setName("Test222");
+			foundCrs.setCapacity(60);
+			foundCrs.setDetail("Testing2222...");
+			foundCrs.setStartDate("2025/04");
+			foundCrs.setEndDate("2025/11");
+			foundCrs.setStatus(1);
+			foundCrs.setEnabled(false); //리포 수정전 불린 값이라
+//			testCourse.setInsert_ts();//데이터 등록일
+//			testCourse.setUpdate_ts();//업데이트 날 
+			foundCrs.setCrtDate(null);//이건 삭제될 예정
+			foundCrs.setUdtDate(null);//이건 삭제될 예정
+			
+			Course modifiedCrs=this.crsRepo.save(foundCrs);
+			log.info("After:{}",modifiedCrs);
+			
+		});
+	
+	}//testUpdate
+	
+
+//	@Disabled
+	@Tag("Controller-Test")
+	@Order(5)
+	@Test
+//	@RepeatedTest(1)
+	@DisplayName("5. testDelete")
+	@Timeout(value=3L, unit =TimeUnit.SECONDS)
+	void testDelete() {
+		log.debug("testDelete() invoked");
+		
+		final Long courseId=2L;
+		
+		Optional<Course> otn=this.crsRepo.findById(courseId);
+		otn.ifPresent(foundCrs -> {
+			this.crsRepo.delete(foundCrs);
+		});//.ifPresent
+	
+
+		
+	}//testDelete
 	
 	
 	
@@ -110,7 +215,7 @@ public class ControllerTests {
 	@Order(0)
 	@Test
 //	@RepeatedTest(1)
-	@DisplayName("1. test")
+	@DisplayName("0. test")
 	@Timeout(value=3L, unit =TimeUnit.SECONDS)
 	void context() {
 		log.debug("conText() invoked");
