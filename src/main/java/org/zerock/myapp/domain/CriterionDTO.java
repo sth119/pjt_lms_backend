@@ -1,12 +1,25 @@
 package org.zerock.myapp.domain;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 import lombok.Data;
 
 @Data
-public class CriterionDTO {
-	private Long id;							//과정번호
+public class CriterionDTO implements Serializable{
+	@Serial private static final long serialVersionUID = 1L;
 
-	private String type;						//과정구분
-	private String name;						//과정명
-	private Integer capacity;					//수강정원
+	private Integer page;
+	private Integer pageSize;
+	
+	private Integer condition;
+	private String q;
+	
+	//구분명 과정1 강사2 훈련생3
+	private Integer type;
+	
+	//강사
+	
+	//훈련생
+					
 } // end class
