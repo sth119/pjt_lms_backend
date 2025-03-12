@@ -4,8 +4,15 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.hibernate.annotations.CurrentTimestamp;
+import org.hibernate.annotations.SourceType;
+import org.hibernate.generator.EventType;
+
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -22,7 +29,7 @@ import lombok.Data;
 public class Upfile implements Serializable {
 	@Serial private static final long serialVersionUID = 1L;
 
-	@Id
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="ID", unique=true, nullable=false, precision=38)
 	private Long fileId;				//
 
@@ -35,14 +42,15 @@ public class Upfile implements Serializable {
 	@Column(nullable=false, length=4000)
 	private String path;				//저장경로
 
+	@Convert(converter = BooleanToIntegerConverter.class)
 	@Column(nullable=false)
 	private Boolean enabled;			//
 
-	@Temporal(TemporalType.DATE)
+	@CurrentTimestamp(event = EventType.INSERT, source = SourceType.DB)
 	@Column(name="INSERT_TS", nullable=false)
 	private Date crtDate;				//
 
-	@Temporal(TemporalType.DATE)
+	@CurrentTimestamp(event = EventType.UPDATE, source = SourceType.DB)
 	@Column(name="UPDATE_TS")
 	private Date udtDate;				//
 	

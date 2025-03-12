@@ -10,7 +10,6 @@ import org.hibernate.annotations.CurrentTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.generator.EventType;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -20,8 +19,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
 import lombok.Data;
 import lombok.ToString;
@@ -49,7 +46,8 @@ public class Course implements Serializable {
 
 	@Column(nullable = false)
 	private Integer capacity = 0;				//수강정원
-
+	
+	@Column(nullable = true)
 	private String detail;						//내용
 
 	@Column(name="START_DATE")
@@ -79,7 +77,7 @@ public class Course implements Serializable {
 	@Transient	// DB 컬럼으로 매핑되지 않음
 	private Integer currCount = 0;	//현재 수강 인원
 
-
+	@ToString.Exclude
 	//3. Bi-directional One-To-One Association
 	@OneToOne(mappedBy="course")
 	private Instructor instructor;				//강사

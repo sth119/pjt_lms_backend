@@ -6,9 +6,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import org.hibernate.annotations.CurrentTimestamp;
+import org.hibernate.annotations.SourceType;
+import org.hibernate.generator.EventType;
+
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -26,7 +33,7 @@ import lombok.Data;
 public class Instructor implements Serializable {
 	@Serial private static final long serialVersionUID = 1L;
 
-	@Id
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="ID", unique=true, nullable=false)
 	private Long instructorId;			//아이디
 
@@ -39,14 +46,15 @@ public class Instructor implements Serializable {
 	@Column(nullable=false)
 	private Integer status;				//
 
+	@Convert(converter = BooleanToIntegerConverter.class)
 	@Column(nullable=false)
 	private Boolean enabled;			//삭제여부(1=유효,0=삭제)
 
-	@Temporal(TemporalType.DATE)
+	@CurrentTimestamp(event = EventType.INSERT, source = SourceType.DB)
 	@Column(name="INSERT_TS", nullable=false)
 	private Date crtDate;
 
-	@Temporal(TemporalType.DATE)
+	@CurrentTimestamp(event = EventType.UPDATE, source = SourceType.DB)
 	@Column(name="UPDATE_TS")
 	private Date udtDate;
 
