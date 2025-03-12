@@ -12,6 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import lombok.Data;
 
 
@@ -57,6 +58,10 @@ public class Course implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name="UPDATE_TS")
 	private Date udtDate;						//수정일
+	
+	
+	@Transient	// DB 컬럼으로 매핑되지 않음
+	private Integer currCount;	//현재 수강 인원
 
 
 	
