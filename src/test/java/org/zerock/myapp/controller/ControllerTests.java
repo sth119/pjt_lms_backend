@@ -52,7 +52,7 @@ public class ControllerTests {
 		
 		//테스트용 더미 데이터 만들기
 		course=new Course();
-		course.setCourseId(1L);
+//		course.setCourseId(1L);
 		course.setType("ING");
 		course.setName("Test");
 		course.setCapacity(5);
@@ -101,7 +101,6 @@ public class ControllerTests {
 		log.debug("testCreate() invoked");
 		
 		Course testCourse=new Course();
-		testCourse.setCourseId(2L);
 		testCourse.setType("Comming");
 		testCourse.setName("Test2");
 		testCourse.setCapacity(6);
@@ -156,13 +155,13 @@ public class ControllerTests {
 	void testUpdate() {
 		log.debug("testUpdate() invoked");
 		
-		final Long courseId=2L;
+		final Long courseId=1L;
 		
 		Optional<Course> otn=this.crsRepo.findById(courseId);
 		otn.ifPresent(foundCrs->{
 			log.info("Before:{}",foundCrs);
 			
-			foundCrs.setCourseId(2L);
+//			foundCrs.setCourseId(2L);
 			foundCrs.setType("ComSoon");
 			foundCrs.setName("Test222");
 			foundCrs.setCapacity(60);
