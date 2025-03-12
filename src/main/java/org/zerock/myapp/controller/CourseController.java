@@ -1,5 +1,8 @@
 package org.zerock.myapp.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.zerock.myapp.domain.CourseDTO;
 import org.zerock.myapp.domain.CriteriaDTO;
 import org.zerock.myapp.entity.Course;
+import org.zerock.myapp.persistence.CourseRepository;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +28,27 @@ import lombok.extern.slf4j.Slf4j;
 // 과정 URI 컨트롤러
 
 public class CourseController {
-//	@Autowired CourseRepository repo;
+	@Autowired CourseRepository repo;
 	
 	//RESTfull	
 	@GetMapping
-	Slice<Course> list(CriteriaDTO dto){
+	Slice<Course> list(CriteriaDTO dto, Pageable paging){
 		log.info("list({}) invoked.",dto);
 		
-		return null;
+		
+		Integer page = dto.getPage();
+		Integer pageSize = dto.getPageSize();
+		Integer condition = dto.getCondition();
+		String q = dto.getQ();
+		Integer type = dto.getType();
+		log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
+		
+		paging = PageRequest.of(page, pageSize);
+		
+		Slice<Course> slice = this.repo.findByEnabled(true, paging);
+		slice.forEach(seq -> log.info(seq.toString()));
+		
+		return slice;
 	} // list
 	
 	@PutMapping
