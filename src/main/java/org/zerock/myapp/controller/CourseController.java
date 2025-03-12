@@ -41,10 +41,10 @@ public class CourseController {
 		
 		Integer page = dto.getPage();
 		Integer pageSize = dto.getPageSize();
-		Integer condition = dto.getCondition();
+		String condition = dto.getCondition();
 		String q = dto.getQ();
-		Integer type = dto.getType();
-		log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
+		//Integer type = dto.getType();
+		//log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
 		
 		
 		paging = PageRequest.of(page, pageSize);

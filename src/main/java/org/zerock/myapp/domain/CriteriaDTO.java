@@ -12,11 +12,11 @@ public class CriteriaDTO implements Serializable{
 	private Integer page;
 	private Integer pageSize;
 	
-	private Integer condition; // select 항목 번호
+	private String condition; // select 항목 번호
 	private String q; // select 검색 데이터
 	
 	//구분명 과정1 강사2 훈련생3
-	private Integer type;
+	//private Integer type;
 	
 	//강사
 	
