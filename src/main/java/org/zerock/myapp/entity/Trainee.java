@@ -30,7 +30,7 @@ public class Trainee implements Serializable {
 
 	@Id
 	@Column(name="ID", unique=true, nullable=false, precision=38)
-	private Long tranineeId;				//아이디
+	private Long traineeId;				//아이디
 
 	@Column(nullable=false, length=100)
 	private String name;					//이름
@@ -43,7 +43,7 @@ public class Trainee implements Serializable {
 	
 	
 	@Column(nullable=false, precision=38)
-	private BigDecimal enabled;				//삭제여부(1=유효,0=삭제된데이터)
+	private Boolean enabled;				//삭제여부(1=유효,0=삭제된데이터)
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name="INSERT_TS", nullable=false)
@@ -58,7 +58,7 @@ public class Trainee implements Serializable {
 	@JoinColumn(name="CRS_ID")
 	private Course course;				//소속과정번호(FK)
 	
-	//bi-directional many-to-one association to TUpfile
+	//bi-directional many-to-one association to Upfile
 	@OneToMany(mappedBy="trainee", fetch=FetchType.EAGER)
 	private List<Upfile> upfiles = new Vector<>();
 

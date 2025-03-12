@@ -1,7 +1,6 @@
 package org.zerock.myapp.persistence;
 
-import java.awt.print.Pageable;
-
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.zerock.myapp.entity.User;

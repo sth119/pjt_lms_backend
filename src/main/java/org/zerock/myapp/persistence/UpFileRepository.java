@@ -1,7 +1,6 @@
 package org.zerock.myapp.persistence;
 
-import java.awt.print.Pageable;
-
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.zerock.myapp.entity.Upfile;
@@ -10,10 +9,14 @@ import org.zerock.myapp.entity.User;
 
 public interface UpFileRepository extends JpaRepository<Upfile, Long> {
 	
-	//과정이미지
-	public abstract Slice<Upfile> findByCrsId(String name, Pageable paging);
-
-	
+//	//과정이미지
+//	public abstract Slice<Upfile> findByCourseId(Long crsId, Pageable paging);
+//	//강사이미지
+//	public abstract Slice<Upfile> findByInstructorId(Long insId, Pageable paging);
+//	//훈련생이미지
+//	public abstract Slice<Upfile> findByTranineeId(Long trnId, Pageable paging);
+//
+//	
 //	public abstract Boolean insertUpfile(UpfileDTO dto);		// C 삽입
 	public abstract User findByFileId(Long fileId); 			// R 단건 조회 
 //	public abstract Boolean updateUpfile(UpfileDTO dto);		// U 수정

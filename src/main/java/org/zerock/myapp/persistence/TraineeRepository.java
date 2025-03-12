@@ -1,7 +1,6 @@
 package org.zerock.myapp.persistence;
 
-import java.awt.print.Pageable;
-
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -45,7 +44,7 @@ public interface TraineeRepository extends JpaRepository<Trainee, Long> {
 
 //	public abstract Boolean insertTrainee(TraineeDTO dto);	// C 삽입
 	
-	public abstract Course findByTraineeId(Long tranineeId); 	// R 단건 조회, 수강생 수는 member에서....
+	public abstract Course findByTraineeId(Long traineeId); 	// R 단건 조회, 수강생 수는 member에서....
 	
 //	public abstract Boolean updateTrainee(TraineeDTO dto);	// U 수정
 	
