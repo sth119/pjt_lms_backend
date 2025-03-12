@@ -1,9 +1,6 @@
 package org.zerock.myapp.controller;
 
-import java.util.List;
-import java.util.Vector;
-
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zerock.myapp.domain.CourseDTO;
-import org.zerock.myapp.domain.CriterionDTO;
+import org.zerock.myapp.domain.CriteriaDTO;
 import org.zerock.myapp.entity.Course;
 
 import lombok.NoArgsConstructor;
@@ -29,34 +26,41 @@ import lombok.extern.slf4j.Slf4j;
 public class CourseController {
 //	@Autowired CourseRepository repo;
 	
-	//resfull	
+	//RESTfull	
 	@GetMapping
-	Page<Course> list(CriterionDTO dto){
-		log.info("list: {}",dto);
+	Slice<Course> list(CriteriaDTO dto){
+		log.info("list({}) invoked.",dto);
 		
 		return null;
-	}
+	} // list
 	
-	@PutMapping("{id}")
-	Course register(@PathVariable Integer id) {
-		log.info("register: {}",id);
+	@PutMapping
+	Course register(CourseDTO dto) {
+		log.info("register({}) invoked.",dto);
 		
 		return null;
-	}
+	} // register
 	
-	@PostMapping("{id}")
+	@GetMapping("/{id}")
+	Course read(@PathVariable Integer id){
+		log.info("read({}) invoked.",id);
+		
+		return null;
+	} // read
+	
+	@PostMapping("/{id}")
 	Course update(@PathVariable Integer id, CourseDTO dto) {
-		log.info("update: {},{}",id,dto);
+		log.info("update({},{}) invoked.",id,dto);
 		
 		return null;
-	}
+	} // update
 	
-	@DeleteMapping("{id}")
+	@DeleteMapping("/{id}")
 	Course delete(@PathVariable Integer id) {
-		log.info("delete: {}",id);
+		log.info("delete({})",id);
 		
 		return null;
-	}
+	} // delete
 	
 	
 	

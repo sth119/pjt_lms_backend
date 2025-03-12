@@ -6,14 +6,14 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class CriterionDTO implements Serializable{
+public class CriteriaDTO implements Serializable{
 	@Serial private static final long serialVersionUID = 1L;
 
 	private Integer page;
 	private Integer pageSize;
 	
-	private Integer condition;
-	private String q;
+	private Integer condition; // select 항목 번호
+	private String q; // select 검색 데이터
 	
 	//구분명 과정1 강사2 훈련생3
 	private Integer type;
