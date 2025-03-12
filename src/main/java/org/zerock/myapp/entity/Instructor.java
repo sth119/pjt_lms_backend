@@ -11,13 +11,11 @@ import org.hibernate.annotations.SourceType;
 import org.hibernate.generator.EventType;
 import org.zerock.myapp.util.BooleanToIntegerConverter;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -61,25 +59,14 @@ public class Instructor implements Serializable {
 	@Column(name="UPDATE_TS")
 	private Date udtDate;
 	
-<<<<<<< Updated upstream
-	@JsonBackReference("course-instructor")
-	@ToString.Exclude
-=======
-//	@JsonBackReference
-//	@ToString.Exclude
->>>>>>> Stashed changes
 	//bi-directional one-to-one association to TCours
 	@OneToOne
 	@JoinColumn(name="CRS_ID")
 	private Course course;		//담당과정번호(FK)
 	
-<<<<<<< Updated upstream
-	@JsonManagedReference("instructor-upfile")
-=======
+	//bi-directional many-to-one association to TUpfile
 	@JsonManagedReference
 	@ToString.Exclude
->>>>>>> Stashed changes
-	//bi-directional many-to-one association to TUpfile
 	@OneToMany(mappedBy="instructor")
 	private List<Upfile> upfiles = new Vector<>();
 

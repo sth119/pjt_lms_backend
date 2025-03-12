@@ -80,28 +80,20 @@ public class Course implements Serializable {
 	@Transient	// DB 컬럼으로 매핑되지 않음
 	private Integer currCount = 0;	//현재 수강 인원
 
-	@JsonManagedReference("course-instructor")
+	@JsonManagedReference	//("course-instructor")
 	@ToString.Exclude
 	//3. Bi-directional One-To-One Association
 	@OneToOne(mappedBy="course")
 	private Instructor instructor;				//강사
 
-<<<<<<< Updated upstream
-	@JsonManagedReference("course-trainee")
-=======
+	//4. Bi-directional Many-To-One Association
 	@JsonManagedReference
 	@ToString.Exclude
->>>>>>> Stashed changes
-	//4. Bi-directional Many-To-One Association
 	@OneToMany(mappedBy="course")
 	private List<Trainee> traninees = new Vector<>();					//훈련생
 	
-<<<<<<< Updated upstream
-	@JsonManagedReference("course-upfile")
-=======
 	@JsonManagedReference
 	@ToString.Exclude
->>>>>>> Stashed changes
 	@OneToMany(mappedBy="course")
 	private List<Upfile> upfiles = new Vector<>();
 
