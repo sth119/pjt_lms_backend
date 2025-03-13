@@ -56,14 +56,11 @@ public class CourseController {
 		// 아직 값을 굉장히 많이 찍는 문제가 있다.
 		//list.forEach(s -> log.info(s.toString()));
 	    
-		
 		//temp
 		list.forEach(s -> {
 			s.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, s));
 		});
-		
-		
-		
+
 		return list;
 	} // list
 	
@@ -97,8 +94,6 @@ public class CourseController {
 	@GetMapping("/{id}") // 단일 조회 화면
 	Course read(@PathVariable Long id){
 		log.info("read({}) invoked.",id);
-		
-		Optional<Course> optional = this.repo.findById(id);
 		
 		Course course = this.repo.findById(id)
 		        .orElseThrow(() -> new RuntimeException("해당 ID의 코스를 찾을 수 없습니다: " + id));

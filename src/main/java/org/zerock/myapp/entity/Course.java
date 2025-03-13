@@ -11,6 +11,7 @@ import org.hibernate.annotations.SourceType;
 import org.hibernate.generator.EventType;
 import org.zerock.myapp.util.BooleanToIntegerConverter;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
@@ -28,6 +29,16 @@ import lombok.ToString;
 
 
 @Data
+
+// JSON 으로 변환해서 보낼때, 제외 할 항목
+@JsonIgnoreProperties({
+	"crtDate",
+	"udtDate",
+	
+	"instructor",
+	"traninees",
+	"upfiles"
+})
 
 @Entity
 @Table(name="T_COURSES")
