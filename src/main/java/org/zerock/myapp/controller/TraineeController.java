@@ -3,9 +3,17 @@ package org.zerock.myapp.controller;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+<<<<<<< Updated upstream
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+=======
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+>>>>>>> Stashed changes
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +28,7 @@ import org.zerock.myapp.domain.TraineeDTO;
 import org.zerock.myapp.entity.Trainee;
 import org.zerock.myapp.persistence.CourseRepository;
 import org.zerock.myapp.persistence.TraineeRepository;
+import org.zerock.myapp.persistence.UpFileRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.NoArgsConstructor;
@@ -33,11 +42,23 @@ import lombok.extern.slf4j.Slf4j;
 public class TraineeController {  // 훈련생 관리
 	@Autowired TraineeRepository repo;
 	@Autowired CourseRepository crsRepo;  // fix
-
+//	@Autowired UpFileRepository ufRepo;
+//
+//	  @Value("${C:\temp}") // application.properties 또는 application.yml에 설정
+//	    private String uploadPath;
+//	
+//	public TraineeController(TraineeRepository repo, CourseRepository crsRepo, UpFileRepository ufRepo) {
+//		this.repo=repo;
+//		this.crsRepo=crsRepo;
+//		this.ufRepo=ufRepo;
+//	}
+	
+	
 	
 	@PostMapping // 리스트 
+//	Slice<Trainee> list(@RequestBody CriteriaDTO dto, Pageable paging){
 	Page<Trainee> list(@RequestBody CriteriaDTO dto, Pageable paging){
-//		List<Instructor> list(@RequestBody CriteriaDTO dto, Pageable paging){ // Pageable paging는 아직 실험중
+//		List<Trainee> list(@RequestBody CriteriaDTO dto, Pageable paging){ 
 		log.info("list({}) invoked.",dto);
 		
 		Integer page = dto.getPage();
@@ -47,19 +68,92 @@ public class TraineeController {  // 훈련생 관리
 		//Integer type = dto.getType();
 		//log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
 		
-		paging = PageRequest.of(page, pageSize);
+//		paging = PageRequest.of(page, pageSize);		//방법1		 
+		paging=PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("crtDate"),Sort.Order.asc("name"))); //방법2
+		
 		
 		// 기본적으로 모든 데이터를 조회
-	    //List<Instructor> list = this.repo.findByEnabled(true, paging);
-		Page<Trainee> slice = this.repo.findByEnabled(true, paging);
-		
+	    //List<Trainee> list = this.repo.findByEnabled(true, paging);
 
-		return slice;
+//		Slice<Trainee> slice = this.repo.findByEnabled(true, paging);
+		Page<Trainee> trnPage = this.repo.findByEnabled(true, paging);
+
+
+		boolean hasNext = trnPage.hasNext(); // 다음 페이지 존재 여부
+		boolean hasPrevious = trnPage.hasPrevious(); // 이전 페이지 존재 여부
+		long totalElements = trnPage.getTotalElements(); // 전체 데이터 개수
+		int totalPages = trnPage.getTotalPages(); // 전체 페이지 개수
 		
+	    log.info("\t hasNext: {}, hasPrevious: {}, totalElements: {}, totalPages: {}", 
+	    		hasNext, hasPrevious, totalElements, totalPages);
+
+		
+		
+//		return list;
+		return trnPage;
+		//페이지 사이즈 갯수대로 소팅
+		//2페이지 20개 
 	} // list
 	
 	
-	  @PutMapping //값을 수정할때
+//	@PostMapping("/{id}")
+//	public ResponseEntity<Trainee> updateTrainee(
+//			@PathVariable("id") Long traineeId
+//			,@RequestPart("trainee") TraineeDTO dto
+//			,@RequestPart(value="file", required=false) MultipartFile file){
+//		//파일이 사진이라 없으면 안올려도 된다.
+//		
+//		log.info("updateTrainee({},{},{}) invoked.", traineeId,dto,file != null ? file.getOriginalFilename() : null);
+//		
+//		return repo.findByEnabledAndTraineeId(true, traineeId)
+//				.map(trn -> {
+//					trn.setName(dto.getName());
+//					trn.setTel(dto.getTel());
+//					trn.setStatus(dto.getStatus());
+//					
+//					if (dto.getCourse() != null &&
+//							dto.getCourse().getCourseId() != null) {
+//						crsRepo.findById(dto.getCourse().getCourseId()).ifPresent(trn::setCourse);
+//					}else {
+//						trn.setCourse(null);
+//					}//if
+//					
+//					//파일처리
+//					if (file != null && !file.isEmpty()) {
+//						try {
+//							String uuid=UUID.randomUUID().toString();
+//							String fileName=uuid+"_"+file.getOriginalFilename();
+//							
+//							File dest=new File(uploadPath, fileName);
+//							
+//							file.transferTo(dest);
+//							
+//							Upfile upfile = new Upfile();
+//							upfile.setOriginal(file.getOriginalFilename());
+//							upfile.setUuid(uuid);
+//							upfile.setPath(dest.getAbsolutePath());
+//							upfile.setEnabled(true);
+//							upfile.setTrainee(trn);
+//							
+//							ufRepo.save(upfile);
+//							
+//							log.info("\t )
+//						}catch(IOException e) {
+//							log.info("IOException : {}",e.getMessage(),e);
+//							
+//							
+//						}//try
+//					}//if
+//						
+//				});//.mpa
+//	}//updateTrainee
+//	
+//	//보통 파일 업로드와 JSON 데이터를 함께 전송해야 할 때 사용됩니다.
+	
+	
+	
+
+	  @PutMapping 
 //	  @PostMapping //객체(값)를 만들때  
 	  Trainee register(@RequestBody TraineeDTO dto) {
 	      log.info("register({}) invoked.", dto);
@@ -93,7 +187,7 @@ public class TraineeController {  // 훈련생 관리
 
 		}
 	*/
-	  
+
 	  
 		@GetMapping("/{id}") // 단일 조회 화면
 		Trainee read(@PathVariable("id") Long traineeId){ // error fix -> ("id")로 명확히 표시

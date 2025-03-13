@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.zerock.myapp.entity.Course;
@@ -21,17 +22,18 @@ public interface TraineeRepository extends JpaRepository<Trainee, Long> {
 	 *  	- 소속과정
 	 * */
 	//검색 리스트: 활성화상태(1) 
+//	public abstract Slice<Trainee> findByEnabled(
 	public abstract Page<Trainee> findByEnabled(
 			Boolean enabled, Pageable paging
 		);
 	
 	//검색 리스트: 활성화상태(1) + 이름 
-	public abstract Page<Trainee> findByEnabledAndNameContaining(
+	public abstract Slice<Trainee> findByEnabledAndNameContaining(
 			Boolean enabled, String name, Pageable paging
 		);
 		
 	//검색 리스트: 활성화상태(1) + 전화번호
-	public abstract Page<Trainee> findByEnabledAndTelContaining(
+	public abstract Slice<Trainee> findByEnabledAndTelContaining(
 			Boolean enabled, String tel, Pageable paging
 		);
 	
