@@ -110,6 +110,7 @@ public class TraineeController {  // 훈련생 관리
 		
 		// https://localhost/trainee/1
 		
+		
 		@PostMapping(value = "/{id}", consumes = "application/json")
 		public ResponseEntity<Trainee> update(@PathVariable("id") Long traineeId, @RequestBody TraineeDTO dto) {
 		    log.info("update({},{}) invoked.", traineeId, dto);
@@ -127,6 +128,7 @@ public class TraineeController {  // 훈련생 관리
 		                        return this.repo.save(trn);
 		                    })
 		                    .orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + dto.getCourse().getCourseId()));
+		           //결과가 존재하면 map을 통해 처리하고, 존재하지 않으면 EntityNotFoundException을 던집니다.
 		            } else {
 		                trn.setCourse(null);
 		                return this.repo.save(trn);
@@ -137,6 +139,7 @@ public class TraineeController {  // 훈련생 관리
 		        .map(updatedTrainee -> {
 		            log.info("Update success");
 		            return ResponseEntity.ok(updatedTrainee);
+//		           훈련생이 성공적으로 업데이트되면 ResponseEntity.ok(updatedTrainee)를 반환하여 업데이트된 훈련생을 응답으로 보냅니다.
 		        })
 		        .orElseThrow(() -> new EntityNotFoundException("Trainee not found with ID: " + traineeId));
 		   
