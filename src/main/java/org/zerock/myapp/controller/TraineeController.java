@@ -61,8 +61,8 @@ public class TraineeController {  // 훈련생 관리
 //		List<Trainee> list(@RequestBody CriteriaDTO dto, Pageable paging){ 
 		log.info("list({}) invoked.",dto);
 		
-		Integer page = dto.getPage();
-		Integer pageSize = dto.getPageSize();
+		Integer page = (dto.getPage() != null && dto.getPage() >= 0) ? dto.getPage() : 0;
+		Integer pageSize = (dto.getPageSize() != null && dto.getPageSize() >= 0) ? dto.getPageSize():10;
 		String condition = dto.getCondition();
 		String q = dto.getQ();
 		//Integer type = dto.getType();
