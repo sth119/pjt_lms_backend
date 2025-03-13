@@ -147,5 +147,29 @@ public class CourseController {
 		log.info("Delete fail");
 		return null;
 	} // delete
+	
+	
+	
+	
+	
+	
+
+	//RESTfull
+	// 강사 & 훈련생 등록 화면: 담당과정 선택 리스트
+	@GetMapping("/selectCourse") 
+	public List<Course> selectCourseList(){
+		log.info("selectCourseList() invoked.");
+		
+		List<Course> list = this.repo.findByEnabledAndStatusInOrderByStartDate(true, List.of(1, 2));
+		
+		list.forEach(c -> {
+			c.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, c));
+		});
+
+		return list;
+	} // list
+	
+	
+	
 	 
 } // end class
