@@ -52,15 +52,17 @@ public class CourseController {
 	//@GetMapping // DTO로 받기 위해서는 Post(json) 방식으로 줘야 한다
 	@PostMapping // 리스트 
 	Page<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){
-//	List<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){ // Pageable paging는 아직 실험중
 		log.info("list({}, {}) invoked.", dto, paging);
 		
-		Integer page = dto.getPage();
-		Integer pageSize = dto.getPageSize();
+		//page는 기본 0부터 시작
+		Integer page = (dto.getPage()!=null && dto.getPage() >= 0) ? dto.getPage() : 0;
+		Integer pageSize = (dto.getPageSize()!=null && dto.getPageSize() >= 0) ? dto.getPageSize() : 10;
 		String condition = dto.getCondition();
 		String q = dto.getQ();
 		
-		paging = PageRequest.of(page, pageSize, Sort.by("crtDate").descending());
+		//log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
+		
+		paging = PageRequest.of(page, pageSize, Sort.by("crtDate").descending().and(Sort.by("status").ascending()));
 		
 		
 		Page<Course> list = this.repo.findByEnabled(true, paging);

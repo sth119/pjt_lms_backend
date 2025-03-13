@@ -37,22 +37,19 @@ public class InstructorController { // 강사 관리
 	//@GetMapping // DTO로 받기 위해서는 Post(json) 방식으로 줘야 한다
 	@PostMapping // 리스트 
 	Page<Instructor> list(@RequestBody CriteriaDTO dto, Pageable paging){
-//		List<Instructor> list(@RequestBody CriteriaDTO dto, Pageable paging){ // Pageable paging는 아직 실험중
 		log.info("list({}, {}) invoked.", dto, paging);
 		
-		Integer page = dto.getPage();
-		Integer pageSize = dto.getPageSize();
+		//page는 기본 0부터 시작
+		Integer page = (dto.getPage()!=null && dto.getPage() >= 0) ? dto.getPage() : 0;
+		Integer pageSize = (dto.getPageSize()!=null && dto.getPageSize() >= 0) ? dto.getPageSize() : 10;
 		String condition = dto.getCondition();
 		String q = dto.getQ();
 		//Integer type = dto.getType();
 		//log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
 		
-		
-		//.and(Sort.by("tel").descending())
-		paging = PageRequest.of(page, pageSize, Sort.by("crtDate").descending());
+		paging = PageRequest.of(page, pageSize, Sort.by("status").ascending().and(Sort.by("crtDate").descending()));
 		
 		// 기본적으로 모든 데이터를 조회
-	    //List<Instructor> list = this.repo.findByEnabled(true, paging);
 		Page<Instructor> list = this.repo.findByEnabled(true, paging);
 		
 
