@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.zerock.myapp.domain.CriteriaDTO;
 import org.zerock.myapp.domain.TraineeDTO;
-import org.zerock.myapp.entity.Course;
 import org.zerock.myapp.entity.Trainee;
 import org.zerock.myapp.persistence.CourseRepository;
 import org.zerock.myapp.persistence.TraineeRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -70,7 +71,7 @@ public class TraineeController {  // 훈련생 관리
 	      trn.setTel(dto.getTel());	  
 	      trn.setCourse(dto.getCourse());
 	      trn.setStatus(dto.getStatus());
-	      trn.setEnabled(dto.getEnabled());
+
 
 	      
 	      Trainee register =repo.save(trn); // 새로운 훈련생 저장!
@@ -89,7 +90,6 @@ public class TraineeController {  // 훈련생 관리
 		        "courseId":5
 		    }
 		    ,"status":1
-		    ,"enabled":true
 
 		}
 	*/
@@ -110,48 +110,49 @@ public class TraineeController {  // 훈련생 관리
 		
 		// https://localhost/trainee/1
 		
-		
-		//수정
-		@PostMapping(value = "/{id}", consumes = "application/json") // error fix? -> consumes  추가
-		Trainee update(@PathVariable("id") Long traineeId, @RequestBody TraineeDTO dto) {
-			log.info("update({},{}) invoked.",traineeId,dto);
-			
-			Optional<Trainee> optionalTrainee  = this.repo.findByEnabledAndTraineeId(true,traineeId);
-		
-			 if (optionalTrainee.isPresent()) {
-				 log.info("\t>>>>>>>{}",optionalTrainee);
-				 
-				 
-				 Trainee trn = optionalTrainee.get();
-				 
-				 trn.setName(dto.getName());      // 이름
-				 trn.setTel(dto.getTel());        // 전화번호
-				 trn.setCourse(dto.getCourse());  // 담당과정
-				 trn.setStatus(dto.getStatus());  // 상태
+		@PostMapping(value = "/{id}", consumes = "application/json")
+		public ResponseEntity<Trainee> update(@PathVariable("id") Long traineeId, @RequestBody TraineeDTO dto) {
+		    log.info("update({},{}) invoked.", traineeId, dto);
+		    
+		    return this.repo.findByEnabledAndTraineeId(true, traineeId)
+		        .map(trn -> {
+		            trn.setName(dto.getName());
+		            trn.setTel(dto.getTel());
+		            trn.setStatus(dto.getStatus());
+		            
+		            if (dto.getCourse() != null && dto.getCourse().getCourseId() != null) {
+		                return this.crsRepo.findById(dto.getCourse().getCourseId())
+		                    .map(course -> {
+		                        trn.setCourse(course);
+		                        return this.repo.save(trn);
+		                    })
+		                    .orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + dto.getCourse().getCourseId()));
+		            } else {
+		                trn.setCourse(null);
+		                return this.repo.save(trn);
+		            }
+		           
+		        })
+		        
+		        .map(updatedTrainee -> {
+		            log.info("Update success");
+		            return ResponseEntity.ok(updatedTrainee);
+		        })
+		        .orElseThrow(() -> new EntityNotFoundException("Trainee not found with ID: " + traineeId));
+		   
+		}//update
 
-				 
-				 if (dto.getCourse() != null) {
-//			            Optional<Course> optionalCourse = course.findById(dto.getCourseId()); // courseRepo는 Course 엔티티용 리포지토리
-			            Optional<Course> optionalCourse = this.crsRepo.findById(dto.getCourse().getCourseId()); // fix?
-			            if (optionalCourse.isPresent()) {
-//			                instructor.setCourseId(optionalCourse.get());
-			            	trn.setCourse(dto.getCourse()); // fix?
-			            } else {
-			                log.warn("Course with ID {} not found", dto.getCourse());
-			            }
-			        }
-				 
-				 			 
-				 Trainee update =  this.repo.save(trn);
-				 
-				 log.info("Update success");
-				 return update;
-			 } // if
-			 
-			 
-			 log.info("Update fail");
-			return null; // 값이 없으면 NULL반환
-		} // update  // 성공
+	// Post https://localhost/trainee/2385
+		/**
+		 {
+    "name": "홍길동사사"
+    ,"tel": "0101234444"
+    ,"course": {
+        "courseId": 4
+    }
+    ,"status":4
+}
+		 */
 
 
 		@DeleteMapping("/{id}")
