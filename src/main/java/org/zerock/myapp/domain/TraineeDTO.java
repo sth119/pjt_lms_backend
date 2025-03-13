@@ -19,4 +19,5 @@ public class TraineeDTO {
 	private Date udtDate;
 	
 	private Course course;				//소속과정번호(FK)
+
 } // end class

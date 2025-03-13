@@ -1,24 +1,22 @@
 package org.zerock.myapp.controller;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.zerock.myapp.domain.CriteriaDTO;
 import org.zerock.myapp.domain.TraineeDTO;
-import org.zerock.myapp.entity.Course;
 import org.zerock.myapp.entity.Trainee;
+import org.zerock.myapp.persistence.CourseRepository;
 import org.zerock.myapp.persistence.TraineeRepository;
 
 import lombok.NoArgsConstructor;
@@ -31,86 +29,125 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 public class TraineeController {  // 훈련생 관리
 	@Autowired TraineeRepository repo;
+	@Autowired CourseRepository crsRepo;  // fix
 
-	  @GetMapping
-	    public Slice<Trainee> list(@ModelAttribute CriteriaDTO dto) {
-	        log.info("list({}) invoked.", dto);
+	
+	@PostMapping // 리스트 
+	Slice<Trainee> list(@RequestBody CriteriaDTO dto, Pageable paging){
+//		List<Instructor> list(@RequestBody CriteriaDTO dto, Pageable paging){ // Pageable paging는 아직 실험중
+		log.info("list({}) invoked.",dto);
+		
+		Integer page = dto.getPage();
+		Integer pageSize = dto.getPageSize();
+		String condition = dto.getCondition();
+		String q = dto.getQ();
+		//Integer type = dto.getType();
+		//log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
+		
+		paging = PageRequest.of(page, pageSize);
+		
+		// 기본적으로 모든 데이터를 조회
+	    //List<Instructor> list = this.repo.findByEnabled(true, paging);
+		Slice<Trainee> slice = this.repo.findByEnabled(true, paging);
+		
 
-	        // 기본값 설정
-	        Integer page = (dto.getPage() != null) ? dto.getPage() - 1 : 0;
-	        Integer pageSize = (dto.getPageSize() != null) ? dto.getPageSize() : 10;
-	        Pageable paging = PageRequest.of(page, pageSize);
-
-	        // 검색 조건 적용
-	        Slice<Trainee> result = null;
-
-	        if (dto.getQ() != null && dto.getCondition() != null) {
-	            switch (dto.getCondition()) {
-	                case "name":
-	                    result = repo.findByEnabledAndNameContaining(true, dto.getQ(), paging);
-	                    break;
-	                case "tel":
-	                    result = repo.findByEnabledAndTelContaining(true, dto.getQ(), paging);
-	                    break;
-	                default:
-	                    result = repo.findByEnabled(true, paging);
-	                    break;
-	            }
-	        } else {
-	            result = repo.findByEnabled(true, paging);
-	        }
-
-	        // 결과가 null이면 빈 Slice 반환
-	        result = (result != null) ? result : new SliceImpl<>(List.of(), paging, false);
-
-	        result.forEach(seq -> log.info(seq.toString()));
-	        return result;
-	    }//list
+		return slice;
+		
+	} // list
 	
 	
-	
-//	@PutMapping //값을 수정할때
-	  @PostMapping //객체(값)를 만들때  
-	  public Trainee register(@RequestBody TraineeDTO dto) {
+	  @PutMapping //값을 수정할때
+//	  @PostMapping //객체(값)를 만들때  
+	  Trainee register(@RequestBody TraineeDTO dto) {
 	      log.info("register({}) invoked.", dto);
 
 	      // DTO -> Entity 변환
 	      Trainee trn = new Trainee();
-	      trn.setTraineeId(dto.getTranineeId());
+
 	      trn.setName(dto.getName());
-	      trn.setTel(dto.getTel());
-	      trn.setStatus(dto.getStatus());
-	      trn.setEnabled(dto.getEnabled() != null ? dto.getEnabled() : true); // 기본값 설정
-	      trn.setCrtDate(dto.getCrtDate());
-	      trn.setUdtDate(dto.getUdtDate());
+	      trn.setTel(dto.getTel());	  
 	      trn.setCourse(dto.getCourse());
-	      trn.setUpfiles(null);
-
-	      return repo.save(trn); // 새로운 훈련생 저장!
-	  }
-	
-	@GetMapping("/{id}")
-	Trainee read(@PathVariable Long id){
-		log.info("read({}) invoked.",id);
+	      trn.setStatus(dto.getStatus());
+	      trn.setEnabled(dto.getEnabled());
+	      
+	      Trainee register =repo.save(trn); // 새로운 훈련생 저장!
+	      log.info("result:{}",register);
+	      log.info("Regist success");
 		
-		Trainee trn= repo.findById(id).orElse(null);
-		
-		return null;
-	} // read
+	      return register;
+	  } // register
 	
-	@PostMapping("/{id}")
-	Course update(@PathVariable Integer id, TraineeDTO dto) {
-		log.info("update({},{}) invoked.",id,dto);
-		
-		return null;
-	} // update
-	
-	@DeleteMapping("/{id}")
-	Course delete(@PathVariable Integer id) {
-		log.info("delete({})",id);
-		
-		return null;
-	} // delete
-	
-
+	  
+	  
+		@GetMapping("/{id}") // 단일 조회 화면
+		Trainee read(@PathVariable("{id}") Long traineeId){ // error fix -> ("id")로 명확히 표시
+			log.info("read({}) invoked.",traineeId);
+			
+			Optional<Trainee> optional = this.repo.findById(traineeId); // error fix ->  주석처리
+			
+			Trainee read = this.repo.findById(traineeId)
+			        .orElseThrow(() -> new RuntimeException("해당 ID의 강사를 찾을 수 없습니다: " + traineeId));
+			
+			log.info("Read success");
+			return read;
+		} // read
+//
+//		@PostMapping(value = "/{id}", consumes = "application/json") // error fix? -> consumes  추가
+//		Trainee update(@PathVariable("id") Long traineeId, @RequestBody TraineeDTO dto) {
+//			log.info("update({},{}) invoked.",traineeId,dto);
+//			
+//			Optional<Trainee> optionalInstructor  = this.repo.findById(traineeId);
+//		
+//			 if (optionalInstructor.isPresent()) {
+//				 Trainee trn = optionalInstructor.get();
+//				 
+//				 trn.setName(dto.getName());      // 강사 이름
+//				 trn.setTel(dto.getTel());        // 전화번호
+////				 trn.setCourse(dto.getCourse());  // 담당과정
+//				 trn.setCourseId(traineeId);  // 담당과정  // fix?
+//				 trn.setStatus(dto.getStatus());  // 상태
+//				 
+//				 if (dto.getCourse() != null) {
+////			            Optional<Course> optionalCourse = course.findById(dto.getCourseId()); // courseRepo는 Course 엔티티용 리포지토리
+//			            Optional<Course> optionalCourse = this.crsRepo.findById(dto.getCourse().getCourseId()); // fix?
+//			            if (optionalCourse.isPresent()) {
+////			                instructor.setCourseId(optionalCourse.get());
+//			            	trn.setCourse(traineeId); // fix?
+//			            } else {
+//			                log.warn("Course with ID {} not found", dto.getCourse());
+//			            }
+//			        }
+//				 
+//				 
+//				 
+//				 Trainee update =  this.repo.save(trn);
+//				 
+//				 log.info("Update success");
+//				 return update;
+//			 } // if
+//			 log.info("Update fail");
+//			return null; // 값이 없으면 NULL반환
+//		} // update  // 성공
+//
+//
+//		@DeleteMapping("/{id}")
+//		Trainee delete(@PathVariable Long id) {
+//			log.info("delete({})",id);
+//			
+//			Optional<Trainee> optionalInstructor  = this.repo.findById(id);
+//			
+//			if (optionalInstructor.isPresent()) {
+//				Trainee trn = optionalInstructor.get();
+//				 
+//				trn.setStatus(3);    // 상태(등록=1,강의중=2,퇴사=3)
+//				trn.setEnabled(false);   // 삭제여부(1=유효,0=삭제)
+//				 
+//				Trainee delete =  this.repo.save(trn);
+//				 
+//				 log.info("Delete success");
+//				 return delete;
+//			 } // if
+//			log.info("Delete fail");
+//			return null;
+//		}
 } // end class
