@@ -11,6 +11,7 @@ import org.hibernate.annotations.SourceType;
 import org.hibernate.generator.EventType;
 import org.zerock.myapp.util.BooleanToIntegerConverter;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -32,7 +33,7 @@ import lombok.ToString;
 
 // JSON 으로 변환해서 보낼때, 제외 할 항목
 @JsonIgnoreProperties({
-	"crtDate",
+//	"crtDate",
 	"udtDate",
 	
 	"instructor",
@@ -79,6 +80,7 @@ public class Course implements Serializable {
 	
 	
 	// 2-2. Iegal Auditing Properties
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	@CurrentTimestamp(event = EventType.INSERT, source = SourceType.DB)
 	@Column(name="INSERT_TS", nullable=false)
 	private Date crtDate;						//등록일
@@ -92,7 +94,6 @@ public class Course implements Serializable {
 	private Integer currCount = 0;	//현재 수강 인원
 
 	@JsonManagedReference("course-instructor")	// fix
-	//("course-instructor")
 	@ToString.Exclude
 	//3. Bi-directional One-To-One Association
 	@OneToOne(mappedBy="course")
