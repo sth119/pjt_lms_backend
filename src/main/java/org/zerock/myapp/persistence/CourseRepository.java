@@ -47,6 +47,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 			Boolean enabled, Integer status, String type, String name, Pageable paging
 		);
 	
+	//단건 조회 :
+	//	삭제를 Enabled false로 지정하였기 때문에 조회도 Enabled를 기본 조건으로 검색해야한다.
 	public abstract Course findByEnabledAndId(Boolean enabled, Long id);
 	
 

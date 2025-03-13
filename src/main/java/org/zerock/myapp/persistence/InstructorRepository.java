@@ -33,15 +33,9 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> {
 			Boolean enabled, String tel, Pageable paging
 		);
 	
-	
-
-//	public abstract Boolean insertInstructor(InstructorDTO dto);	// C 삽입
-	
-//	public abstract Course findByInstructorId(Long instructorId); 	// R 단건 조회
-	
-//	public abstract Boolean updateInstructor(InstructorDTO dto);	// U 수정
-	
-//	public abstract Boolean deleteByInstructorId(Long instructorId);	// D 삭제
+	//단건 조회 :
+	//	삭제를 Enabled false로 지정하였기 때문에 조회도 Enabled를 기본 조건으로 검색해야한다.
+	public abstract Instructor findByEnabledAndId(Boolean enabled, Long id);
 	
 	
 }//end interface

@@ -32,22 +32,13 @@ public interface TraineeRepository extends JpaRepository<Trainee, Long> {
 			Boolean enabled, String tel, Pageable paging
 		);
 	
-	
-	//단건 조회: 
-//	public abstract 
-	
-	
+	//단건 조회 :
+	//	삭제를 Enabled false로 지정하였기 때문에 조회도 Enabled를 기본 조건으로 검색해야한다.
+	public abstract Trainee findByEnabledAndId(Boolean enabled, Long id);
 	
 	
 	
-
-//	public abstract Boolean insertTrainee(TraineeDTO dto);	// C 삽입
 	
-//	public abstract Course findByTraineeId(Long traineeId); 	// R 단건 조회, 수강생 수는 member에서....
-	
-//	public abstract Boolean updateTrainee(TraineeDTO dto);	// U 수정
-	
-//	public abstract Boolean deleteByTraineeId(Long tranineeId);	// D 삭제
 	
 	
 }//end interface
