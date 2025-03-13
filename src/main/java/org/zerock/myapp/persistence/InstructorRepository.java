@@ -36,7 +36,7 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> {
 	
 	//단건 조회 :
 	//	삭제를 Enabled false로 지정하였기 때문에 조회도 Enabled를 기본 조건으로 검색해야한다.
-	public abstract Instructor findByEnabledAndId(Boolean enabled, Long id);
+	public abstract Instructor findByEnabledAndInstructorId(Boolean enabled, Long instructorId);
 	
 	
 }//end interface

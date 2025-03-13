@@ -53,7 +53,7 @@ public class ControllerTests {
 		//테스트용 더미 데이터 만들기
 		course=new Course();
 //		course.setCourseId(1L);
-		course.setType("ING");
+		course.setType(1);
 		course.setName("Test");
 		course.setCapacity(5);
 		course.setDetail("Testing...");
@@ -101,7 +101,7 @@ public class ControllerTests {
 		log.debug("testCreate() invoked");
 		
 		Course testCourse=new Course();
-		testCourse.setType("Comming");
+		testCourse.setType(2);
 		testCourse.setName("Test2");
 		testCourse.setCapacity(6);
 		testCourse.setDetail("Testing2...");
@@ -162,7 +162,7 @@ public class ControllerTests {
 			log.info("Before:{}",foundCrs);
 			
 //			foundCrs.setCourseId(2L);
-			foundCrs.setType("ComSoon");
+			foundCrs.setType(3);
 			foundCrs.setName("Test222");
 			foundCrs.setCapacity(60);
 			foundCrs.setDetail("Testing2222...");

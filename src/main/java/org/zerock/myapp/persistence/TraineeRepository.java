@@ -40,7 +40,7 @@ public interface TraineeRepository extends JpaRepository<Trainee, Long> {
 	
 	//단건 조회 :
 	//	삭제를 Enabled false로 지정하였기 때문에 조회도 Enabled를 기본 조건으로 검색해야한다.
-	public abstract Trainee findByEnabledAndId(Boolean enabled, Long id);
+	public abstract Trainee findByEnabledAndTraineeId(Boolean enabled, Long traineeId);
 	
 	
 	

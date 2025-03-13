@@ -68,7 +68,7 @@ public class CourseRepositoryTests {
 		
 		Course data = new Course();
 		data.setName("AI를 활용한 JAVA 풀스택 과정");
-		data.setType("fullstack");
+		data.setType(1);					//과정구분(1=NCS, 2=KDT, 3=산대특, 4=미정)
 		data.setCapacity(30);
 		data.setDetail("열씨미 합시다!!!!");
 		data.setStartDate("2024-10-18");
@@ -101,10 +101,10 @@ public class CourseRepositoryTests {
 			
 			Course course = new Course();			
 			switch(random) {
-				case 1 -> course.setType("frontend");
-				case 2 -> course.setType("backend");
-				case 3 -> course.setType("fullstack");
-				case 4 -> course.setType("fullstack");					
+				case 1 -> course.setType(1);
+				case 2 -> course.setType(2);
+				case 3 -> course.setType(3);
+				case 4 -> course.setType(4);				
 			}
 			course.setName("과정Name_" + String.format("%02d", seq));
 			course.setCapacity(15+seq);
@@ -156,7 +156,7 @@ public class CourseRepositoryTests {
 			log.info("\t+ read data: {}", foundCourse);
 			
 			foundCourse.setName("TEST");
-			foundCourse.setType("front");
+			foundCourse.setType(2);
 			
 //			this.repo.save(foundCourse);	//안해도 됨
 			
