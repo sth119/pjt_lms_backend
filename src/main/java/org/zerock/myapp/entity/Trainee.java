@@ -65,14 +65,14 @@ public class Trainee implements Serializable {
 	@Column(name="UPDATE_TS")
 	private Date udtDate;						//수정일
 	
-	@JsonBackReference
+	@JsonBackReference("course-trainees")
 	// 3. Bi-directional Many-To-One Association
 	@ManyToOne
 	@JoinColumn(name="CRS_ID")
 	private Course course;				//소속과정번호(FK)
 	
 	//4. Bi-directional One-To-Many Association
-	@JsonManagedReference
+	@JsonManagedReference("trainee-upfiles")
 	@ToString.Exclude
 	@OneToMany(mappedBy="trainee")
 	private List<Upfile> upfiles = new Vector<>();

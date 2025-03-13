@@ -4,6 +4,8 @@ import java.util.Date;
 
 import org.zerock.myapp.entity.Course;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.Data;
 
 @Data
@@ -18,6 +20,7 @@ public class InstructorDTO {
 	private Date crtDate;
 	private Date udtDate;
 	
-//	private Course course;		//담당과정번호(FK)
-	private Long courseId;		//담당과정번호(FK)
+	@JsonBackReference("course-instructor")
+	private Course course;		//담당과정번호(FK)
+	
 } // end class

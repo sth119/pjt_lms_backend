@@ -55,19 +55,19 @@ public class Upfile implements Serializable {
 	@Column(name="UPDATE_TS")
 	private Date udtDate;				//수정일
 	
-	@JsonBackReference
+	@JsonBackReference("course-upfiles")
 	//bi-directional many-to-one association to Cours
 	@ManyToOne
 	@JoinColumn(name="CRS_ID")
 	private Course course;
 
-	@JsonBackReference
+	@JsonBackReference("instructor-upfiles")
 	//bi-directional many-to-one association to Instructor
 	@ManyToOne
 	@JoinColumn(name="INS_ID")
 	private Instructor instructor;
 
-	@JsonBackReference
+	@JsonBackReference("trainee-upfiles")
 	//bi-directional many-to-one association to Trainee
 	@ManyToOne
 	@JoinColumn(name="TRN_ID")

@@ -60,7 +60,7 @@ public class Instructor implements Serializable {
 	@Column(name="UPDATE_TS")
 	private Date udtDate;
 	
-	@JsonBackReference
+	@JsonBackReference("course-instructor")
 	//bi-directional one-to-one association to TCours
 	@OneToOne
 	@JoinColumn(name="CRS_ID")
@@ -68,7 +68,7 @@ public class Instructor implements Serializable {
 	private Course course;
 	
 	//bi-directional many-to-one association to TUpfile
-	@JsonManagedReference
+	@JsonManagedReference("instructor-upfiles")
 	@ToString.Exclude
 	@OneToMany(mappedBy="instructor")
 	private List<Upfile> upfiles = new Vector<>();

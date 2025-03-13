@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 public class InstructorController { // 강사 관리
 	@Autowired InstructorRepository repo;
-	@Autowired CourseRepository repository;  // fix
+	@Autowired CourseRepository crsRepo;  // fix
 
 
 	//RESTfull	
@@ -67,7 +67,7 @@ public class InstructorController { // 강사 관리
 		
 		instructor.setName(dto.getName()); // 이름
 		instructor.setTel(dto.getTel()); // 전화번호
-		instructor.setCourseId(dto.getCourseId());  // 담당과정
+		instructor.setCourse(dto.getCourse());  // 담당과정
 		
 				
 		
@@ -107,17 +107,17 @@ public class InstructorController { // 강사 관리
 			 instructor.setName(dto.getName());      // 강사 이름
 			 instructor.setTel(dto.getTel());        // 전화번호
 //			 instructor.setCourse(dto.getCourse());  // 담당과정
-			 instructor.setCourseId(dto.getCourseId());  // 담당과정  // fix?
+			 instructor.setCourse(dto.getCourse());  // 담당과정  // fix?
 			 instructor.setStatus(dto.getStatus());  // 상태
 			 
-			 if (dto.getCourseId() != null) {
+			 if (dto.getCourse() != null) {
 //		            Optional<Course> optionalCourse = course.findById(dto.getCourseId()); // courseRepo는 Course 엔티티용 리포지토리
-		            Optional<Course> optionalCourse = repository.findById(dto.getCourseId()); // fix?
+		            Optional<Course> optionalCourse = this.crsRepo.findById(dto.getCourse().getCourseId()); // fix?
 		            if (optionalCourse.isPresent()) {
 //		                instructor.setCourseId(optionalCourse.get());
 		                instructor.setCourseId(instructorId); // fix?
 		            } else {
-		                log.warn("Course with ID {} not found", dto.getCourseId());
+		                log.warn("Course with ID {} not found", dto.getCourse());
 		            }
 		        }
 			 
