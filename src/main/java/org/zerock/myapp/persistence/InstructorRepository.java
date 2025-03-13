@@ -1,6 +1,8 @@
 package org.zerock.myapp.persistence;
 
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,12 +33,13 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> {
 	public abstract Slice<Instructor> findByEnabledAndTelContaining(
 			Boolean enabled, String tel, Pageable paging
 		);
-
+	
+	
 	
 	
 	//단건 조회 :
 	//	삭제를 Enabled false로 지정하였기 때문에 조회도 Enabled를 기본 조건으로 검색해야한다.
-	public abstract Instructor findByEnabledAndInstructorId(Boolean enabled, Long instructorId);
+	public abstract Optional<Instructor> findByEnabledAndInstructorId(Boolean enabled, Long instructorId);
 	
 	
 }//end interface

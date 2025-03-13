@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import org.zerock.myapp.entity.Course;
 import org.zerock.myapp.entity.Trainee;
 
 import lombok.NoArgsConstructor;
@@ -43,6 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 public class TraineeRepositoryTests {
 	@Autowired private TraineeRepository repo;
+	@Autowired private CourseRepository crsRepo;
 	
 	@BeforeAll
 	void beforeAll() throws SQLException {
@@ -162,6 +165,68 @@ public class TraineeRepositoryTests {
 		log.info("\t+ delete end!");
 		
 	}//delete
+	
+	
+//	@Disabled
+	@Tag("Trainee-Repository-Test")
+	@Order(6)
+	@Test
+//	@RepeatedTest(1)
+	@DisplayName("6. findByEnabledAndTraineeId")
+	@Timeout(value = 1L, unit = TimeUnit.SECONDS)
+	void findByEnabledAndTraineeId() {
+		log.debug("read() invoked -- 단건 조회");
+		
+		Optional<Trainee> trainee = this.repo.findByEnabledAndTraineeId(true, 1963L);
+		trainee.ifPresent(foundTrainee -> {
+			log.info("\t+ findByEnabledAndTraineeId data: {}", trainee);
+		});		
+		
+	}//findByEnabledAndTraineeId
+	
+	
+//	@Disabled
+	@Tag("Trainee-Repository-Test")
+	@Order(7)
+	@Test
+//	@RepeatedTest(1)
+	@DisplayName("7. countByEnabledAndCourse")
+	@Timeout(value = 1L, unit = TimeUnit.SECONDS)
+	void countByEnabledAndCourse() {
+		log.debug("countByEnabledAndCourse() invoked");
+		
+		Optional<Course> course = this.crsRepo.findById(39L);
+		course.ifPresent(foundCourse -> {
+			Integer count = this.repo.countByEnabledAndCourse(true, foundCourse);
+			log.info("\t+ 과정별 현재 수강생 Count: {}", count);
+		});
+		
+	}//countByEnabledAndCourse
+	
+//	@Disabled
+	@Tag("Trainee-Repository-Test")
+	@Order(8)
+	@Test
+//	@RepeatedTest(1)
+	@DisplayName("8. findByEnabledAndCourse")
+	@Timeout(value = 1L, unit = TimeUnit.SECONDS)
+	void findByEnabledAndCourse() {
+		log.debug("findByEnabledAndCourse() invoked");
+
+		Optional<Course> course = this.crsRepo.findById(39L);
+		course.ifPresent(foundCourse -> {
+			List<Trainee> list = this.repo.findByEnabledAndCourse(true, foundCourse);
+			log.info("\t+ 해당 과정 수강생 정보 list");
+			list.forEach(t -> log.info(t.toString()));
+		});
+		
+	}//findByEnabledAndCourse
+	
+	
+	
+	
+	
+	
 	
 	
 	

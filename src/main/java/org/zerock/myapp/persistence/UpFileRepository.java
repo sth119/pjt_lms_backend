@@ -1,6 +1,7 @@
 package org.zerock.myapp.persistence;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.zerock.myapp.entity.Course;
@@ -20,6 +21,6 @@ public interface UpFileRepository extends JpaRepository<Upfile, Long> {
 	
 	//단건 조회 :
 	//	삭제를 Enabled false로 지정하였기 때문에 조회도 Enabled를 기본 조건으로 검색해야한다.
-	public abstract Upfile findByEnabledAndFileId(Boolean enabled, Long fileId);
+	public abstract Optional<Upfile> findByEnabledAndFileId(Boolean enabled, Long fileId);
 
 } // end class
