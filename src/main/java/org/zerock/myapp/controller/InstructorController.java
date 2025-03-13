@@ -2,7 +2,9 @@ package org.zerock.myapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +38,7 @@ public class InstructorController { // 강사 관리
 	@PostMapping // 리스트 
 	Page<Instructor> list(@RequestBody CriteriaDTO dto, Pageable paging){
 //		List<Instructor> list(@RequestBody CriteriaDTO dto, Pageable paging){ // Pageable paging는 아직 실험중
-		log.info("list({}) invoked.",dto);
+		log.info("list({}, {}) invoked.", dto, paging);
 		
 		Integer page = dto.getPage();
 		Integer pageSize = dto.getPageSize();
@@ -45,14 +47,16 @@ public class InstructorController { // 강사 관리
 		//Integer type = dto.getType();
 		//log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
 		
-		//paging = PageRequest.of(page, pageSize);
+		
+		//.and(Sort.by("tel").descending())
+		paging = PageRequest.of(page, pageSize, Sort.by("crtDate").descending());
 		
 		// 기본적으로 모든 데이터를 조회
 	    //List<Instructor> list = this.repo.findByEnabled(true, paging);
-		Page<Instructor> slice = this.repo.findByEnabled(true, paging);
+		Page<Instructor> list = this.repo.findByEnabled(true, paging);
 		
 
-		return slice;
+		return list;
 	} // list // 성공
 	
 	

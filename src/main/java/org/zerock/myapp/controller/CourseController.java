@@ -5,7 +5,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,14 +40,27 @@ public class CourseController {
 	//RESTfull	
 	//@GetMapping // DTO로 받기 위해서는 Post(json) 방식으로 줘야 한다
 	@PostMapping // 리스트 
-//	Page<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){
-		List<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){ // Pageable paging는 아직 실험중
-		log.info("list({}) invoked.",dto);
+	Page<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){
+//	List<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){ // Pageable paging는 아직 실험중
+		log.info("list({}, {}) invoked.", dto, paging);
 		
 		Integer page = dto.getPage();
 		Integer pageSize = dto.getPageSize();
 		String condition = dto.getCondition();
 		String q = dto.getQ();
+		
+		paging = PageRequest.of(page, pageSize, Sort.by("crtDate").descending());
+		
+		
+		Page<Course> list = this.repo.findByEnabled(true, paging);
+		list.forEach(s -> {
+			s.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, s));
+			log.info(s.toString());
+		});
+		
+		
+		
+		
 		//Integer type = dto.getType();
 		//log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
 		
@@ -52,18 +68,21 @@ public class CourseController {
 		
 		// 기본적으로 모든 데이터를 조회
 	    //Page<Course> slice = this.repo.findByEnabled(true, paging);
-		List<Course> list = this.repo.findByEnabled(true);
+//		List<Course> list = this.repo.findByEnabled(true);
 		
 		// 아직 값을 굉장히 많이 찍는 문제가 있다.
 		//list.forEach(s -> log.info(s.toString()));
 	    
 		//temp
-		list.forEach(s -> {
-			s.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, s));
-		});
+//		list.forEach(s -> {
+//			s.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, s));
+//		});
 
 		return list;
 	} // list
+	
+	
+	
 	
 	@PutMapping // 등록
 	Course register(@RequestBody CourseDTO dto) {
