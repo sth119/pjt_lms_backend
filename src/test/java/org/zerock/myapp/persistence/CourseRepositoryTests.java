@@ -23,9 +23,9 @@ import org.junit.jupiter.api.Timeout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -237,7 +237,7 @@ public class CourseRepositoryTests {
 		Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by("crtDate").descending());
 		Boolean eanbled = true;
 		
-		Slice<Course> list = this.repo.findByEnabled(eanbled, paging);
+		Page<Course> list = this.repo.findByEnabled(eanbled, paging);
 		list.forEach(d -> log.info(d.toString()));
 		
 		log.info("=".repeat(100));

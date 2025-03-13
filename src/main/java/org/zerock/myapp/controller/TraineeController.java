@@ -3,9 +3,9 @@ package org.zerock.myapp.controller;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +36,7 @@ public class TraineeController {  // 훈련생 관리
 
 	
 	@PostMapping // 리스트 
-	Slice<Trainee> list(@RequestBody CriteriaDTO dto, Pageable paging){
+	Page<Trainee> list(@RequestBody CriteriaDTO dto, Pageable paging){
 //		List<Instructor> list(@RequestBody CriteriaDTO dto, Pageable paging){ // Pageable paging는 아직 실험중
 		log.info("list({}) invoked.",dto);
 		
@@ -51,7 +51,7 @@ public class TraineeController {  // 훈련생 관리
 		
 		// 기본적으로 모든 데이터를 조회
 	    //List<Instructor> list = this.repo.findByEnabled(true, paging);
-		Slice<Trainee> slice = this.repo.findByEnabled(true, paging);
+		Page<Trainee> slice = this.repo.findByEnabled(true, paging);
 		
 
 		return slice;

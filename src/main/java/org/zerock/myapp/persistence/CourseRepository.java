@@ -4,6 +4,7 @@ package org.zerock.myapp.persistence;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,29 +22,29 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 	 *  	- 강사명
 	 * */
 	//검색 리스트: 활성화상태(1) 
-	public abstract Slice<Course> findByEnabled(
+	public abstract Page<Course> findByEnabled(
 			Boolean enabled, Pageable paging
 		);
 	//검색 리스트: 활성화상태(1) => 페이징 X
 	public abstract List<Course> findByEnabled(Boolean enabled);
 	
 	//검색 리스트: 활성화상태(1) + 진행여부 
-	public abstract Slice<Course> findByEnabledAndStatus(
+	public abstract Page<Course> findByEnabledAndStatus(
 			Boolean enabled, Integer status, Pageable paging
 		);
 		
 	//검색 리스트: 활성화상태(1) + 진행여부 + 과정구분
-	public abstract Slice<Course> findByEnabledAndStatusAndType(
+	public abstract Page<Course> findByEnabledAndStatusAndType(
 			Boolean enabled, Integer status, String type, Pageable paging
 		);
 	
 	//검색 리스트: 활성화상태(1) + 진행상태 + 과정명
-	public abstract Slice<Course> findByEnabledAndStatusAndNameContaining(
+	public abstract Page<Course> findByEnabledAndStatusAndNameContaining(
 			Boolean enabled, Integer status, String name, Pageable paging
 		);
 	
 	//검색 리스트: 활성화상태(1) + 진행여부 + 과정구분 + 과정명
-	public abstract Slice<Course> findByEnabledAndStatusAndTypeAndNameContaining(
+	public abstract Page<Course> findByEnabledAndStatusAndTypeAndNameContaining(
 			Boolean enabled, Integer status, String type, String name, Pageable paging
 		);
 	

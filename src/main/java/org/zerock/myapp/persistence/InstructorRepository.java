@@ -3,8 +3,8 @@ package org.zerock.myapp.persistence;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.zerock.myapp.entity.Instructor;
@@ -20,17 +20,17 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> {
 	 *  	- 담당과정
 	 * */
 	//검색 리스트: 활성화상태(1) 
-	public abstract Slice<Instructor> findByEnabled(
+	public abstract Page<Instructor> findByEnabled(
 			Boolean enabled, Pageable paging
 		);
 	
 	//검색 리스트: 활성화상태(1) + 이름 
-	public abstract Slice<Instructor> findByEnabledAndNameContaining(
+	public abstract Page<Instructor> findByEnabledAndNameContaining(
 			Boolean enabled, String name, Pageable paging
 		);
 		
 	//검색 리스트: 활성화상태(1) + 전화번호
-	public abstract Slice<Instructor> findByEnabledAndTelContaining(
+	public abstract Page<Instructor> findByEnabledAndTelContaining(
 			Boolean enabled, String tel, Pageable paging
 		);
 	

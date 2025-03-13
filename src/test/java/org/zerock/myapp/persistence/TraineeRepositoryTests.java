@@ -1,6 +1,7 @@
 package org.zerock.myapp.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 
 import java.sql.SQLException;
 import java.util.Date;
@@ -22,9 +23,9 @@ import org.junit.jupiter.api.Timeout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -245,7 +246,7 @@ public class TraineeRepositoryTests {
 		Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by("crtDate").descending());
 		Boolean eanbled = true;
 		
-		Slice<Trainee> list = this.repo.findByEnabled(eanbled, paging);
+		Page<Trainee> list = this.repo.findByEnabled(eanbled, paging);
 		list.forEach(d -> log.info(d.toString()));
 		
 //		log.info("=".repeat(100));
@@ -273,7 +274,7 @@ public class TraineeRepositoryTests {
 		Boolean eanbled = true;
 		String name = "011";
 		
-		Slice<Trainee> list = this.repo.findByEnabledAndNameContaining(eanbled, name, paging);
+		Page<Trainee> list = this.repo.findByEnabledAndNameContaining(eanbled, name, paging);
 		list.forEach(d -> log.info(d.toString()));
 		
 		

@@ -37,7 +37,7 @@ public class CourseController {
 	//RESTfull	
 	//@GetMapping // DTO로 받기 위해서는 Post(json) 방식으로 줘야 한다
 	@PostMapping // 리스트 
-//	Slice<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){
+//	Page<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){
 		List<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){ // Pageable paging는 아직 실험중
 		log.info("list({}) invoked.",dto);
 		
@@ -51,7 +51,7 @@ public class CourseController {
 		//paging = PageRequest.of(page, pageSize);
 		
 		// 기본적으로 모든 데이터를 조회
-	    //Slice<Course> slice = this.repo.findByEnabled(true, paging);
+	    //Page<Course> slice = this.repo.findByEnabled(true, paging);
 		List<Course> list = this.repo.findByEnabled(true);
 		
 		// 아직 값을 굉장히 많이 찍는 문제가 있다.
@@ -169,8 +169,6 @@ public class CourseController {
 	} // 훈련생 수강정원 필터
 
 	
-	
-	//RESTfull
 	// 강사 등록 화면: 담당과정 선택 리스트
 	@GetMapping("/selectCourseIns") 
 	public List<Course> selectCourseListInstructor(){

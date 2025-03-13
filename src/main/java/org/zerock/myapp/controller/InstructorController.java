@@ -1,11 +1,8 @@
 package org.zerock.myapp.controller;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +34,7 @@ public class InstructorController { // 강사 관리
 	//RESTfull	
 	//@GetMapping // DTO로 받기 위해서는 Post(json) 방식으로 줘야 한다
 	@PostMapping // 리스트 
-	Slice<Instructor> list(@RequestBody CriteriaDTO dto, Pageable paging){
+	Page<Instructor> list(@RequestBody CriteriaDTO dto, Pageable paging){
 //		List<Instructor> list(@RequestBody CriteriaDTO dto, Pageable paging){ // Pageable paging는 아직 실험중
 		log.info("list({}) invoked.",dto);
 		
@@ -52,7 +49,7 @@ public class InstructorController { // 강사 관리
 		
 		// 기본적으로 모든 데이터를 조회
 	    //List<Instructor> list = this.repo.findByEnabled(true, paging);
-		Slice<Instructor> slice = this.repo.findByEnabled(true, paging);
+		Page<Instructor> slice = this.repo.findByEnabled(true, paging);
 		
 
 		return slice;
