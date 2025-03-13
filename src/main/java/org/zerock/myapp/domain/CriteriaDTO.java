@@ -12,7 +12,7 @@ public class CriteriaDTO implements Serializable{
 	private Integer page;
 	private Integer pageSize;
 	
-	private String condition; // selected 검색 항목 번호
+	private String condition; // selected 검색 항목명
 	private String q; // selected 검색 데이터
 	
 	//구분명 과정1 강사2 훈련생3

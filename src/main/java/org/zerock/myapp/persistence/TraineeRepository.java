@@ -33,6 +33,10 @@ public interface TraineeRepository extends JpaRepository<Trainee, Long> {
 		);
 	
 	
+	//단건 조회: 
+//	public abstract 
+	
+	
 	
 	
 	

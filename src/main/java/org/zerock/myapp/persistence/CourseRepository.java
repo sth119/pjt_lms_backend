@@ -47,7 +47,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 			Boolean enabled, Integer status, String type, String name, Pageable paging
 		);
 	
-	public abstract Optional<Course> findByCourseId(Long id);
+	public abstract Course findByEnabledAndId(Boolean enabled, Long id);
 	
 
 }//end interface
