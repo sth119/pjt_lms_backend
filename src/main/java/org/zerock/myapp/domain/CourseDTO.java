@@ -8,7 +8,7 @@ import lombok.Data;
 public class CourseDTO {
 	private Long id;							//과정번호
 
-	private String type;						//과정구분
+	private Integer type;						//과정구분(1=NCS, 2=KDT, 3=산대특, 4=미정)
 	private String name;						//과정명
 	private Integer capacity;					//수강정원
 	private String detail;						//내용

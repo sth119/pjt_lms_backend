@@ -42,7 +42,7 @@ public class Course implements Serializable {
 	
 	// 2-1. General Properties
 	@Column(nullable = false)
-	private String type;						//과정구분(frontend, backend, fullstack)
+	private Integer type = 4;						//과정구분(1=NCS, 2=KDT, 3=산대특, 4=미정)
 
 	@Column(nullable = false)
 	private String name;						//과정명

@@ -17,6 +17,7 @@ import org.zerock.myapp.domain.CourseDTO;
 import org.zerock.myapp.domain.CriteriaDTO;
 import org.zerock.myapp.entity.Course;
 import org.zerock.myapp.persistence.CourseRepository;
+import org.zerock.myapp.persistence.TraineeRepository;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 // 과정 URI 컨트롤러
 public class CourseController {
 	@Autowired CourseRepository repo;
+	@Autowired TraineeRepository trnRepo;
 	
 	//RESTfull	
 	//@GetMapping // DTO로 받기 위해서는 Post(json) 방식으로 줘야 한다
@@ -54,6 +56,13 @@ public class CourseController {
 		// 아직 값을 굉장히 많이 찍는 문제가 있다.
 		//list.forEach(s -> log.info(s.toString()));
 	    
+		
+		//temp
+		list.forEach(s -> {
+			s.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, s));
+		});
+		
+		
 		return list;
 	} // list
 	
