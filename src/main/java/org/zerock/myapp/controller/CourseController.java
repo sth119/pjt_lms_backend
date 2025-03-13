@@ -2,6 +2,7 @@ package org.zerock.myapp.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -149,26 +150,37 @@ public class CourseController {
 	} // delete
 	
 	
-	
-	
-	
-	
 
 	//RESTfull
-	// 강사 & 훈련생 등록 화면: 담당과정 선택 리스트
-	@GetMapping("/selectCourse") 
-	public List<Course> selectCourseList(){
+	// 훈련생 등록 화면: 담당과정 선택 리스트
+	@GetMapping("/selectCourseTrn") 
+	public List<Course> selectCourseListTrainee(){
 		log.info("selectCourseList() invoked.");
 		
 		List<Course> list = this.repo.findByEnabledAndStatusInOrderByStartDate(true, List.of(1, 2));
 		
-		list.forEach(c -> {
-			c.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, c));
-		});
+		// 수강 인원이 정원보다 작은 과정만 필터링
+		list.stream()
+		.peek(c -> c.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, c))) // peek: currCount를 설정하기 위해 사용. forEach 대신 중간 연산으로 처리.
+		.filter(c -> c.getCurrCount() < c.getCapacity()) // 정원 미만인 경우만 포함
+		.collect(Collectors.toList());
 
 		return list;
-	} // list
+	} // 훈련생 수강정원 필터
+
 	
+	
+	//RESTfull
+	// 강사 등록 화면: 담당과정 선택 리스트
+	@GetMapping("/selectCourseIns") 
+	public List<Course> selectCourseListInstructor(){
+		log.info("selectCourseListInstructor() invoked.");
+		
+		List<Course> list = this.repo.findByEnabledAndStatusInOrderByStartDate(true, List.of(1, 2));
+		
+		return list;
+		
+	} // 강사 수강정원 필터.
 	
 	
 	 
