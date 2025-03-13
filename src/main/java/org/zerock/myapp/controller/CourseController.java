@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,9 +33,9 @@ public class CourseController {
 	
 	//RESTfull	
 	//@GetMapping // DTO로 받기 위해서는 Post(json) 방식으로 줘야 한다
-	@PostMapping
+	@PostMapping // 리스트 
 //	Slice<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){
-		List<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){
+		List<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){ // Pageable paging는 아직 실험중
 		log.info("list({}) invoked.",dto);
 		
 		Integer page = dto.getPage();
@@ -47,18 +45,19 @@ public class CourseController {
 		//Integer type = dto.getType();
 		//log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
 		
-		paging = PageRequest.of(page, pageSize);
+		//paging = PageRequest.of(page, pageSize);
 		
 		// 기본적으로 모든 데이터를 조회
 	    //Slice<Course> slice = this.repo.findByEnabled(true, paging);
 		List<Course> list = this.repo.findByEnabled(true);
 		
+		// 아직 값을 굉장히 많이 찍는 문제가 있다.
 		//list.forEach(s -> log.info(s.toString()));
 	    
 		return list;
 	} // list
 	
-	@PutMapping
+	@PutMapping // 등록
 	Course register(@RequestBody CourseDTO dto) {
 		log.info("register({}) invoked.",dto);
 		Course course = new Course();
@@ -80,21 +79,21 @@ public class CourseController {
 		
 		Course result = this.repo.save(course);
 		log.info("result:{}",result);
+		log.info("Regist success");
 		
 		return result;
 	} // register
 	
-	@GetMapping("/{id}")
+	@GetMapping("/{id}") // 단일 조회 화면
 	Course read(@PathVariable Long id){
 		log.info("read({}) invoked.",id);
 		
-		Optional<Course> optional = this.repo.findById(1L);
+		Optional<Course> optional = this.repo.findByCourseId(id);
 		
-		optional.ifPresent(foundCourse -> {
-			log.info("\t+ read data: {}", foundCourse);
-		});	// ifPresent
+		Course course = this.repo.findByCourseId(id)
+		        .orElseThrow(() -> new RuntimeException("해당 ID의 코스를 찾을 수 없습니다: " + id));
 		
-		Course course = optional.get();
+		log.info("Read success");
 		return course;
 	} // read
 	
@@ -115,9 +114,11 @@ public class CourseController {
 			 course.setEndDate(dto.getEndDate());
 			 
 			 Course result =  this.repo.save(course);
+			 
+			 log.info("Update success");
 			 return result;
 		 } // if
-		 
+		 log.info("Update fail");
 		return null; // 값이 없으면 NULL반환
 	} // update
 	
@@ -134,9 +135,11 @@ public class CourseController {
 			 course.setEnabled(false);
 			 
 			 Course result =  this.repo.save(course);
+			 
+			 log.info("Delete success");
 			 return result;
 		 } // if
-		
+		log.info("Delete fail");
 		return null;
 	} // delete
 	 

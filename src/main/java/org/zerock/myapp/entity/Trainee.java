@@ -11,6 +11,7 @@ import org.hibernate.annotations.SourceType;
 import org.hibernate.generator.EventType;
 import org.zerock.myapp.util.BooleanToIntegerConverter;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
@@ -64,7 +65,7 @@ public class Trainee implements Serializable {
 	@Column(name="UPDATE_TS")
 	private Date udtDate;						//수정일
 	
-
+	@JsonBackReference
 	// 3. Bi-directional Many-To-One Association
 	@ManyToOne
 	@JoinColumn(name="CRS_ID")

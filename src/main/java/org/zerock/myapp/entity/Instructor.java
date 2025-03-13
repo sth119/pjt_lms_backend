@@ -11,6 +11,7 @@ import org.hibernate.annotations.SourceType;
 import org.hibernate.generator.EventType;
 import org.zerock.myapp.util.BooleanToIntegerConverter;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
@@ -59,6 +60,7 @@ public class Instructor implements Serializable {
 	@Column(name="UPDATE_TS")
 	private Date udtDate;
 	
+	@JsonBackReference
 	//bi-directional one-to-one association to TCours
 	@OneToOne
 	@JoinColumn(name="CRS_ID")

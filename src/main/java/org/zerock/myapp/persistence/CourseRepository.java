@@ -2,6 +2,7 @@ package org.zerock.myapp.persistence;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -45,6 +46,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 	public abstract Slice<Course> findByEnabledAndStatusAndTypeAndNameContaining(
 			Boolean enabled, Integer status, String type, String name, Pageable paging
 		);
+	
+	public abstract Optional<Course> findByCourseId(Long id);
 	
 
 }//end interface
