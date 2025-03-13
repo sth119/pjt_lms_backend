@@ -21,12 +21,12 @@ public class InstructorDTO {
 	private Date udtDate;
 	
 	@JsonBackReference("course-instructor")
-//	private Course course;		//담당과정번호(FK)
+	private Course course;		//담당과정번호(FK)
 	private Long courseId;
 
-	public Object getCourseId() {
-		return null;
-	}
+//	public Object getCourseId() {
+//		return null;
+//	}
 
 
 } // end class

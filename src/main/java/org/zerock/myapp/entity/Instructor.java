@@ -52,12 +52,12 @@ public class Instructor implements Serializable {
 	@Column(nullable=false, length=50)
 	private String tel;
 
-	@Column(nullable=false)
-	private Integer status;				
+	@Column(nullable=false) //상태(등록=1,강의중=2,퇴사=3)
+	private Integer status = 1;				
 
 	@Convert(converter = BooleanToIntegerConverter.class)
 	@Column(nullable=false)
-	private Boolean enabled;			//삭제여부(1=유효,0=삭제)
+	private Boolean enabled = true;			//삭제여부(1=유효,0=삭제)
 
 	@CurrentTimestamp(event = EventType.INSERT, source = SourceType.DB)
 	@Column(name="INSERT_TS", nullable=false)
