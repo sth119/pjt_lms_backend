@@ -18,5 +18,6 @@ public class InstructorDTO {
 	private Date crtDate;
 	private Date udtDate;
 	
-	private Course course;		//담당과정번호(FK)
+//	private Course course;		//담당과정번호(FK)
+	private Long courseId;		//담당과정번호(FK)
 } // end class

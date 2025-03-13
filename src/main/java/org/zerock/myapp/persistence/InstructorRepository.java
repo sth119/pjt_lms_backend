@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.zerock.myapp.entity.Course;
 import org.zerock.myapp.entity.Instructor;
 
 @Repository
@@ -32,6 +31,8 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> {
 	public abstract Slice<Instructor> findByEnabledAndTelContaining(
 			Boolean enabled, String tel, Pageable paging
 		);
+
+	
 	
 	//단건 조회 :
 	//	삭제를 Enabled false로 지정하였기 때문에 조회도 Enabled를 기본 조건으로 검색해야한다.

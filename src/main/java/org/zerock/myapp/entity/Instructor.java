@@ -46,7 +46,7 @@ public class Instructor implements Serializable {
 	private String tel;
 
 	@Column(nullable=false)
-	private Integer status;				//
+	private Integer status;				
 
 	@Convert(converter = BooleanToIntegerConverter.class)
 	@Column(nullable=false)
@@ -64,7 +64,8 @@ public class Instructor implements Serializable {
 	//bi-directional one-to-one association to TCours
 	@OneToOne
 	@JoinColumn(name="CRS_ID")
-	private Course course;		//담당과정번호(FK)
+//	private Course course;		//담당과정번호(FK)
+	private Course course;
 	
 	//bi-directional many-to-one association to TUpfile
 	@JsonManagedReference
@@ -85,5 +86,9 @@ public class Instructor implements Serializable {
 		upfile.setInstructor(null);
 
 		return upfile;
+	}
+
+	public void setCourseId(Long courseId) {
+		
 	}
 }
