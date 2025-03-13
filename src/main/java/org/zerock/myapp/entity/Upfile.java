@@ -10,6 +10,7 @@ import org.hibernate.generator.EventType;
 import org.zerock.myapp.util.BooleanToIntegerConverter;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -24,6 +25,15 @@ import lombok.Data;
 
 
 @Data
+
+@JsonIgnoreProperties({
+	"crtDate",
+	"udtDate",
+	
+	"course",
+	"instructor",
+	"trainee"
+})
 
 @Entity
 @Table(name="T_UPFILES")

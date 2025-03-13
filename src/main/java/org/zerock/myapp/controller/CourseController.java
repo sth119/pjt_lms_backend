@@ -1,7 +1,10 @@
 package org.zerock.myapp.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,12 +20,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.zerock.myapp.domain.CourseDTO;
 import org.zerock.myapp.domain.CriteriaDTO;
 import org.zerock.myapp.entity.Course;
+import org.zerock.myapp.entity.Upfile;
 import org.zerock.myapp.persistence.CourseRepository;
 import org.zerock.myapp.persistence.TraineeRepository;
+import org.zerock.myapp.persistence.UpFileRepository;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CourseController {
 	@Autowired CourseRepository repo;
 	@Autowired TraineeRepository trnRepo;
+	@Autowired UpFileRepository fileRepo;
 	
 	//RESTfull	
 	//@GetMapping // DTO로 받기 위해서는 Post(json) 방식으로 줘야 한다
@@ -56,27 +67,8 @@ public class CourseController {
 		list.forEach(s -> {
 			s.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, s));
 			log.info(s.toString());
-		});
+		}); // forEach
 		
-		
-		
-		
-		//Integer type = dto.getType();
-		//log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
-		
-		//paging = PageRequest.of(page, pageSize);
-		
-		// 기본적으로 모든 데이터를 조회
-	    //Page<Course> slice = this.repo.findByEnabled(true, paging);
-//		List<Course> list = this.repo.findByEnabled(true);
-		
-		// 아직 값을 굉장히 많이 찍는 문제가 있다.
-		//list.forEach(s -> log.info(s.toString()));
-	    
-		//temp
-//		list.forEach(s -> {
-//			s.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, s));
-//		});
 
 		return list;
 	} // list
@@ -84,9 +76,17 @@ public class CourseController {
 	
 	
 	
-	@PutMapping // 등록
-	Course register(@RequestBody CourseDTO dto) {
-		log.info("register({}) invoked.",dto);
+	@PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE) // 등록
+	Course register(
+			@RequestPart("dto") String dtoString, // String 으로 받아서 변환해야 한다
+			@RequestPart("upfiles") MultipartFile file) throws Exception, IOException {
+		log.info("register({}) invoked.",dtoString);
+		
+		// JSON 데이터를 DTO로 변환
+	    ObjectMapper objectMapper = new ObjectMapper();
+	    CourseDTO dto = objectMapper.readValue(dtoString, CourseDTO.class);
+		
+		
 		Course course = new Course();
 		
 		course.setType(dto.getType()); // 과정구분
@@ -96,17 +96,52 @@ public class CourseController {
 		course.setStartDate(dto.getStartDate()); // 시작일
 		course.setEndDate(dto.getEndDate()); // 종료일
 		
-		// 담당강사명, 여기서 넣는게 아니다. 강사나 훈련생을 등록할 때 넣어야 한다.
-		//course.setInstructor(dto.getInstructor().getName()); 
-		
 		course.setCurrCount(0); // 현재수강인원
-		
-		// enabled 는 기본적으로 1이 자동으로 들어감
 		// currCount는 기본값 0
+		// enabled 는 기본적으로 1이 자동으로 들어감
 		
 		Course result = this.repo.save(course);
 		log.info("result:{}",result);
 		log.info("Regist success");
+		
+
+		Upfile upfile = new Upfile();  // 파일 객체 생성
+		upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
+		upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
+		upfile.setPath("C:/temp/course/"); // 주소
+		upfile.setEnabled(true); // 기본값
+		
+		upfile.setCourse(result); // 연관 관계 설정, 자식이 부모객체 저장(set)
+		
+		log.info("upfile:{}",upfile);
+		this.fileRepo.save(upfile); // 파일 엔티티 저장
+		
+		
+		   // 파일 저장 처리
+	    if (file != null && !file.isEmpty()) {
+	        // 파일 저장 경로 생성
+	        String uploadDir = upfile.getPath();
+	        File targetDir = new File(uploadDir);
+	        if (!targetDir.exists()) {
+	            targetDir.mkdirs(); // 디렉토리가 없는 경우 생성
+	        } // if
+	    
+	        // 파일 저장 경로 및 이름 설정
+	        String filePath = upfile.getPath() + upfile.getUuid() + "." + upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
+	        File savedFile = new File(filePath);
+	        // 이후에 파일 받을때는 uuid에서 확장자를 뺴는 과정이 필요함.
+
+	        // 파일 저장
+	        file.transferTo(savedFile);
+	        log.info("File saved at: {}", filePath);
+	    } // if
+		
+		
+		// 4. Course에 Upfile 추가
+		result.addUpfile(upfile); // 연관 관계 설정, 부모에 자식객체 저장(add)
+		
+		log.info("result:{}",result);
+		log.info("getFileCourse success");
 		
 		return result;
 	} // register

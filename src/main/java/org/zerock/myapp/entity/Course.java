@@ -127,6 +127,7 @@ public class Course implements Serializable {
 	}
 
 	public Upfile addUpfile(Upfile upfile) {
+		getUpfiles().remove(upfile);
 		getUpfiles().add(upfile);
 		upfile.setCourse(this);
 

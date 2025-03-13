@@ -2,6 +2,10 @@ package org.zerock.myapp.domain;
 
 import java.util.Date;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Data
@@ -19,6 +23,9 @@ public class CourseDTO {
 	
 	private Date crtDate;						//등록일
 	private Date udtDate;						//수정일
+	
+	@JsonIgnore
+	private MultipartFile upfiles; // 받을 파일 객체
 	
 	private Integer currCount;	//현재 수강 인원
 } // end class
