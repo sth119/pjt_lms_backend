@@ -68,19 +68,19 @@ public class TraineeRepositoryTests {
 	void create() {
 		log.debug("create() invoked");
 		
-		Trainee trainee = new Trainee();
-		trainee.setName("최성락");
-		trainee.setTel("01012341234");
-		trainee.setStatus(1);
-		trainee.setEnabled(true);
-		trainee.setCrtDate(new Date());
-		
-		
-		log.info("\t+ Before: {}", trainee);		// PK 속성값이 null
-		
-		trainee = this.repo.save(trainee);
-		
-		log.info("\t+ After: {}", trainee);		// 자동생성된 PK 속성값이 들어있다!!
+		Optional<Course> course = this.crsRepo.findById(39L);
+		course.ifPresent(foundCourse -> {
+			Trainee trainee = new Trainee();
+			trainee.setName("최성락");
+			trainee.setTel("01012341234");
+			trainee.setCourse(foundCourse);
+			trainee.setStatus(1);
+			trainee.setEnabled(true);
+			
+			log.info("\t+ Before: {}", trainee);		// PK 속성값이 null			
+			trainee = this.repo.save(trainee);			
+			log.info("\t+ After: {}", trainee);		// 자동생성된 PK 속성값이 들어있다!!
+		});
 		
 	}//create
 	
