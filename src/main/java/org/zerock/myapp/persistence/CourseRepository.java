@@ -47,6 +47,12 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 			Boolean enabled, Integer status, String type, String name, Pageable paging
 		);
 	
+	//강사 & 훈련생 등록 화면: 담당과정 선택 리스트
+	public abstract List<Course> findByEnabledAndStatusInOrderByStartDate(Boolean enabled, List<Integer> statuses);
+	
+	
+	
+	
 	//단건 조회 :
 	//	삭제를 Enabled false로 지정하였기 때문에 조회도 Enabled를 기본 조건으로 검색해야한다.
 	public abstract Optional<Course> findByEnabledAndCourseId(Boolean enabled, Long courseId);

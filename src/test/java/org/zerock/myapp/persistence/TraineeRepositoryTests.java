@@ -119,7 +119,7 @@ public class TraineeRepositoryTests {
 	void read() {
 		log.debug("read() invoked");
 		
-		Optional<Trainee> trainee = this.repo.findById(103L);
+		Optional<Trainee> trainee = this.repo.findByEnabledAndTraineeId(true, 2L);
 		trainee.ifPresent(foundTrainee -> {
 			log.info("\t+ read data: {}", trainee);
 		});		

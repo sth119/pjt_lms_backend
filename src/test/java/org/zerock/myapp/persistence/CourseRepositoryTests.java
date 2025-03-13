@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -183,6 +184,37 @@ public class CourseRepositoryTests {
 		log.info("\t+ delete end!");
 		
 	}//delete
+	
+//	@Disabled
+	@Tag("Course-Repository-Test")
+	@Order(6)
+	@Test
+//	@RepeatedTest(1)
+	@DisplayName("6. 강사 & 훈련생 등록 화면: 담당과정 선택 리스트")
+	@Timeout(value = 1L*5, unit = TimeUnit.SECONDS)
+	@Rollback(false)
+	void findByEnabledAndStatusIn() {
+		log.debug("findByEnabledAndStatusIn() invoked");
+		
+		List<Course> list = this.repo.findByEnabledAndStatusInOrderByStartDate(true, List.of(1, 2));
+		
+		list.forEach(c -> log.info(c.toString()));
+		
+	}//findByEnabledAndStatusIn
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
