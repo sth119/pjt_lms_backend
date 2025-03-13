@@ -63,6 +63,7 @@ public class CourseController {
 		});
 		
 		
+		
 		return list;
 	} // list
 	
@@ -97,9 +98,9 @@ public class CourseController {
 	Course read(@PathVariable Long id){
 		log.info("read({}) invoked.",id);
 		
-		Optional<Course> optional = this.repo.findByCourseId(id);
+		Optional<Course> optional = this.repo.findById(id);
 		
-		Course course = this.repo.findByCourseId(id)
+		Course course = this.repo.findById(id)
 		        .orElseThrow(() -> new RuntimeException("해당 ID의 코스를 찾을 수 없습니다: " + id));
 		
 		log.info("Read success");
