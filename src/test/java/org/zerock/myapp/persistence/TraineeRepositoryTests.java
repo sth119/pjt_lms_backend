@@ -1,7 +1,6 @@
 package org.zerock.myapp.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 
 import java.sql.SQLException;
 import java.util.Date;

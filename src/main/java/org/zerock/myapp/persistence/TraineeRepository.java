@@ -28,12 +28,12 @@ public interface TraineeRepository extends JpaRepository<Trainee, Long> {
 		);
 	
 	//검색 리스트: 활성화상태(1) + 이름 
-	public abstract Slice<Trainee> findByEnabledAndNameContaining(
+	public abstract Page<Trainee> findByEnabledAndNameContaining(
 			Boolean enabled, String name, Pageable paging
 		);
 		
 	//검색 리스트: 활성화상태(1) + 전화번호
-	public abstract Slice<Trainee> findByEnabledAndTelContaining(
+	public abstract Page<Trainee> findByEnabledAndTelContaining(
 			Boolean enabled, String tel, Pageable paging
 		);
 	
