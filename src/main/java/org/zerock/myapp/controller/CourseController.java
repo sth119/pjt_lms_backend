@@ -314,7 +314,7 @@ public class CourseController {
 			 course.setStatus(4);
 			 course.setEnabled(false);
 			 
-			 // 연관된 Instructor 처리
+			// 연관된 Instructor 처리
 	        if (course.getInstructor() != null) {
 	            course.getInstructor().setCourse(null); // Instructor의 Course 참조를 null로 설정
 	            this.insRepo.save(course.getInstructor()); // 변경된 상태 저장
