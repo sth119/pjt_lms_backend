@@ -109,7 +109,7 @@ public class Course implements Serializable {
 	@JsonManagedReference("course-upfiles") // fix
 	@ToString.Exclude
 	@OneToMany(mappedBy="course")
-	private List<Upfile> upfiles;
+	private List<Upfile> upfiles = new Vector<>();
 
 
 	
@@ -128,7 +128,9 @@ public class Course implements Serializable {
 	}
 
 	public Upfile addUpfile(Upfile upfile) {
+		if(upfile != null) {
 		getUpfiles().remove(upfile);
+		}
 		getUpfiles().add(upfile);
 		upfile.setCourse(this);
 

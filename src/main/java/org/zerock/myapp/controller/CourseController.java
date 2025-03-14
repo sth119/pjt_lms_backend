@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -125,18 +126,13 @@ public class CourseController {
 	
 	
 	
-	@PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE) // 등록
+	@PutMapping // 등록
 	Course register(
-			@RequestPart("dto") String dtoString, // String 으로 받아서 변환해야 한다
-			@RequestPart("upfiles") MultipartFile file) throws Exception, IOException {
-		log.info("register({}) invoked.",dtoString);
+			CourseDTO dto, // String 으로 받아서 변환해야 한다
+			@RequestParam("upfiles") MultipartFile file) throws Exception, IOException {
+		log.info("register({}) invoked.",dto);
 		
-		// JSON 데이터를 DTO로 변환
-	    ObjectMapper objectMapper = new ObjectMapper();
-	    CourseDTO dto = objectMapper.readValue(dtoString, CourseDTO.class);
-		
-		
-		Course course = new Course();
+		Course course = new Course(); // 코스 객체 생성
 		
 		course.setType(dto.getType()); // 과정구분
 		course.setName(dto.getName()); // 과정명
@@ -153,7 +149,7 @@ public class CourseController {
 		log.info("result:{}",result);
 		log.info("Regist success");
 		
-
+		
 		Upfile upfile = new Upfile();  // 1. 파일 객체 생성
 		upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
 		upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
