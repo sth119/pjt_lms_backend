@@ -19,5 +19,12 @@ public class TraineeDTO {
 	private Date udtDate;
 	
 	private Course course;				//소속과정번호(FK)
+	
+//	private Integer page;
+//	private Integer PageSize;
+	
+	private String searchWord;    //이름 전화번호
+	private String searchText;	//검색어
+	
 
 } // end class
