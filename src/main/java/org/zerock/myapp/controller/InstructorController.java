@@ -74,13 +74,14 @@ public class InstructorController { // 강사 관리
 		log.info("register({}) invoked.",dto);
 		Instructor instructor = new Instructor();
 		
-		Course course = this.crsRepo.findById(dto.getCourseId()).orElse(new Course());
 		instructor.setName(dto.getName()); // 이름
 		instructor.setTel(dto.getTel()); // 전화번호
-//		instructor.setCourse(dto.getCourse());  // 담당과정
-		instructor.setCourse(course);  // 담당과정
-		instructor.setStatus(1);
-//		instructor.setEnabled(true);
+		
+		if(dto.getCourseId() != null)
+			instructor.setCourse(this.crsRepo.findById(dto.getCourseId()).orElse(new Course()));  // 담당과정
+		
+		instructor.setStatus(1);	// 등록시 항목 없음으로  기본값		
+		instructor.setEnabled(true);// 등록시 항목 없음으로  기본값
 		log.info("before success?");
 		
 		
@@ -128,9 +129,9 @@ public class InstructorController { // 강사 관리
 		instructor.setTel(dto.getTel());
 		
 		// 3. Course 설정 (register와 동일한 방식)
-		Course course = this.crsRepo.findById(dto.getCourseId()).orElse(new Course());
-		instructor.setCourse(course);
-		
+		if(dto.getCourseId() != null)
+			instructor.setCourse(this.crsRepo.findById(dto.getCourseId()).orElse(new Course()));  // 담당과정
+				
 		// 4. 상태값 유지 (register에서는 status=1로 고정, update에서는 DTO에서 받음)
 		if(dto.getStatus() != null) {
 			instructor.setStatus(dto.getStatus());
