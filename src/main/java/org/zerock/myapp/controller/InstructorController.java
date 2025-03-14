@@ -77,7 +77,6 @@ public class InstructorController { // 강사 관리
 		Course course = this.crsRepo.findById(dto.getCourseId()).orElse(new Course());
 		instructor.setName(dto.getName()); // 이름
 		instructor.setTel(dto.getTel()); // 전화번호
-//		instructor.setCourse(dto.getCourse());  // 담당과정
 		instructor.setCourse(course);  // 담당과정
 		instructor.setStatus(1);
 //		instructor.setEnabled(true);

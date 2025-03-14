@@ -6,11 +6,13 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import org.zerock.myapp.entity.Instructor;
 
 @Repository
-public interface InstructorRepository extends JpaRepository<Instructor, Long> {
+public interface InstructorRepository extends JpaRepository<Instructor, Long> , JpaSpecificationExecutor<Instructor> {
+	
 	
 	/* 검색
 	 * ** 기본 조건 => 활성화상태(enabled)
@@ -41,5 +43,14 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> {
 	//	삭제를 Enabled false로 지정하였기 때문에 조회도 Enabled를 기본 조건으로 검색해야한다.
 	public abstract Optional<Instructor> findByEnabledAndInstructorId(Boolean enabled, Long instructorId);
 	
+	// 과정을 강사명으로 찾을때 native 쿼리문 명령어
+//	final String nativeSQL = """
+//			SELECT c.*
+//			FROM t_courses c JOIN t_instructors i ON c.id = i.crs_id
+//			WHERE c.enabled = 1 AND i.name LIKE '%' || : instructorName || '%'
+//			""";
+//	
+//	@Query(value = nativeSQL, nativeQuery = true)
+//	Page<Course> findCoursesByInstructorName(@Param("instructorName") String name, Pageable paging);
 	
 }//end interface
