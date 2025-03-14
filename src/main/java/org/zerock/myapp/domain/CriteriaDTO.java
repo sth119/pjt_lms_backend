@@ -9,7 +9,7 @@ import lombok.Data;
 public class CriteriaDTO implements Serializable{
 	@Serial private static final long serialVersionUID = 1L;
 
-	private Integer page = 0;
+	private Integer page = 0;			//front 랑 약속
 	private Integer pageSize = 10;
 	
 	private String condition; // selected 검색 항목명
