@@ -13,6 +13,7 @@ public class UserDTO {
 	private String name;
 	private Boolean enabled;
 
+	
 	private Date crtDate;
 	private Date udtDate;
 } // end class
