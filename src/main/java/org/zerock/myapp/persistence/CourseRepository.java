@@ -6,13 +6,16 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import org.zerock.myapp.entity.Course;
 
+
+//JpaSpecificationExecutor: 동적 검색을 위한 상속
+
 @Repository
-public interface CourseRepository extends JpaRepository<Course, Long> {
+public interface CourseRepository extends JpaRepository<Course, Long>, JpaSpecificationExecutor<Course> {
 	
 	/* 검색
 	 * ** 상태 => 기본 조건, 삭제여부 => 기본 조건

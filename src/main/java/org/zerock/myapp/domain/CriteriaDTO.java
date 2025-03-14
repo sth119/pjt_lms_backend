@@ -9,8 +9,8 @@ import lombok.Data;
 public class CriteriaDTO implements Serializable{
 	@Serial private static final long serialVersionUID = 1L;
 
-	private Integer page;
-	private Integer pageSize;
+	private Integer page = 0;
+	private Integer pageSize = 10;
 	
 	private String condition; // selected 검색 항목명
 	private String q; // selected 검색 데이터
