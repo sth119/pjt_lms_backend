@@ -34,4 +34,6 @@ public class CourseDTO {
 	
 	private Integer currCount;	//현재 수강 인원
 
+	private String searchWord;
+	private String searchText;
 } // end class

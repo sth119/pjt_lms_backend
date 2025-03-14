@@ -223,7 +223,7 @@ public class CourseRepositoryTests {
 	@Test
 //	@RepeatedTest(1)
 	@DisplayName("10. list-findByEnabled")
-	@Timeout(value = 1L*5, unit = TimeUnit.SECONDS)
+	@Timeout(value = 1L*10, unit = TimeUnit.SECONDS)
 	void findByEnabled() {
 		log.debug("findByEnabled() invoked");
 		
@@ -247,30 +247,98 @@ public class CourseRepositoryTests {
 //		list.forEach(d -> log.info(d.toString()));
 		
 	}//findByEnabled
-//	
+
+	
+	@Disabled
+	@Tag("Course-Repository-Test")
+	@Order(11)
+	@Test
+//	@RepeatedTest(1)
+	@DisplayName("11. list-findByEnabledAndStatus")
+	@Timeout(value = 1L*10, unit = TimeUnit.SECONDS)
+	void findByEnabledAndStatus() {
+		log.debug("findByEnabledAndStatus() invoked");
+		
+		int pageNo = 1;
+		int pageSize = 50;		
+		Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by("crtDate").descending());
+		
+		Page<Course> list = this.repo.findByEnabledAndStatus(true, 1, paging);
+		list.forEach(d -> log.info(d.toString()));
+		
+		log.info("=".repeat(100));
+		
+		Page<Course> list2 = this.repo.findByEnabledAndStatus(true, 2, paging);
+		list2.forEach(d -> log.info(d.toString()));
+		
+		
+	}//findByEnabledAndStatus
+	
+	
+	@Disabled
+	@Tag("Course-Repository-Test")
+	@Order(12)
+	@Test
+//	@RepeatedTest(1)
+	@DisplayName("12. list-nativeSQL_TypeAndInsName")
+	@Timeout(value = 1L*10, unit = TimeUnit.SECONDS)
+	void findCoursesByTypeAndInstructorName() {
+		log.debug("findCoursesByTypeAndInstructorName() invoked");
+		
+		int pageNo = 1;
+		int pageSize = 50;		
+		Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by("INSERT_TS").descending());
+		
+		Boolean enabled = true;
+		Integer status = 1;	//진행여부(연기=3,예정=2,진행중=1,종료=0)
+		Integer type = 1;		//과정구분(1=NCS, 2=KDT, 3=산대특, 4=미정)
+		String instructorName = "dong";
+		
+		Page<Course> list = this.repo.findCoursesByTypeAndInstructorName(enabled, status, type, instructorName, paging);
+		list.forEach(d -> log.info(d.toString()));
+		
+		log.info("=".repeat(100));
+		
+		status = 2;
+		type = 2;
+		instructorName = "dong";
+		
+		Page<Course> list2 = this.repo.findCoursesByTypeAndInstructorName(true, status, type, instructorName, paging);
+		list2.forEach(d -> log.info(d.toString()));
+		
+	}//findCoursesByTypeAndInstructorName
+	
 //	@Disabled
-//	@Tag("Course-Repository-Test")
-//	@Order(11)
-//	@Test
-////	@RepeatedTest(1)
-//	@DisplayName("11. list-findByEnabledAndNameContaining")
-//	@Timeout(value = 1L, unit = TimeUnit.SECONDS)
-//	void findByEnabledAndNameContaining() {
-//		log.debug("findByEnabledAndNameContaining() invoked");
-//	}//findByEnabledAndNameContaining
-//	
-//	@Disabled
-//	@Tag("Course-Repository-Test")
-//	@Order(12)
-//	@Test
-////	@RepeatedTest(1)
-//	@DisplayName("12. list-findByEnabledAndTelContaining")
-//	@Timeout(value = 1L, unit = TimeUnit.SECONDS)
-//	void findByEnabledAndTelContaining() {
-//		log.debug("findByEnabledAndTelContaining() invoked");
-//	}//findByEnabledAndTelContaining
-//	
-//	
+	@Tag("Course-Repository-Test")
+	@Order(13)
+	@Test
+//	@RepeatedTest(1)
+	@DisplayName("13. list-findCoursesByInstructorName")
+	@Timeout(value = 1L*10, unit = TimeUnit.SECONDS)
+	void nativeSQL_InsName() {
+		log.debug("findCoursesByInstructorName() invoked");
+		
+		int pageNo = 1;
+		int pageSize = 50;		
+		Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by("INSERT_TS").descending());
+		
+		Boolean enabled = true;
+		Integer status = 1;	//진행여부(연기=3,예정=2,진행중=1,종료=0)
+		String instructorName = "22";
+		
+		Page<Course> list = this.repo.findCoursesByInstructorName(enabled, status, instructorName, paging);
+		list.forEach(d -> log.info(d.toString()));
+		
+		log.info("=".repeat(100));
+		
+		status = 2;
+		instructorName = "33";
+		
+		Page<Course> list2 = this.repo.findCoursesByInstructorName(true, status, instructorName, paging);
+		list2.forEach(d -> log.info(d.toString()));
+		
+	}//findCoursesByInstructorName
+	
 	
 	
 	

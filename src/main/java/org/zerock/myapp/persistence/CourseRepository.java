@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.zerock.myapp.entity.Course;
 
@@ -51,17 +53,42 @@ public interface CourseRepository extends JpaRepository<Course, Long>, JpaSpecif
 			Boolean enabled, Integer status, String type, String name, Pageable paging
 		);
 	
-	//강사 & 훈련생 등록 화면: 담당과정 선택 리스트
-	public abstract List<Course> findByEnabledAndStatusInOrderByStartDate(Boolean enabled, List<Integer> statuses);
-	
-	
-	//Native SQL
-	final String nativeSQL = """
+	final String nativeSQL_TypeAndInsName = """
+			SELECT c.* 
+			FROM t_courses c 
+				JOIN t_instructors i ON c.id = i.crs_id 
+			WHERE c.enabled = :enabled AND c.status = :status AND c.type = :type AND i.name LIKE '%' || :instructorName || '%'
+		""";
+	final String nativeSQL_InsName = """
 			SELECT c.* 
 			FROM t_courses c 
 				JOIN t_instructors i ON c.id = i.crs_id 
 			WHERE c.enabled = :enabled AND c.status = :status AND i.name LIKE '%' || :instructorName || '%'
 		""";
+			
+	@Query(value = nativeSQL_TypeAndInsName, nativeQuery = true)
+	Page<Course> findCoursesByTypeAndInstructorName(
+			@Param("enabled") Boolean enabled, 
+			@Param("status") Integer status, 
+			@Param("type") Integer type, 
+			@Param("instructorName") String instructorName, 
+			Pageable paging
+		);
+	
+	@Query(value = nativeSQL_InsName, nativeQuery = true)
+	Page<Course> findCoursesByInstructorName(
+			@Param("enabled") Boolean enabled, 
+			@Param("status") Integer status, 
+			@Param("instructorName") String instructorName, 
+			Pageable paging
+		);
+	
+	
+
+	
+	//강사 & 훈련생 등록 화면: 담당과정 선택 리스트
+	public abstract List<Course> findByEnabledAndStatusInOrderByStartDate(Boolean enabled, List<Integer> statuses);
+			
 	
 	
 	
