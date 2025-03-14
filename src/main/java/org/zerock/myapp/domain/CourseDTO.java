@@ -24,7 +24,6 @@ public class CourseDTO {
 	private Date crtDate;						//등록일
 	private Date udtDate;						//수정일
 	
-	@JsonIgnore
 	private MultipartFile upfiles; // 받을 파일 객체
 	
 	private Integer currCount;	//현재 수강 인원

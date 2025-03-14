@@ -140,8 +140,6 @@ public class Course implements Serializable {
 
 		return upfile;
 	}
-	
-	
-	
+
 	
 } // end class
