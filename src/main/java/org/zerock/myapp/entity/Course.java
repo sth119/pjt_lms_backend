@@ -109,7 +109,7 @@ public class Course implements Serializable {
 	@JsonManagedReference("course-upfiles") // fix
 	@ToString.Exclude
 	@OneToMany(mappedBy="course")
-	private List<Upfile> upfiles = new Vector<>();
+	private List<Upfile> upfiles = new Vector<>(); // 생성해두지 않으면 null이라 오류 발생
 
 
 	
@@ -118,31 +118,43 @@ public class Course implements Serializable {
 		traninee.setCourse(this);
 
 		return traninee;
-	}
+	} // addTraninee
 
 	public Trainee removeTraninee(Trainee traninee) {
 		getTraninees().remove(traninee);
 		traninee.setCourse(null);
 
 		return traninee;
-	}
+	} // removeTraninee
 
 	public Upfile addUpfile(Upfile upfile) {
-		if(upfile != null) {
-		getUpfiles().remove(upfile);
-		}
-		getUpfiles().add(upfile);
-		upfile.setCourse(this);
+		 // 1. 기존 부모와의 연관 관계 제거
+        if (getUpfiles().contains(upfile)) {
+            getUpfiles().remove(upfile); // 부모 컬렉션에서 제거
+        } // if
+
+        // 2. 자식 엔티티에 새로운 부모 참조 설정
+        upfile.setCourse(this);
+
+        // 3. 부모 컬렉션에 자식 엔티티 추가
+        getUpfiles().add(upfile);
 
 		return upfile;
-	}
+	} // addUpfile
 
 	public Upfile removeUpfile(Upfile upfile) {
-		getUpfiles().remove(upfile);
-		upfile.setCourse(null);
+		if (upfile != null) {
+	        // 1. 자식 엔티티의 활성 상태를 비활성화
+	        upfile.setEnabled(false);
 
+	        // 2. 자식 엔티티에서 부모 참조 제거
+	        upfile.setCourse(null);
+
+	        // 3. 부모 컬렉션에서 자식 엔티티 제거
+	        getUpfiles().remove(upfile);
+	    } // if
 		return upfile;
-	}
+	} // removeUpfile
 
 	
 } // end class

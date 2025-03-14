@@ -14,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.myapp.domain.CourseDTO;
@@ -35,8 +33,6 @@ import org.zerock.myapp.persistence.InstructorRepository;
 import org.zerock.myapp.persistence.TraineeRepository;
 import org.zerock.myapp.persistence.UpFileRepository;
 import org.zerock.myapp.persistence.spec.CourseSearchCriteria;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -89,15 +85,7 @@ public class CourseController {
 		return list;
 	} // list
 	
-	
-	
-	
-	
-	
-	
-	
-	
-//	//@GetMapping // DTO로 받기 위해서는 Post(json) 방식으로 줘야 한다
+
 //	@PostMapping // 리스트 
 //	Page<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){
 //		log.info("list({}, {}) invoked.", dto, paging);
@@ -123,9 +111,7 @@ public class CourseController {
 //		return list;
 //	} // list
 	
-	
-	
-	
+	//RequestParameter 확인 완료
 	@PutMapping // 등록
 	Course register(
 			CourseDTO dto, // String 으로 받아서 변환해야 한다
@@ -192,8 +178,6 @@ public class CourseController {
 	} // register
 	
 	
-	
-	//RequestParameter 확인 완료
 	//read
 	@GetMapping("/{id}") // 단일 조회 화면
 	CourseDTO read(@PathVariable Long id){
@@ -228,17 +212,13 @@ public class CourseController {
 	} // read
 	
 	
-	//RequestParameter 확인 필요
 	//update
-	@PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(path = "/{id}")
 	Course update(@PathVariable Long id, 
-				@RequestPart("dto") String dtoString,
-				@RequestPart("upfiles") MultipartFile file) throws IllegalStateException, IOException {
-		log.info("update({},{}) invoked.",id,dtoString);
+				CourseDTO dto,
+				@RequestParam("upfiles") MultipartFile file) throws IllegalStateException, IOException {
+		log.info("update({},{}) invoked.",id,dto);
 		
-		ObjectMapper objectMapper = new ObjectMapper();
-	    CourseDTO dto = objectMapper.readValue(dtoString, CourseDTO.class);
-	    
 		Optional<Course> optionalCourse  = this.repo.findById(id);
 		
 		 if (optionalCourse.isPresent()) {
@@ -255,61 +235,65 @@ public class CourseController {
 			 
 			 course.setInstructor(course.getInstructor());
 			 course.setTraninees(course.getTraninees());
-			 
-			// NullPointerException 방지를 위한 컬렉션 초기화
-	        if (course.getUpfiles() == null) {
-	            course.setUpfiles(new ArrayList<>()); // upfiles가 null이면 빈 리스트로 초기화
+
+	        // 3. 기존 파일 처리
+	        if (!course.getUpfiles().isEmpty()) {
+	            Upfile existingFile = course.getUpfiles().get(0); // 첫 번째 파일 가져오기
+	            String existingFileName = existingFile.getOriginal(); // 기존 파일명 가져오기
+
+	            // 새로운 파일명과 비교
+	            if (!existingFileName.equals(file.getOriginalFilename())) {
+	                // 기존 파일 비활성화 및 연관 관계 제거
+	                course.removeUpfile(existingFile);
+	                log.info("Existing file removed: {}", existingFile);
+	                this.fileRepo.save(existingFile); // 변경된 상태 저장
+	            } else {
+	                log.info("Same file detected, skipping removal.");
+	                return course; // 동일한 경우 업데이트 중단
+	            } // if-else
 	        } // if
-			 
-			// Course에 파일이 있다면, 파일명을 가져온다.
-			 String originFileName = course.getUpfiles().isEmpty() ? 
-					 null : course.getUpfiles().get(0).getOriginal(); 
 			 
 			 Upfile upfile = new Upfile();  // 1. 파일 객체 생성
 			 
-			 // 기존에 있던 파일명과, 방금 업데이트한 파일 명을 비교한다.
-			 if(originFileName == null ||
-				!originFileName.equals(file.getOriginalFilename())) {
-				 
-				upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
-				upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
-				upfile.setPath(CourseFileDirectory); // 주소
-				upfile.setEnabled(true); // 기본값
-				
-				upfile.setCourse(course); // 2. 연관 관계 설정, 자식이 부모객체 저장(set)
-				
-				log.info("upfile:{}",upfile);
-				this.fileRepo.save(upfile); // 파일 엔티티 저장
-				
-				// 파일 저장 처리
-				
-		        // 파일 저장 경로 생성
-		        String uploadDir = upfile.getPath();
-		        File targetDir = new File(uploadDir);
-		        if (!targetDir.exists()) {
-		            targetDir.mkdirs(); // 디렉토리가 없는 경우 생성
-		        } // if
-		    
-		        // 파일 저장 경로 및 이름 설정
-		        String filePath = upfile.getPath() + upfile.getUuid() + "." + upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
-		        File savedFile = new File(filePath);
-		        // 이후에 파일 받을때는 uuid에서 확장자를 뺴는 과정이 필요함.
+			upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
+			upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
+			upfile.setPath(CourseFileDirectory); // 주소
+			upfile.setEnabled(true); // 기본값
+			
+			log.info("New upfile created: {}", upfile);
 
-		        // 파일 저장
-		        file.transferTo(savedFile);
-		        log.info("File saved at: {}", filePath); 
-		        
-			    // Course 엔티티에 새로운 파일 추가
-                course.addUpfile(upfile);
-			 } else{
-				log.info("같은 파일입니다");
-			 }// if-else
+			// 파일 저장 처리
+			
+	        // 파일 저장 경로 생성
+	        String uploadDir = upfile.getPath();
+	        File targetDir = new File(uploadDir);
+	        if (!targetDir.exists()) {
+	            targetDir.mkdirs(); // 디렉토리가 없는 경우 생성
+	        } // if
+	    
+	        // 파일 저장 경로 및 이름 설정
+	        String filePath = upfile.getPath() + upfile.getUuid() + "." + upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
+	        File savedFile = new File(filePath);
+
+	        // 파일 저장
+	        file.transferTo(savedFile);
+	        log.info("File saved at: {}", filePath); 
+	        
+		    // Course 엔티티에 새로운 파일 추가
+            course.addUpfile(upfile);
+            
+            this.fileRepo.save(upfile); // // 새 파일 엔티티 저장
+                
+         // 7. Course 엔티티 저장
+         Course result =  this.repo.save(course);
+         
+		 log.info("Update success");
+		 
+		 return result;
+		 } else{
+			log.info("같은 파일입니다");
+		 }// if-else
 			 
-			 Course result =  this.repo.save(course);
-			 log.info("Update success");
-			 
-			 return result;
-		 } // if
 		 log.info("Update fail");
 		return null; // 값이 없으면 NULL반환
 	} // update
@@ -339,7 +323,6 @@ public class CourseController {
 	} // delete
 	
 	
-
 	//RESTfull
 	// 훈련생 등록 화면: 담당과정 선택 리스트
 	@GetMapping("/selectCourseTrn") 
