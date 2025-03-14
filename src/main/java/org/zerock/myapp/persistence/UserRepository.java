@@ -1,5 +1,7 @@
 package org.zerock.myapp.persistence;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,8 +10,12 @@ import org.zerock.myapp.entity.User;
 
 public interface UserRepository extends JpaRepository<User, String> {
 
-	//userName 검색
-	public abstract Page<User> findByNameContaining(String name, Pageable paging);
+//	//userName 검색
+//	public abstract Page<User> findByNameContaining(String name, Pageable paging);
+	
+	//로그인 처리
+	public abstract Optional<User> findByUserIdAndPasswd(String userId, String userPasswd);
+	
 
 	
 //	public abstract Boolean insertUser(UserDTO dto);		// C 삽입
@@ -22,8 +28,6 @@ public interface UserRepository extends JpaRepository<User, String> {
 	
 	
 	
-	//로그인 처리?
-//	public abstract Optional<User> findByUserIdAndUserPassword(String userId, String userPassword);
 	
 	
 	

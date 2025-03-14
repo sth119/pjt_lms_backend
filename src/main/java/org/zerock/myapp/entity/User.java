@@ -16,8 +16,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import lombok.Data;
 
 @Data
@@ -27,10 +25,11 @@ import lombok.Data;
 public class User implements Serializable {
 	@Serial private static final long serialVersionUID = 1L;
 
-	@Id 
-	@Column(name="ID", unique=true, nullable=false)
+	@Id
+	
+	@Column(name = "ID", nullable =false , unique = true)
 	private String userId;
-
+	
 	@Column(nullable=false)
 	private String passwd;
 
@@ -38,11 +37,11 @@ public class User implements Serializable {
 	private String name;
 
 	@Convert(converter = BooleanToIntegerConverter.class)
-	@Column(nullable=false)
+	@Column(nullable=true)
 	private Boolean enabled;
 
 	@CurrentTimestamp(event = EventType.INSERT, source = SourceType.DB)
-	@Column(name="INSERT_TS", nullable=false)
+	@Column(name="INSERT_TS", nullable=true)
 	private Date crtDate;
 
 	@CurrentTimestamp(event = EventType.UPDATE, source = SourceType.DB)
