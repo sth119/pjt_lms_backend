@@ -47,6 +47,7 @@ public class CourseController {
 	@Autowired CourseRepository repo;
 	@Autowired TraineeRepository trnRepo;
 	@Autowired UpFileRepository fileRepo;
+	String CourseFileDirectory = "C:/temp/course/";
 	
 	//RESTfull	
 	//@GetMapping // DTO로 받기 위해서는 Post(json) 방식으로 줘야 한다
@@ -107,13 +108,13 @@ public class CourseController {
 		log.info("Regist success");
 		
 
-		Upfile upfile = new Upfile();  // 파일 객체 생성
+		Upfile upfile = new Upfile();  // 1. 파일 객체 생성
 		upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
 		upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
-		upfile.setPath("C:/temp/course/"); // 주소
+		upfile.setPath(CourseFileDirectory); // 주소
 		upfile.setEnabled(true); // 기본값
 		
-		upfile.setCourse(result); // 연관 관계 설정, 자식이 부모객체 저장(set)
+		upfile.setCourse(result); // 2. 연관 관계 설정, 자식이 부모객체 저장(set)
 		
 		log.info("upfile:{}",upfile);
 		this.fileRepo.save(upfile); // 파일 엔티티 저장
@@ -140,7 +141,7 @@ public class CourseController {
 		
 		
 		// 4. Course에 Upfile 추가
-		result.addUpfile(upfile); // 연관 관계 설정, 부모에 자식객체 저장(add)
+		result.addUpfile(upfile); // 3. 연관 관계 설정, 부모에 자식객체 저장(add)
 		
 		log.info("result:{}",result);
 		log.info("getFileCourse success");
