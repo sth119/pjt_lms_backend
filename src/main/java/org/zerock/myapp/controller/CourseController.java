@@ -180,7 +180,7 @@ public class CourseController {
 	
 	//read
 	@GetMapping("/{id}") // 단일 조회 화면
-	CourseDTO read(@PathVariable Long id){
+	CourseDTO read(@PathVariable(name="id") Long id){
 		log.info("read({}) invoked.",id);
 		
 		Course course = this.repo.findById(id) // id값 받아서 course 객체 단일 조회
