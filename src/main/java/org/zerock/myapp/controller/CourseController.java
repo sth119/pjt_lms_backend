@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.zerock.myapp.domain.CourseDTO;
 import org.zerock.myapp.domain.CriteriaDTO;
 import org.zerock.myapp.entity.Course;
+import org.zerock.myapp.entity.Trainee;
 import org.zerock.myapp.entity.Upfile;
 import org.zerock.myapp.persistence.CourseRepository;
 import org.zerock.myapp.persistence.InstructorRepository;
@@ -46,7 +47,7 @@ import lombok.extern.slf4j.Slf4j;
 // 과정 URI 컨트롤러
 public class CourseController {
 	@Autowired CourseRepository repo;
-	@Autowired InstructorRepository InsRepo;
+	@Autowired InstructorRepository insRepo;
 	@Autowired TraineeRepository trnRepo;
 	@Autowired UpFileRepository fileRepo;
 	String CourseFileDirectory = "C:/temp/course/";
@@ -131,7 +132,7 @@ public class CourseController {
 		// currCount는 기본값 0
 		// enabled 는 기본적으로 1이 자동으로 들어감
 		
-		Course result = this.repo.save(course);
+		Course result = this.repo.save(course); // DTO로 받아온 값 저장해서 DB에 올림
 		log.info("result:{}",result);
 		log.info("Regist success");
 		
@@ -214,7 +215,7 @@ public class CourseController {
 	
 	//update
 	@PostMapping(path = "/{id}")
-	Course update(@PathVariable Long id, 
+	Course update(@PathVariable(name="id") Long id, 
 				CourseDTO dto,
 				@RequestParam("upfiles") MultipartFile file) throws IllegalStateException, IOException {
 		log.info("update({},{}) invoked.",id,dto);
@@ -302,7 +303,7 @@ public class CourseController {
 	//RequestParameter 확인 OK
 	//Delete
 	@DeleteMapping("/{id}")
-	Course delete(@PathVariable Long id) {
+	Course delete(@PathVariable(name="id") Long id) {
 		log.info("delete({})",id);
 		
 		Optional<Course> optionalCourse  = this.repo.findById(id);
@@ -312,6 +313,26 @@ public class CourseController {
 			 
 			 course.setStatus(4);
 			 course.setEnabled(false);
+			 
+			 // 연관된 Instructor 처리
+	        if (course.getInstructor() != null) {
+	            course.getInstructor().setCourse(null); // Instructor의 Course 참조를 null로 설정
+	            this.insRepo.save(course.getInstructor()); // 변경된 상태 저장
+	        } // if
+
+	        // 연관된 Trainee 처리
+	        if (!course.getTraninees().isEmpty()) {
+	            for (Trainee trainee : new ArrayList<>(course.getTraninees())) {
+	            	course.removeTraninee(trainee); // Trainee의 Course 참조를 null로 설정
+	            } // for
+	        } // if
+
+	        // 연관된 Upfile 처리
+	        if (!course.getUpfiles().isEmpty()) {
+	            for (Upfile upfile : new ArrayList<>(course.getUpfiles())) {
+	            	course.removeUpfile(upfile); // Upfile의 상태를 비활성화하고 Course 참조를 null로 설정
+	            } // for
+	        } // if
 			 
 			 Course result =  this.repo.save(course);
 			 

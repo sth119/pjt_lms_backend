@@ -45,13 +45,13 @@ public class Instructor implements Serializable {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="ID", unique=true, nullable=false)
-	private Long instructorId;			//아이디
+	private Long instructorId;			// 아이디
 
 	@Column(nullable=false, length=500)
-	private String name;				//이름
+	private String name;				// 이름
 
 	@Column(nullable=false, length=50)
-	private String tel;
+	private String tel;					// 전화번호
 
 	@Column(nullable=false) //상태(등록=1,강의중=2,퇴사=3)
 	private Integer status = 1;				
@@ -83,21 +83,33 @@ public class Instructor implements Serializable {
 	private List<Upfile> upfiles = new Vector<>();
 
 
-	public Upfile addTUpfile(Upfile upfile) {
-		getUpfiles().add(upfile);
-		upfile.setInstructor(this);
+	public Upfile addUpfile(Upfile upfile) {
+		// 1. 기존 부모와의 연관 관계 제거
+        if (getUpfiles().contains(upfile)) {
+            getUpfiles().remove(upfile); // 부모 컬렉션에서 제거
+        } // if
+
+        // 2. 자식 엔티티에 새로운 부모 참조 설정
+        upfile.setInstructor(this);
+
+        // 3. 부모 컬렉션에 자식 엔티티 추가
+        getUpfiles().add(upfile);
 
 		return upfile;
-	}
+	} // addTUpfile
 
-	public Upfile removeTUpfile(Upfile upfile) {
-		getUpfiles().remove(upfile);
-		upfile.setInstructor(null);
+	public Upfile removeUpfile(Upfile upfile) {
+		if (upfile != null) {
+	        // 1. 자식 엔티티의 활성 상태를 비활성화
+	        upfile.setEnabled(false);
 
+	        // 2. 자식 엔티티에서 부모 참조 제거
+	        upfile.setInstructor(null);
+
+	        // 3. 부모 컬렉션에서 자식 엔티티 제거
+	        getUpfiles().remove(upfile);
+	    } // if
 		return upfile;
-	}
+	} // removeTUpfile
 
-	public void setCourseId(Long courseId) {
-		
-	}
-}
+} // end class

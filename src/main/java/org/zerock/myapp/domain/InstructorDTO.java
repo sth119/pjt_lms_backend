@@ -1,10 +1,10 @@
 package org.zerock.myapp.domain;
 
 import java.util.Date;
+import java.util.List;
 
 import org.zerock.myapp.entity.Course;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.zerock.myapp.entity.Upfile;
 
 import lombok.Data;
 
@@ -20,13 +20,12 @@ public class InstructorDTO {
 	private Date crtDate;
 	private Date udtDate;
 	
-	@JsonBackReference("course-instructor")
-	private Course course;		//담당과정번호(FK)
+	// 받을 CourseId
 	private Long courseId;
 
-//	public Object getCourseId() {
-//		return null;
-//	}
-
+	// 돌려줄 객체 DTO
+	private Course course;
+	private List<Upfile> upfile;
+	
 
 } // end class
