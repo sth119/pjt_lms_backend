@@ -2,6 +2,7 @@ package org.zerock.myapp.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.zerock.myapp.domain.CourseDTO;
 import org.zerock.myapp.domain.CriteriaDTO;
 import org.zerock.myapp.entity.Course;
-import org.zerock.myapp.entity.Instructor;
 import org.zerock.myapp.entity.Upfile;
 import org.zerock.myapp.persistence.CourseRepository;
 import org.zerock.myapp.persistence.InstructorRepository;
@@ -156,10 +156,10 @@ public class CourseController {
 	CourseDTO read(@PathVariable Long id){
 		log.info("read({}) invoked.",id);
 		
-		Course course = this.repo.findById(id)
+		Course course = this.repo.findById(id) // id값 받아서 course 객체 단일 조회
 		        .orElseThrow(() -> new RuntimeException("해당 ID의 코스를 찾을 수 없습니다: " + id));
 		
-		CourseDTO dto = new CourseDTO();
+		CourseDTO dto = new CourseDTO(); // DTO객체 생성해서 원하는 값만 전달하기 + 조인한 객체들
 		dto.setCourseId(course.getCourseId());
 		dto.setType(course.getType());
 		dto.setName(course.getName());
@@ -171,9 +171,11 @@ public class CourseController {
 		dto.setEnabled(course.getEnabled());
 		dto.setCrtDate(course.getCrtDate());
 		
+		// 테이블엔 없고, 직접 계산해야 하는 값
 		Integer currCount = this.trnRepo.countByEnabledAndCourse(true, course);
 		dto.setCurrCount(currCount);
 		
+		// 조인 객체들
 		dto.setUpfile(course.getUpfiles());
 		dto.setInstructor(course.getInstructor());
 		dto.setTrainees(course.getTraninees());
@@ -182,10 +184,15 @@ public class CourseController {
 		return dto;
 	} // read
 	
-	@PostMapping("/{id}")
-	Course update(@PathVariable Long id, @RequestBody CourseDTO dto) {
-		log.info("update({},{}) invoked.",id,dto);
+	@PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	Course update(@PathVariable Long id, 
+				@RequestPart("dto") String dtoString,
+				@RequestPart("upfiles") MultipartFile file) throws IllegalStateException, IOException {
+		log.info("update({},{}) invoked.",id,dtoString);
 		
+		ObjectMapper objectMapper = new ObjectMapper();
+	    CourseDTO dto = objectMapper.readValue(dtoString, CourseDTO.class);
+	    
 		Optional<Course> optionalCourse  = this.repo.findById(id);
 		
 		 if (optionalCourse.isPresent()) {
@@ -193,14 +200,68 @@ public class CourseController {
 			 
 			 course.setType(dto.getType());
 			 course.setName(dto.getName());
-			 course.setCapacity(dto.getCapacity());
 			 course.setDetail(dto.getDetail());
 			 course.setStartDate(dto.getStartDate());
 			 course.setEndDate(dto.getEndDate());
 			 
-			 Course result =  this.repo.save(course);
+			 Integer currCount = this.trnRepo.countByEnabledAndCourse(true, course);
+			 course.setCurrCount(currCount);
 			 
+			 course.setInstructor(course.getInstructor());
+			 course.setTraninees(course.getTraninees());
+			 
+			// NullPointerException 방지를 위한 컬렉션 초기화
+	        if (course.getUpfiles() == null) {
+	            course.setUpfiles(new ArrayList<>()); // upfiles가 null이면 빈 리스트로 초기화
+	        } // if
+			 
+			// Course에 파일이 있다면, 파일명을 가져온다.
+			 String originFileName = course.getUpfiles().isEmpty() ? 
+					 null : course.getUpfiles().get(0).getOriginal(); 
+			 
+			 Upfile upfile = new Upfile();  // 1. 파일 객체 생성
+			 
+			 // 기존에 있던 파일명과, 방금 업데이트한 파일 명을 비교한다.
+			 if(originFileName == null ||
+				!originFileName.equals(file.getOriginalFilename())) {
+				 
+				upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
+				upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
+				upfile.setPath(CourseFileDirectory); // 주소
+				upfile.setEnabled(true); // 기본값
+				
+				upfile.setCourse(course); // 2. 연관 관계 설정, 자식이 부모객체 저장(set)
+				
+				log.info("upfile:{}",upfile);
+				this.fileRepo.save(upfile); // 파일 엔티티 저장
+				
+				// 파일 저장 처리
+				
+		        // 파일 저장 경로 생성
+		        String uploadDir = upfile.getPath();
+		        File targetDir = new File(uploadDir);
+		        if (!targetDir.exists()) {
+		            targetDir.mkdirs(); // 디렉토리가 없는 경우 생성
+		        } // if
+		    
+		        // 파일 저장 경로 및 이름 설정
+		        String filePath = upfile.getPath() + upfile.getUuid() + "." + upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
+		        File savedFile = new File(filePath);
+		        // 이후에 파일 받을때는 uuid에서 확장자를 뺴는 과정이 필요함.
+
+		        // 파일 저장
+		        file.transferTo(savedFile);
+		        log.info("File saved at: {}", filePath); 
+		        
+			    // Course 엔티티에 새로운 파일 추가
+                course.addUpfile(upfile);
+			 } else{
+				log.info("같은 파일입니다");
+			 }// if-else
+			 
+			 Course result =  this.repo.save(course);
 			 log.info("Update success");
+			 
 			 return result;
 		 } // if
 		 log.info("Update fail");
