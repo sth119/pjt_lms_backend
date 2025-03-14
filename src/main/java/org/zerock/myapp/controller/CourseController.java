@@ -26,8 +26,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.zerock.myapp.domain.CourseDTO;
 import org.zerock.myapp.domain.CriteriaDTO;
 import org.zerock.myapp.entity.Course;
+import org.zerock.myapp.entity.Instructor;
 import org.zerock.myapp.entity.Upfile;
 import org.zerock.myapp.persistence.CourseRepository;
+import org.zerock.myapp.persistence.InstructorRepository;
 import org.zerock.myapp.persistence.TraineeRepository;
 import org.zerock.myapp.persistence.UpFileRepository;
 
@@ -45,6 +47,7 @@ import lombok.extern.slf4j.Slf4j;
 // 과정 URI 컨트롤러
 public class CourseController {
 	@Autowired CourseRepository repo;
+	@Autowired InstructorRepository InsRepo;
 	@Autowired TraineeRepository trnRepo;
 	@Autowired UpFileRepository fileRepo;
 	String CourseFileDirectory = "C:/temp/course/";
@@ -150,14 +153,33 @@ public class CourseController {
 	} // register
 	
 	@GetMapping("/{id}") // 단일 조회 화면
-	Course read(@PathVariable Long id){
+	CourseDTO read(@PathVariable Long id){
 		log.info("read({}) invoked.",id);
 		
 		Course course = this.repo.findById(id)
 		        .orElseThrow(() -> new RuntimeException("해당 ID의 코스를 찾을 수 없습니다: " + id));
 		
+		CourseDTO dto = new CourseDTO();
+		dto.setCourseId(course.getCourseId());
+		dto.setType(course.getType());
+		dto.setName(course.getName());
+		dto.setCapacity(course.getCapacity());
+		dto.setDetail(course.getDetail());
+		dto.setStartDate(course.getStartDate());
+		dto.setEndDate(course.getEndDate());
+		dto.setStatus(course.getStatus());
+		dto.setEnabled(course.getEnabled());
+		dto.setCrtDate(course.getCrtDate());
+		
+		Integer currCount = this.trnRepo.countByEnabledAndCourse(true, course);
+		dto.setCurrCount(currCount);
+		
+		dto.setUpfile(course.getUpfiles());
+		dto.setInstructor(course.getInstructor());
+		dto.setTrainees(course.getTraninees());
+		
 		log.info("Read success");
-		return course;
+		return dto;
 	} // read
 	
 	@PostMapping("/{id}")

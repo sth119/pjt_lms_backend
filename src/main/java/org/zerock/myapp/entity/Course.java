@@ -9,6 +9,7 @@ import java.util.Vector;
 import org.hibernate.annotations.CurrentTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.generator.EventType;
+import org.springframework.web.multipart.MultipartFile;
 import org.zerock.myapp.util.BooleanToIntegerConverter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -108,7 +109,7 @@ public class Course implements Serializable {
 	@JsonManagedReference("course-upfiles") // fix
 	@ToString.Exclude
 	@OneToMany(mappedBy="course")
-	private List<Upfile> upfiles = new Vector<>();
+	private List<Upfile> upfiles;
 
 
 	
