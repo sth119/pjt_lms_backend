@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 
 //과정 리스트 검색 DTO
-public class CourseCriteria {
+public class CourseSearchCriteria {
 
 	private Boolean enabled = true;	//활성화상태(1=유효,0=삭제)
 	

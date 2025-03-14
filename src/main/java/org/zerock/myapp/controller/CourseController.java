@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import org.zerock.myapp.persistence.CourseRepository;
 import org.zerock.myapp.persistence.InstructorRepository;
 import org.zerock.myapp.persistence.TraineeRepository;
 import org.zerock.myapp.persistence.UpFileRepository;
+import org.zerock.myapp.persistence.spec.CourseSearchCriteria;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -52,21 +54,28 @@ public class CourseController {
 	@Autowired UpFileRepository fileRepo;
 	String CourseFileDirectory = "C:/temp/course/";
 	
-	//RESTfull	
-	//@GetMapping // DTO로 받기 위해서는 Post(json) 방식으로 줘야 한다
-	@PostMapping // 리스트 
-	Page<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){
-		log.info("list({}, {}) invoked.", dto, paging);
+	//RESTfull
+	
+	
+	//== 리스트 =============================== 
+	//RequestParameter 확인 필요
+	@PostMapping 
+	Page<Course> list(
+			CourseSearchCriteria criteria,	//동적 검색을 위한 conditions
+			@RequestBody CriteriaDTO dto
+		){
+		log.info("list({}, {}) invoked.", criteria, dto);
 		
-		//page는 기본 0부터 시작
-		Integer page = (dto.getPage()!=null && dto.getPage() >= 0) ? dto.getPage() : 0;
+		Integer currPage = (dto.getPage()!=null && dto.getPage() >= 0) ? dto.getPage() : 0;	//page는 기본 0부터 시작
 		Integer pageSize = (dto.getPageSize()!=null && dto.getPageSize() >= 0) ? dto.getPageSize() : 10;
 		String condition = dto.getCondition();
 		String q = dto.getQ();
 		
 		//log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
 		
-		paging = PageRequest.of(page, pageSize, Sort.by("crtDate").descending().and(Sort.by("status").ascending()));
+//		Pageable paging = PageRequest.of(currPage - 1, pageSize, Sort.Direction.DESC, "id");	// 강사님 코드
+		Pageable paging = PageRequest.of(currPage, pageSize, Sort.by("crtDate").descending().and(Sort.by("status").ascending()));
+				
 		
 		
 		Page<Course> list = this.repo.findByEnabled(true, paging);
@@ -78,6 +87,40 @@ public class CourseController {
 
 		return list;
 	} // list
+	
+	
+	
+	
+	
+	
+	
+	
+	
+//	//@GetMapping // DTO로 받기 위해서는 Post(json) 방식으로 줘야 한다
+//	@PostMapping // 리스트 
+//	Page<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){
+//		log.info("list({}, {}) invoked.", dto, paging);
+//		
+//		//page는 기본 0부터 시작
+//		Integer page = (dto.getPage()!=null && dto.getPage() >= 0) ? dto.getPage() : 0;
+//		Integer pageSize = (dto.getPageSize()!=null && dto.getPageSize() >= 0) ? dto.getPageSize() : 10;
+//		String condition = dto.getCondition();
+//		String q = dto.getQ();
+//		
+//		//log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
+//		
+//		paging = PageRequest.of(page, pageSize, Sort.by("crtDate").descending().and(Sort.by("status").ascending()));
+//		
+//		
+//		Page<Course> list = this.repo.findByEnabled(true, paging);
+//		list.forEach(s -> {
+//			s.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, s));
+//			log.info(s.toString());
+//		}); // forEach
+//		
+//
+//		return list;
+//	} // list
 	
 	
 	
@@ -152,6 +195,10 @@ public class CourseController {
 		return result;
 	} // register
 	
+	
+	
+	//RequestParameter 확인 완료
+	//read
 	@GetMapping("/{id}") // 단일 조회 화면
 	CourseDTO read(@PathVariable Long id){
 		log.info("read({}) invoked.",id);
@@ -184,6 +231,9 @@ public class CourseController {
 		return dto;
 	} // read
 	
+	
+	//RequestParameter 확인 필요
+	//update
 	@PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	Course update(@PathVariable Long id, 
 				@RequestPart("dto") String dtoString,
@@ -268,6 +318,9 @@ public class CourseController {
 		return null; // 값이 없으면 NULL반환
 	} // update
 	
+	
+	//RequestParameter 확인 OK
+	//Delete
 	@DeleteMapping("/{id}")
 	Course delete(@PathVariable Long id) {
 		log.info("delete({})",id);
@@ -294,8 +347,10 @@ public class CourseController {
 	//RESTfull
 	// 훈련생 등록 화면: 담당과정 선택 리스트
 	@GetMapping("/selectCourseTrn") 
-	public List<Course> selectCourseListTrainee(){
+	public List<CourseDTO> selectCourseListTrainee(){
 		log.info("selectCourseList() invoked.");
+		
+		List<CourseDTO> dtoList = new Vector<>(); // 값을 담을 DTO객체 생성
 		
 		List<Course> list = this.repo.findByEnabledAndStatusInOrderByStartDate(true, List.of(1, 2));
 		
@@ -304,20 +359,68 @@ public class CourseController {
 		.peek(c -> c.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, c))) // peek: currCount를 설정하기 위해 사용. forEach 대신 중간 연산으로 처리.
 		.filter(c -> c.getCurrCount() < c.getCapacity()) // 정원 미만인 경우만 포함
 		.collect(Collectors.toList());
+		
+		list.forEach(course -> { // 순회해서 하나씩 넣기
+			CourseDTO dto = new CourseDTO(); // DTO객체 생성해서 원하는 값만 전달하기 + 조인한 객체들
+			
+			// 기존 Course 엔티티 값을 DTO에 셋팅
+			dto.setCourseId(course.getCourseId());
+			dto.setType(course.getType());
+			dto.setName(course.getName());
+			dto.setCapacity(course.getCapacity());
+			dto.setDetail(course.getDetail());
+			dto.setStartDate(course.getStartDate());
+			dto.setEndDate(course.getEndDate());
+			dto.setStatus(course.getStatus());
+			dto.setEnabled(course.getEnabled());
+			dto.setCrtDate(course.getCrtDate());
+			dto.setCurrCount(course.getCurrCount());
+			
+			// 조인 객체들
+			dto.setInstructor(course.getInstructor());
+			
+			dtoList.add(dto); // DTOList에 객체 하나씩 넣기
+		}); // list.forEach
 
-		return list;
+		return dtoList;
 	} // 훈련생 수강정원 필터
 
 	
-	// 강사 등록 화면: 담당과정 선택 리스트
+	// 강사 등록 화면: 담당과정 선택 리스트, 강사 수강정원 필터.
 	@GetMapping("/selectCourseIns") 
-	public List<Course> selectCourseListInstructor(){
+	public List<CourseDTO> selectCourseListInstructor(){
 		log.info("selectCourseListInstructor() invoked.");
 		
-		List<Course> list = this.repo.findByEnabledAndStatusInOrderByStartDate(true, List.of(1, 2));
+		List<CourseDTO> dtoList = new Vector<>(); // 값을 담을 DTO객체 생성
 		
-		return list;
+		List<Course> list = this.repo.findByEnabledAndStatusInOrderByStartDate(true, List.of(1, 2)); // enabled + status가 1,2인 course를 가져옴
+		list.forEach(course -> { // 순회해서 하나씩 넣기
+			CourseDTO dto = new CourseDTO(); // DTO객체 생성해서 원하는 값만 전달하기 + 조인한 객체들
+			
+			// 기존 Course 엔티티 값을 DTO에 셋팅
+			dto.setCourseId(course.getCourseId());
+			dto.setType(course.getType());
+			dto.setName(course.getName());
+			dto.setCapacity(course.getCapacity());
+			dto.setDetail(course.getDetail());
+			dto.setStartDate(course.getStartDate());
+			dto.setEndDate(course.getEndDate());
+			dto.setStatus(course.getStatus());
+			dto.setEnabled(course.getEnabled());
+			dto.setCrtDate(course.getCrtDate());
+			
+			Integer currCount = this.trnRepo.countByEnabledAndCourse(true, course);
+			dto.setCurrCount(currCount);
+			
+			// 조인 객체들
+			dto.setInstructor(course.getInstructor());
+			
+			dtoList.add(dto); // DTOList에 객체 하나씩 넣기
+		}); // list.forEach
 		
+		// 이거 그냥 /list에 넣어서 조건부 조회하게 하면 안 되는건가요?
+		
+		return dtoList;
 	} // 강사 수강정원 필터.
 	
 	

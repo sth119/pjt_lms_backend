@@ -55,6 +55,14 @@ public interface CourseRepository extends JpaRepository<Course, Long>, JpaSpecif
 	public abstract List<Course> findByEnabledAndStatusInOrderByStartDate(Boolean enabled, List<Integer> statuses);
 	
 	
+	//Native SQL
+	final String nativeSQL = """
+			SELECT c.* 
+			FROM t_courses c 
+				JOIN t_instructors i ON c.id = i.crs_id 
+			WHERE c.enabled = :enabled AND c.status = :status AND i.name LIKE '%' || :instructorName || '%'
+		""";
+	
 	
 	
 	//단건 조회 :
