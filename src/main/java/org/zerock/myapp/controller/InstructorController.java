@@ -1,5 +1,7 @@
 package org.zerock.myapp.controller;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,13 +15,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.zerock.myapp.domain.CriteriaDTO;
 import org.zerock.myapp.domain.InstructorDTO;
 import org.zerock.myapp.entity.Course;
 import org.zerock.myapp.entity.Instructor;
 import org.zerock.myapp.persistence.CourseRepository;
 import org.zerock.myapp.persistence.InstructorRepository;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -71,8 +77,17 @@ public class InstructorController { // 강사 관리
 
 	
 	@PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE) // 등록
-	Instructor register(@RequestBody InstructorDTO dto) {
-		log.info("register({}) invoked.",dto);
+	Instructor register(
+			@RequestPart("dto") String dtoString,
+			@RequestPart("upfiles") MultipartFile file
+		)throws Exception, IOException {
+		
+		log.info("register({}) invoked.",dtoString);
+		
+		// JSON 데이터를 DTO로 변환
+		ObjectMapper objectMapper = new ObjectMapper();
+		InstructorDTO dto = objectMapper.readValue(dtoString, InstructorDTO.class);
+		
 		Instructor instructor = new Instructor();
 		
 		instructor.setName(dto.getName()); // 이름
@@ -84,11 +99,12 @@ public class InstructorController { // 강사 관리
 		instructor.setStatus(1);	// 등록시 항목 없음으로  기본값		
 		instructor.setEnabled(true);// 등록시 항목 없음으로  기본값
 		log.info("before success?");
-		
-		
+				
 		Instructor register = this.repo.save(instructor);
 		log.info("result:{}",register);
 		log.info("Regist success");
+		
+		
 		
 		return register;
 	} // register // 성공
