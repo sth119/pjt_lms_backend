@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.grammars.hql.HqlParser.IsEmptyPredicateContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -100,6 +101,7 @@ public class InstructorController { // 강사 관리
       log.info("result:{}",result);
       log.info("Regist success");
 
+      if(file != null && !file.isEmpty()) {
 		Upfile upfile = new Upfile();  // 1. 파일 객체 생성
 		upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
 		upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
@@ -111,9 +113,10 @@ public class InstructorController { // 강사 관리
 		log.info("upfile:{}",upfile);
 		this.fileRepo.save(upfile); // 파일 엔티티 저장
 		
-		
+
+	
 		   // 파일 저장 처리
-	    if (file != null && !file.isEmpty()) {
+//	    if (file != null && !file.isEmpty()) {
 	        // 파일 저장 경로 생성
 	        String uploadDir = upfile.getPath();
 	        File targetDir = new File(uploadDir);
@@ -129,15 +132,18 @@ public class InstructorController { // 강사 관리
 	        // 파일 저장
 	        file.transferTo(savedFile);
 	        log.info("File saved at: {}", filePath);
-	    } // if
+	    //} // if
 		
 		// 4. Instructor에 Upfile 추가
 		result.addUpfile(upfile); // 3. 연관 관계 설정, 부모에 자식객체 저장(add)
 		
-      return result;
+      return result; } else {
+    	  return null;
+      }
    } // register // 성공
    
  
+   
    @GetMapping("/{id}") // 단일 조회 화면
    InstructorDTO read(@PathVariable("id") Long instructorId){ // error fix -> ("id")로 명확히 표시
       log.info("read({}) invoked.",instructorId);
@@ -164,6 +170,7 @@ public class InstructorController { // 강사 관리
    } // read  // 성공
    
 
+   
    @PostMapping(value = "/{id}") 
    Instructor update(@PathVariable("id") Long instructorId, 
 		   			 InstructorDTO dto,
@@ -176,6 +183,7 @@ public class InstructorController { // 강사 관리
       // 2. DTO에서 받은 값으로 업데이트
       instructor.setName(dto.getName());
       instructor.setTel(dto.getTel());
+      
       if(dto.getStatus() != null) { // 상태값 유지 (register에서는 status=1로 고정, update에서는 DTO에서 받음)
          instructor.setStatus(dto.getStatus());
       } // if
@@ -185,6 +193,9 @@ public class InstructorController { // 강사 관리
          instructor.setCourse(this.crsRepo.findById(dto.getCourseId()).orElse(new Course()));  // 담당과정
             
 
+      if(file != null && !file.isEmpty()) { // 사진이 없는경우 대비를 위한 if-else 문.
+      
+      
       //  기존 파일 처리
       if (!instructor.getUpfiles().isEmpty()) {
           Upfile existingFile = instructor.getUpfiles().get(0); // 첫 번째 파일 가져오기
@@ -200,7 +211,9 @@ public class InstructorController { // 강사 관리
               log.info("Same file detected, skipping removal.");
               return instructor; // 동일한 경우 업데이트 중단
           } // if-else
-      } // if
+      } 
+      
+     
 		 
 		 Upfile upfile = new Upfile();  // 1. 파일 객체 생성
 		 
@@ -232,6 +245,10 @@ public class InstructorController { // 강사 관리
       instructor.addUpfile(upfile);
       
       this.fileRepo.save(upfile); // // 새 파일 엔티티 저장
+      
+      } else {
+    	  log.info("사진이 수정되지 않았습니다.");
+      }
           
       
       // 4. 저장 및 반환
@@ -239,6 +256,7 @@ public class InstructorController { // 강사 관리
       log.info("Update success: {}" , update);
       
       return update;
+      
     } // update // 성공
    
 

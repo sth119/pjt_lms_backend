@@ -44,13 +44,13 @@ public class Upfile implements Serializable {
 	@Column(name="ID", unique=true, nullable=false)
 	private Long fileId;				//
 
-	@Column(nullable=false)
+	@Column(nullable=true) // fix -> false  - true
 	private String original;			//원본파일명(확장자포함)
 
-	@Column(nullable=false)
+	@Column(nullable=true) // fix -> false  - true
 	private String uuid;				//저장파일명
 
-	@Column(nullable=false)
+	@Column(nullable=true) //fix -> false  - true
 	private String path;				//저장경로
 
 	@Convert(converter = BooleanToIntegerConverter.class)
@@ -58,7 +58,7 @@ public class Upfile implements Serializable {
 	private Boolean enabled = true;			//
 
 	@CurrentTimestamp(event = EventType.INSERT, source = SourceType.DB)
-	@Column(name="INSERT_TS", nullable=false)
+	@Column(name="INSERT_TS", nullable=true)  // fix -> false  - true
 	private Date crtDate;				//등록일
 
 	@CurrentTimestamp(event = EventType.UPDATE, source = SourceType.DB)
