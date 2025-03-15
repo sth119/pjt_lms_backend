@@ -42,12 +42,15 @@ public class InstructorController { // 강사 관리
    @Autowired CourseRepository crsRepo; 
    @Autowired UpFileRepository fileRepo;
    String InstructorFileDirectory = "C:/temp/instructor/";
+//   String InstructorFileDirectory = "/Users/host/workspaces/tmep";
+   
 
 
    //RESTfull   
    @PostMapping // 리스트 
    
-   Page<Instructor> list(@ModelAttribute CriteriaDTO dto, Pageable paging){
+   Page<Instructor> list(
+		   @ModelAttribute CriteriaDTO dto, Pageable paging){
 	   // @ RequestParam : 단일 값 바인딩 할때 사용. (String , Integer 등)
 	   // @ ModelAttribute : 복합객체(DTO) 처리할 때 사용.
       log.info("list({}, {}) invoked.", dto, paging);
@@ -138,7 +141,13 @@ public class InstructorController { // 강사 관리
 	        } // if
 	    
 	        // 파일 저장 경로 및 이름 설정
-	        String filePath = upfile.getPath() + upfile.getUuid() + "." + upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
+	        
+	        // error 수정 중.
+	        String extension = upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
+	        String filePath = upfile.getPath() + upfile.getUuid() + "." + extension;
+	        
+	        
+//	        String filePath = upfile.getPath() + upfile.getUuid() + "." + upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
 	        File savedFile = new File(filePath);
 	        // 이후에 파일 받을때는 uuid에서 확장자를 뺴는 과정이 필요함.
 
@@ -150,11 +159,14 @@ public class InstructorController { // 강사 관리
 		// 4. Instructor에 Upfile 추가
 		result.addUpfile(upfile); // 3. 연관 관계 설정, 부모에 자식객체 저장(add)
 		
-      return result; } else {
+//      return result; 
+      } else {
     	  log.info("File is not uploaded.");
-    	  return null;
+//    	  return null;
     	  
       }
+      
+      return result;
    } // register // 성공
    
  

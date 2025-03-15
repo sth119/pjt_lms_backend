@@ -35,7 +35,7 @@ import lombok.ToString;
 @JsonIgnoreProperties({
 //"crtDate",
 "udtDate",
-"course",
+//"course", fix -> 강사 리스트에서 과정목록 보이도록 활성화.
 "upfiles"
 })
 @Entity
