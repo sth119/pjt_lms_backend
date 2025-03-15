@@ -10,8 +10,8 @@ import lombok.Data;
 
 @Data
 public class TraineeDTO {
-	private Long tranineeId;				//아이디
-
+	private Long traineeId;				//아이디
+	
 	private String name;					//이름
 	private String tel;						//전화번호
 	private Integer status;					//상태(훈련중=1,중도탈락=2,중도포기=3,취업완료=4)
@@ -20,16 +20,12 @@ public class TraineeDTO {
 	private Date crtDate;
 	private Date udtDate;
 	
-
 	// 받을 CourseId
 	private Long courseId;
-
-	// 돌려줄 객체 DTO
-	private Course course;
-	private List<Upfile> upfile;
 	
-//	private Integer page;
-//	private Integer PageSize;
+	// DTO로 담아서 프론트로 보낼 데이터
+	private Course course;				//소속과정번호
+	private List<Upfile> upfile;
 	
 	private String searchWord;    //이름 전화번호
 	private String searchText;	//검색어

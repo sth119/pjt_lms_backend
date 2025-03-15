@@ -93,19 +93,31 @@ public class Trainee implements Serializable {
 	private List<Upfile> upfiles = new Vector<>();
 
 
-	public Upfile addTUpfile(Upfile upfiles) {
-		getUpfiles().add(upfiles);
-		upfiles.setTrainee(this);
+	public Upfile addUpfile(Upfile upfile) {
+		// 1. 기존 부모와의 연관 관계 제거
+        if (getUpfiles().contains(upfile)) {
+            getUpfiles().remove(upfile); // 부모 컬렉션에서 제거
+        } // if
 
-		return upfiles;
-	}
+        // 2. 자식 엔티티에 새로운 부모 참조 설정
+        upfile.setTrainee(this);
 
-	public Upfile removeUpfile(Upfile upfiles) {
-		getUpfiles().remove(upfiles);
-		upfiles.setTrainee(null);
+        // 3. 부모 컬렉션에 자식 엔티티 추가
+        getUpfiles().add(upfile);
 
-		return upfiles;
-	}
+		return upfile;
+	} // addTUpfile
 
+	public Upfile removeUpfile(Upfile upfile) {
+		if (upfile != null) {
+	        // 1. 자식 엔티티의 활성 상태를 비활성화
+	        upfile.setEnabled(false);
+	     // 2. 자식 엔티티에서 부모 참조 제거
+	        upfile.setTrainee(null);
+	        // 3. 부모 컬렉션에서 자식 엔티티 제거
+	        getUpfiles().remove(upfile);
+	    } // if
+		return upfile;
+	} // removeUpfile
 
 }//class

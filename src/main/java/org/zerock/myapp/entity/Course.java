@@ -113,7 +113,7 @@ public class Course implements Serializable {
 
 
 	
-	public Trainee addTraninee(Trainee traninee) {
+	public Trainee addTraninee(Trainee traninee) { // 중복된 훈련생이 있으면 체크가 필요하다
 		getTraninees().add(traninee);
 		traninee.setCourse(this);
 
