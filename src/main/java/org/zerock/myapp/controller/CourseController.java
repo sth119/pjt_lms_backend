@@ -55,7 +55,7 @@ public class CourseController {
 	
 	//== 리스트 =============================== 
 	//RequestParameter 확인 필요
-	@PostMapping(path = "/list/{status1}", params = {"status"})
+	@PostMapping(path = "/list/{status1}")
 	Page<Course> list(
 			CourseDTO dto,
 			@PathVariable Integer status1,
