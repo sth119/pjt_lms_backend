@@ -6,6 +6,7 @@ import java.util.List;
 import org.zerock.myapp.entity.Course;
 import org.zerock.myapp.entity.Upfile;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
@@ -21,6 +22,7 @@ public class InstructorDTO {
 	private Integer status;				//	상태(등록=1,강의중=2,퇴사=3)
 	private Boolean enabled;			//	삭제여부(1=유효,0=삭제)
 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
 	private Date crtDate;
 	private Date udtDate;
 	
@@ -30,9 +32,5 @@ public class InstructorDTO {
 	// 돌려줄 객체 DTO
 	private Course course;
 	private List<Upfile> upfile;
-	
-	
-
-	
 
 } // end class

@@ -52,7 +52,6 @@ public class InstructorController { // 강사 관리
 
    //RESTfull   
    @PostMapping // 리스트 
-   
    Page<InstructorDTO> list(
 		   @ModelAttribute CriteriaDTO dto, Pageable paging){
 	   // @ RequestParam : 단일 값 바인딩 할때 사용. (String , Integer 등)
@@ -82,6 +81,7 @@ public class InstructorController { // 강사 관리
       	  // 조인 객체들
     	  instructorDto.setCourse(s.getCourse());
     	  instructorDto.setUpfile(s.getUpfiles());
+    	  
     	  dtoList.add(instructorDto);
       }); // forEach
       Page<InstructorDTO> result = new PageImpl<>(dtoList, list.getPageable(), list.getTotalElements());
