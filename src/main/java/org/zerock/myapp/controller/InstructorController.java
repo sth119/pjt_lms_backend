@@ -10,8 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,8 +43,8 @@ public class InstructorController { // 강사 관리
    @Autowired InstructorRepository repo;
    @Autowired CourseRepository crsRepo; 
    @Autowired UpFileRepository fileRepo;
-   String InstructorFileDirectory = "C:/temp/instructor/";
-//   String InstructorFileDirectory = "/Users/host/workspaces/tmep";
+//   String InstructorFileDirectory = "C:/temp/instructor/";
+   String InstructorFileDirectory = "/Users/host/workspaces/tmep/";
    
 
 
@@ -89,7 +91,7 @@ public class InstructorController { // 강사 관리
    @PutMapping // 등록
    Instructor register(
          @ModelAttribute InstructorDTO dto,
-         @RequestParam(value = "upfiles", required = false) MultipartFile file
+         @RequestParam(value = "upfiles", required = false) MultipartFile file // fix -> required = false 
       )throws Exception, IOException {
       
       log.info("register({}) invoked.",dto);
@@ -191,7 +193,8 @@ public class InstructorController { // 강사 관리
   	  // 조인 객체들
   	  dto.setCourse(Instructor.getCourse());
   	  dto.setUpfile(Instructor.getUpfiles());
-      
+  	  
+  	  
       log.info("Read success");
       return dto;
    } // read  // 성공
@@ -201,7 +204,7 @@ public class InstructorController { // 강사 관리
    @PostMapping(value = "/{id}") 
    Instructor update(@PathVariable("id") Long instructorId, 
 		   			 InstructorDTO dto,
-		   			@RequestParam("upfiles") MultipartFile file) throws IllegalStateException, IOException {
+		   			@RequestParam(value = "upfiles" , required = false) MultipartFile file) throws IllegalStateException, IOException {
       log.info("update({},{}) invoked.",instructorId,dto);
       
       // 1. 기존 Instructor 조회 (없으면 예외 발생)
@@ -216,73 +219,123 @@ public class InstructorController { // 강사 관리
       } // if
       
       // 3. Course 설정 (register와 동일한 방식)
-      if(dto.getCourseId() != null)
-         instructor.setCourse(this.crsRepo.findById(dto.getCourseId()).orElse(new Course()));  // 담당과정
+//      if(dto.getCourseId() != null)
+//         instructor.setCourse(this.crsRepo.findById(dto.getCourseId()).orElse(new Course()));  // 담당과정
             
+      if (dto.getCourseId() != null) {
+          Course course = this.crsRepo.findById(dto.getCourseId()).orElse(new Course());
+          instructor.setCourse(course);
+       }
 
-      if(file != null && !file.isEmpty()) { // 사진이 없는경우 대비를 위한 if-else 문.
+//      if(file != null && !file.isEmpty()) { // 사진이 없는경우 대비를 위한 if-else 문.
+//      
+//      
+//      //  기존 파일 처리
+//      if (!instructor.getUpfiles().isEmpty()) {
+//          Upfile existingFile = instructor.getUpfiles().get(0); // 첫 번째 파일 가져오기
+//          String existingFileName = existingFile.getOriginal(); // 기존 파일명 가져오기
+//
+//          // 새로운 파일명과 비교
+//          if (!existingFileName.equals(file.getOriginalFilename())) {
+//              // 기존 파일 비활성화 및 연관 관계 제거
+//        	  instructor.removeUpfile(existingFile);
+//              log.info("Existing file removed: {}", existingFile);
+//              this.fileRepo.save(existingFile); // 변경된 상태 저장
+//          } else {
+//              log.info("Same file detected, skipping removal.");
+//              return instructor; // 동일한 경우 업데이트 중단
+//          } // if-else
+//      } 
+//      
+//     
+//		 
+//		 Upfile upfile = new Upfile();  // 1. 파일 객체 생성
+//		 
+//		upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
+//		upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
+//		upfile.setPath(InstructorFileDirectory); // 주소
+//		upfile.setEnabled(true); // 기본값
+//		
+//		log.info("New upfile created: {}", upfile);
+//
+//		// 파일 저장 처리
+//		
+//      // 파일 저장 경로 생성
+//      String uploadDir = upfile.getPath();
+//      File targetDir = new File(uploadDir);
+//      if (!targetDir.exists()) {
+//          targetDir.mkdirs(); // 디렉토리가 없는 경우 생성
+//      } // if
+//  
+//      // 파일 저장 경로 및 이름 설정
+//      String filePath = upfile.getPath() + upfile.getUuid() + "." + upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
+//      File savedFile = new File(filePath);
+//
+//      // 파일 저장
+//      file.transferTo(savedFile);
+//      log.info("File saved at: {}", filePath); 
+//      
+//	    // Course 엔티티에 새로운 파일 추가
+//      instructor.addUpfile(upfile);
+//      
+//      this.fileRepo.save(upfile); // // 새 파일 엔티티 저장
+//      
+//      } else {
+//    	  log.info("사진이 수정되지 않았습니다.");
+//      }
+//          
+//      
+//      // 4. 저장 및 반환
+//      Instructor update = this.repo.save(instructor);
+//      log.info("Update success: {}" , update);
+//      
+//      return update;
       
-      
-      //  기존 파일 처리
-      if (!instructor.getUpfiles().isEmpty()) {
-          Upfile existingFile = instructor.getUpfiles().get(0); // 첫 번째 파일 가져오기
-          String existingFileName = existingFile.getOriginal(); // 기존 파일명 가져오기
-
-          // 새로운 파일명과 비교
-          if (!existingFileName.equals(file.getOriginalFilename())) {
-              // 기존 파일 비활성화 및 연관 관계 제거
-        	  instructor.removeUpfile(existingFile);
-              log.info("Existing file removed: {}", existingFile);
-              this.fileRepo.save(existingFile); // 변경된 상태 저장
-          } else {
-              log.info("Same file detected, skipping removal.");
-              return instructor; // 동일한 경우 업데이트 중단
-          } // if-else
-      } 
-      
-     
-		 
-		 Upfile upfile = new Upfile();  // 1. 파일 객체 생성
-		 
-		upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
-		upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
-		upfile.setPath(InstructorFileDirectory); // 주소
-		upfile.setEnabled(true); // 기본값
-		
-		log.info("New upfile created: {}", upfile);
-
-		// 파일 저장 처리
-		
-      // 파일 저장 경로 생성
-      String uploadDir = upfile.getPath();
-      File targetDir = new File(uploadDir);
-      if (!targetDir.exists()) {
-          targetDir.mkdirs(); // 디렉토리가 없는 경우 생성
-      } // if
-  
-      // 파일 저장 경로 및 이름 설정
-      String filePath = upfile.getPath() + upfile.getUuid() + "." + upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
-      File savedFile = new File(filePath);
-
-      // 파일 저장
-      file.transferTo(savedFile);
-      log.info("File saved at: {}", filePath); 
-      
-	    // Course 엔티티에 새로운 파일 추가
-      instructor.addUpfile(upfile);
-      
-      this.fileRepo.save(upfile); // // 새 파일 엔티티 저장
-      
-      } else {
-    	  log.info("사진이 수정되지 않았습니다.");
-      }
+      if (file != null && !file.isEmpty()) {
+          // 기존 파일이 null이 아닌지 먼저 확인
+          if (instructor.getUpfiles() != null && !instructor.getUpfiles().isEmpty()) {
+             Upfile existingFile = instructor.getUpfiles().get(0);
+             String existingFileName = existingFile.getOriginal();
+             // 새로운 파일과 기존 파일명이 다를 경우에만 기존 파일 제거
+             if (!existingFileName.equals(file.getOriginalFilename())) {
+                instructor.removeUpfile(existingFile);
+                log.info("Existing file removed: {}", existingFile);
+                this.fileRepo.save(existingFile);
+             } else {
+                log.info("Same file detected, skipping file update.");
+                return instructor;
+             }
+          }
           
-      
-      // 4. 저장 및 반환
-      Instructor update = this.repo.save(instructor);
-      log.info("Update success: {}" , update);
-      
-      return update;
+          // 새 파일 저장
+          Upfile upfile = new Upfile();
+          upfile.setOriginal(file.getOriginalFilename());
+          upfile.setUuid(UUID.randomUUID().toString());
+          upfile.setPath(InstructorFileDirectory);
+          upfile.setEnabled(true);
+          
+          log.info("New upfile created: {}", upfile);
+          
+          File targetDir = new File(InstructorFileDirectory);
+          if (!targetDir.exists()) {
+             targetDir.mkdirs();
+          }
+          
+          String extension = upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
+          String filePath = upfile.getPath() + upfile.getUuid() + "." + extension;
+          File savedFile = new File(filePath);
+          file.transferTo(savedFile);
+          log.info("File saved at: {}", filePath);
+          
+          instructor.addUpfile(upfile);
+          this.fileRepo.save(upfile);
+       } else {
+          log.info("파일이 수정되지 않았습니다.");
+       }
+       
+       Instructor updated = this.repo.save(instructor);
+       log.info("Update success: {}", updated);
+       return updated;
       
     } // update // 성공
    
@@ -318,5 +371,11 @@ public class InstructorController { // 강사 관리
       return delete;
    } // delete // 성공
    
+   
+   @InitBinder
+   public void initBinder(WebDataBinder binder) {
+       // InstructorDTO의 course 필드는 바인딩하지 않음
+       binder.setDisallowedFields("course");
+   }
 
 } // end class

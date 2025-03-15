@@ -6,9 +6,13 @@ import java.util.List;
 import org.zerock.myapp.entity.Course;
 import org.zerock.myapp.entity.Upfile;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
 
 @Data
+//입력시 course 필드를 무시하고, 출력 시에는 getter를 허용
+@JsonIgnoreProperties(value = {"course"}, allowGetters = true)
 public class InstructorDTO {
 	private Long instructorId;			// 아이디
 
@@ -26,6 +30,9 @@ public class InstructorDTO {
 	// 돌려줄 객체 DTO
 	private Course course;
 	private List<Upfile> upfile;
+	
+	
+
 	
 
 } // end class
