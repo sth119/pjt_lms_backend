@@ -3,11 +3,8 @@ package org.zerock.myapp.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
-import org.hibernate.grammars.hql.HqlParser.IsEmptyPredicateContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,10 +12,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +24,6 @@ import org.zerock.myapp.domain.CriteriaDTO;
 import org.zerock.myapp.domain.InstructorDTO;
 import org.zerock.myapp.entity.Course;
 import org.zerock.myapp.entity.Instructor;
-import org.zerock.myapp.entity.Trainee;
 import org.zerock.myapp.entity.Upfile;
 import org.zerock.myapp.persistence.CourseRepository;
 import org.zerock.myapp.persistence.InstructorRepository;
@@ -50,7 +46,10 @@ public class InstructorController { // 강사 관리
 
    //RESTfull   
    @PostMapping // 리스트 
-   Page<Instructor> list(@RequestBody CriteriaDTO dto, Pageable paging){
+   
+   Page<Instructor> list(@ModelAttribute CriteriaDTO dto, Pageable paging){
+	   // @ RequestParam : 단일 값 바인딩 할때 사용. (String , Integer 등)
+	   // @ ModelAttribute : 복합객체(DTO) 처리할 때 사용.
       log.info("list({}, {}) invoked.", dto, paging);
       
       //page는 기본 0부터 시작
@@ -64,7 +63,21 @@ public class InstructorController { // 강사 관리
       // 기본적으로 모든 데이터를 조회
       Page<Instructor> list = this.repo.findByEnabled(true, paging);
       
-
+      //검색 리스트: 활성화상태(1) + status 
+      Page<Instructor> list2 = this.repo.findByEnabledAndStatus(true, pageSize, paging);
+      
+      //검색 리스트: 활성화상태(1) + status + 이름 
+      Page<Instructor> list3 = this.repo.findByEnabledAndStatusAndNameContaining(true, pageSize, q, paging);
+      
+      //검색 리스트: 활성화상태(1) + 이름
+      Page<Instructor> list4 = this.repo.findByEnabledAndNameContaining(true, q, paging);
+      
+      //검색 리스트: 활성화상태(1) + status + 전화번호
+      Page<Instructor> list5 = this.repo.findByEnabledAndStatusAndTelContaining(true, pageSize, q, paging);
+      
+      //검색 리스트: 활성화상태(1) + 전화번호
+      Page<Instructor> list6 = this.repo.findByEnabledAndTelContaining(true, q, paging);
+      
       return list;
    } // list // 성공
    
@@ -72,8 +85,8 @@ public class InstructorController { // 강사 관리
    
    @PutMapping // 등록
    Instructor register(
-         InstructorDTO dto,
-         @RequestParam("upfiles") MultipartFile file
+         @ModelAttribute InstructorDTO dto,
+         @RequestParam(value = "upfiles", required = false) MultipartFile file
       )throws Exception, IOException {
       
       log.info("register({}) invoked.",dto);
@@ -138,7 +151,9 @@ public class InstructorController { // 강사 관리
 		result.addUpfile(upfile); // 3. 연관 관계 설정, 부모에 자식객체 저장(add)
 		
       return result; } else {
+    	  log.info("File is not uploaded.");
     	  return null;
+    	  
       }
    } // register // 성공
    
