@@ -60,7 +60,7 @@ public class Instructor implements Serializable {
 	@Column(nullable=false)
 	private Boolean enabled = true;			//삭제여부(1=유효,0=삭제)
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
 	@CurrentTimestamp(event = EventType.INSERT, source = SourceType.DB)
 	@Column(name="INSERT_TS", nullable=false)
 	private Date crtDate;
