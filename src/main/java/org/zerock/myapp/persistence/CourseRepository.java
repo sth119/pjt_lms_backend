@@ -53,19 +53,13 @@ public interface CourseRepository extends JpaRepository<Course, Long>, JpaSpecif
 			Boolean enabled, Integer status, Integer type, String name, Pageable paging
 		);
 	
+	//검색 리스트: 활성화상태(true) + 진행여부 + 과정구분 + 강사명
 	final String nativeSQL_TypeAndInsName = """
 			SELECT c.* 
 			FROM t_courses c 
 				JOIN t_instructors i ON c.id = i.crs_id 
 			WHERE c.enabled = :enabled AND c.status = :status AND c.type = :type AND i.name LIKE '%' || :instructorName || '%'
-		""";
-	final String nativeSQL_InsName = """
-			SELECT c.* 
-			FROM t_courses c 
-				JOIN t_instructors i ON c.id = i.crs_id 
-			WHERE c.enabled = :enabled AND c.status = :status AND i.name LIKE '%' || :instructorName || '%'
-		""";
-			
+		""";		
 	@Query(value = nativeSQL_TypeAndInsName, nativeQuery = true)
 	Page<Course> findCoursesByTypeAndInstructorName(
 			@Param("enabled") Boolean enabled, 
@@ -75,6 +69,13 @@ public interface CourseRepository extends JpaRepository<Course, Long>, JpaSpecif
 			Pageable paging
 		);
 	
+	//검색 리스트: 활성화상태(true) + 진행여부 + 강사명
+	final String nativeSQL_InsName = """
+			SELECT c.* 
+			FROM t_courses c 
+				JOIN t_instructors i ON c.id = i.crs_id 
+			WHERE c.enabled = :enabled AND c.status = :status AND i.name LIKE '%' || :instructorName || '%'
+		""";
 	@Query(value = nativeSQL_InsName, nativeQuery = true)
 	Page<Course> findCoursesByInstructorName(
 			@Param("enabled") Boolean enabled, 
@@ -86,11 +87,25 @@ public interface CourseRepository extends JpaRepository<Course, Long>, JpaSpecif
 	
 
 	
-	//강사 & 훈련생 등록 화면: 담당과정 선택 리스트
+	//훈련생 등록 화면: 신청과정 선택 리스트
 	public abstract List<Course> findByEnabledAndStatusInOrderByStartDate(Boolean enabled, List<Integer> statuses);
+
+	
+	//강사 등록 화면: 담당과정 선택 리스트
+	final String nativeSQL_InsRegCourseList = """
+			SELECT c.* 
+			FROM t_courses c 
+				LEFT JOIN t_instructors i ON c.id = i.crs_id 
+			WHERE c.enabled = :enabled AND c.status in (1, 2) AND i.name is null	--상태(등록=1,진행중=2,폐지=3,종료=4)
+			--ORDER BY c.INSERT_TS DESC
 			
+		""";
+	@Query(value = nativeSQL_InsRegCourseList, nativeQuery = true)
+	List<Course> findCoursesByNotInstructorName(
+			@Param("enabled") Boolean enabled
+		);
 	
-	
+
 	
 	//단건 조회 :
 	//	삭제를 Enabled false로 지정하였기 때문에 조회도 Enabled를 기본 조건으로 검색해야한다.
