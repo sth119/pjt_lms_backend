@@ -38,7 +38,7 @@ import lombok.ToString;
 //"crtDate",
 "udtDate",
 
-"course",
+//"course",
 "upfiles"
 })
 
@@ -70,7 +70,7 @@ public class Trainee implements Serializable {
 	
 	
 	// 2-2. Iegal Auditing Properties
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
 	@CurrentTimestamp(event = EventType.INSERT, source = SourceType.DB)
 	@Column(name="INSERT_TS", nullable=false)
 	private Date crtDate;						//등록일
