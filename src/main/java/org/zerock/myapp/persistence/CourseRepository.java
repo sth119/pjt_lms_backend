@@ -26,31 +26,31 @@ public interface CourseRepository extends JpaRepository<Course, Long>, JpaSpecif
 	 * 		- 과정명
 	 *  	- 강사명
 	 * */
-	//검색 리스트: 활성화상태(1) 
+	//검색 리스트: 활성화상태(true) 
 	public abstract Page<Course> findByEnabled(
 			Boolean enabled, Pageable paging
 		);
-	//검색 리스트: 활성화상태(1) => 페이징 X
+	//검색 리스트: 활성화상태(true) => 페이징 X
 	public abstract List<Course> findByEnabled(Boolean enabled);
 	
-	//검색 리스트: 활성화상태(1) + 진행여부 
+	//검색 리스트: 활성화상태(true) + 진행여부 
 	public abstract Page<Course> findByEnabledAndStatus(
 			Boolean enabled, Integer status, Pageable paging
 		);
 		
-	//검색 리스트: 활성화상태(1) + 진행여부 + 과정구분
+	//검색 리스트: 활성화상태(true) + 진행여부 + 과정구분
 	public abstract Page<Course> findByEnabledAndStatusAndType(
-			Boolean enabled, Integer status, String type, Pageable paging
+			Boolean enabled, Integer status, Integer type, Pageable paging
 		);
 	
-	//검색 리스트: 활성화상태(1) + 진행상태 + 과정명
+	//검색 리스트: 활성화상태(true) + 진행상태 + 과정명
 	public abstract Page<Course> findByEnabledAndStatusAndNameContaining(
 			Boolean enabled, Integer status, String name, Pageable paging
 		);
 	
-	//검색 리스트: 활성화상태(1) + 진행여부 + 과정구분 + 과정명
+	//검색 리스트: 활성화상태(true) + 진행여부 + 과정구분 + 과정명
 	public abstract Page<Course> findByEnabledAndStatusAndTypeAndNameContaining(
-			Boolean enabled, Integer status, String type, String name, Pageable paging
+			Boolean enabled, Integer status, Integer type, String name, Pageable paging
 		);
 	
 	final String nativeSQL_TypeAndInsName = """

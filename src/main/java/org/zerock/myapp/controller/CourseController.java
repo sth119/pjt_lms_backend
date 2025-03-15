@@ -19,13 +19,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.myapp.domain.CourseDTO;
-import org.zerock.myapp.domain.CriteriaDTO;
 import org.zerock.myapp.entity.Course;
 import org.zerock.myapp.entity.Trainee;
 import org.zerock.myapp.entity.Upfile;
@@ -33,8 +31,8 @@ import org.zerock.myapp.persistence.CourseRepository;
 import org.zerock.myapp.persistence.InstructorRepository;
 import org.zerock.myapp.persistence.TraineeRepository;
 import org.zerock.myapp.persistence.UpFileRepository;
-import org.zerock.myapp.persistence.spec.CourseSearchCriteria;
 
+import jakarta.inject.Named;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,60 +55,72 @@ public class CourseController {
 	
 	//== 리스트 =============================== 
 	//RequestParameter 확인 필요
-	@PostMapping 
+	@PostMapping(params = {"status"})
 	Page<Course> list(
-			CourseSearchCriteria criteria,	//동적 검색을 위한 conditions
-			@RequestBody CriteriaDTO dto
+			CourseDTO dto,
+			@RequestParam(defaultValue = "0") Integer currPage, 
+			@RequestParam(defaultValue = "10") Integer pageSize
 		){
-		log.info("list({}, {}) invoked.", criteria, dto);
-		
-		Integer currPage = (dto.getPage()!=null && dto.getPage() >= 0) ? dto.getPage() : 0;	//page는 기본 0부터 시작
-		Integer pageSize = (dto.getPageSize()!=null && dto.getPageSize() >= 0) ? dto.getPageSize() : 10;
-		String condition = dto.getCondition();
-		String q = dto.getQ();
-		
-		//log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
-		
-//		Pageable paging = PageRequest.of(currPage - 1, pageSize, Sort.Direction.DESC, "id");	// 강사님 코드
-		Pageable paging = PageRequest.of(currPage, pageSize, Sort.by("crtDate").descending().and(Sort.by("status").ascending()));
-				
-		
-		
-		Page<Course> list = this.repo.findByEnabled(true, paging);
-		list.forEach(s -> {
-			s.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, s));
-			log.info(s.toString());
-		}); // forEach
+			log.debug("Course - list({}, {}, {}) invoked.", dto, currPage, pageSize);
+			
+//			CourseDTO dto = new CourseDTO();
+//			dto.setStatus(status);
+			
+	//		Pageable paging = PageRequest.of(currPage - 1, pageSize, Sort.Direction.DESC, "id");	// 강사님 코드
+			//쿼리메소드 사용 시
+			Pageable paging = PageRequest.of(currPage, pageSize, Sort.by("crtDate").descending().and(Sort.by("status").ascending()));
+			//nativeSQL  사용 시
+			Pageable paging2 = PageRequest.of(currPage, pageSize, Sort.Direction.DESC, "INSERT_TS");
+					
+			/* 리스트 검색 조건
+			 * 1. dto.getEnabled();	// null, true 기본으로 셋팅
+			 * 2. dto.getStatus();	// 네브바 검색으로 필수로 들어옴
+			 * 
+			 * 3. dto.getType(); //null 확인
+			 * 
+			 * 4. dto.getSearchWord();
+			 * 	  dto.getSearchText();	//null 확인
+			 * */
+			
+			Page<Course> list = Page.empty(); // 기본 값 설정
+			
+			if	   ( dto.getType() == null && dto.getSearchText() == null ) {
+				//기본 검색 : 활성화상태(true) + 진행여부 
+				list = this.repo.findByEnabledAndStatus(true, dto.getStatus(), paging);
+			}
+			else if( dto.getType() != null && dto.getSearchText() == null ) {
+				//검색 리스트: 활성화상태(true) + 진행여부 + 과정구분
+				list = this.repo.findByEnabledAndStatusAndType(true, dto.getStatus(), dto.getType(), paging);
+			}
+			else if( dto.getType() == null && dto.getSearchText() != null ) {
+				if(dto.getSearchWord().equals("name")) {
+					//검색 리스트: 활성화상태(true) + 진행상태 + 과정명
+					list = this.repo.findByEnabledAndStatusAndNameContaining(true, dto.getStatus(), dto.getSearchText(), paging);
+				}
+				else if(dto.getSearchWord().equals("instructorName")) {	
+					list = this.repo.findCoursesByInstructorName(true, dto.getStatus(), dto.getSearchText(), paging2);
+				}
+			}
+			else if( dto.getType() != null && dto.getSearchText() != null ) {
+				if(dto.getSearchWord().equals("name")) {
+					//검색 리스트: 활성화상태(true) + 진행여부 + 과정구분 + 과정명
+					list = this.repo.findByEnabledAndStatusAndTypeAndNameContaining(true, dto.getStatus(), dto.getType(), dto.getSearchText(), paging);
+				}
+				else if(dto.getSearchWord().equals("instructorName")) {
+					list = this.repo.findCoursesByTypeAndInstructorName(true, dto.getStatus(), dto.getType(), dto.getSearchText(), paging2);
+					
+				}
+			}
+			
+			//과정 리스트에 현재 수강생 수 담기 
+			list.forEach(s -> {
+				s.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, s));
+				log.info(s.toString());
+			}); // forEach
 		
 
 		return list;
 	} // list
-	
-
-//	@PostMapping // 리스트 
-//	Page<Course> list(@RequestBody CriteriaDTO dto, Pageable paging){
-//		log.info("list({}, {}) invoked.", dto, paging);
-//		
-//		//page는 기본 0부터 시작
-//		Integer page = (dto.getPage()!=null && dto.getPage() >= 0) ? dto.getPage() : 0;
-//		Integer pageSize = (dto.getPageSize()!=null && dto.getPageSize() >= 0) ? dto.getPageSize() : 10;
-//		String condition = dto.getCondition();
-//		String q = dto.getQ();
-//		
-//		//log.info("DTO list: {},{},{},{},{}",page,pageSize,condition,q,type);
-//		
-//		paging = PageRequest.of(page, pageSize, Sort.by("crtDate").descending().and(Sort.by("status").ascending()));
-//		
-//		
-//		Page<Course> list = this.repo.findByEnabled(true, paging);
-//		list.forEach(s -> {
-//			s.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, s));
-//			log.info(s.toString());
-//		}); // forEach
-//		
-//
-//		return list;
-//	} // list
 	
 	//RequestParameter 확인 완료
 	@PutMapping // 등록
