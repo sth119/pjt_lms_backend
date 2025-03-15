@@ -21,18 +21,33 @@ public interface TraineeRepository extends JpaRepository<Trainee, Long> {
 	 *  	- 전화번호
 	 *  	- 소속과정
 	 * */
-	//검색 리스트: 활성화상태(1) 
+	//검색 리스트: 활성화상태(true) 
 //	public abstract Slice<Trainee> findByEnabled(
 	public abstract Page<Trainee> findByEnabled(
 			Boolean enabled, Pageable paging
 		);
 	
-	//검색 리스트: 활성화상태(1) + 이름 
+	//검색 리스트: 활성화상태(true) + status
+	public abstract Page<Trainee> findByEnabledAndStatus(
+			Boolean enabled, Integer status, Pageable paging
+		);
+	
+	//검색 리스트: 활성화상태(true) + status + 이름 
+	public abstract Page<Trainee> findByEnabledAndStatusAndNameContaining(
+			Boolean enabled, Integer status, String name, Pageable paging
+		);
+	
+	//검색 리스트: 활성화상태(true) + 이름 
 	public abstract Page<Trainee> findByEnabledAndNameContaining(
 			Boolean enabled, String name, Pageable paging
 		);
 		
-	//검색 리스트: 활성화상태(1) + 전화번호
+	//검색 리스트: 활성화상태(true) + status + 전화번호
+	public abstract Page<Trainee> findByEnabledAndStatusAndTelContaining(
+			Boolean enabled, Integer status, String tel, Pageable paging
+		);	
+		
+	//검색 리스트: 활성화상태(true) + 전화번호
 	public abstract Page<Trainee> findByEnabledAndTelContaining(
 			Boolean enabled, String tel, Pageable paging
 		);

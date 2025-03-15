@@ -26,9 +26,24 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> , 
 			Boolean enabled, Pageable paging
 		);
 	
+	//검색 리스트: 활성화상태(1) + status 
+	public abstract Page<Instructor> findByEnabledAndStatus(
+			Boolean enabled, Integer status, Pageable paging
+		);
+	
+	//검색 리스트: 활성화상태(1) + status + 이름 
+	public abstract Page<Instructor> findByEnabledAndStatusAndNameContaining(
+			Boolean enabled, Integer status, String name, Pageable paging
+		);
+	
 	//검색 리스트: 활성화상태(1) + 이름 
 	public abstract Page<Instructor> findByEnabledAndNameContaining(
 			Boolean enabled, String name, Pageable paging
+		);
+		
+	//검색 리스트: 활성화상태(1) + status + 전화번호
+	public abstract Page<Instructor> findByEnabledAndStatusAndTelContaining(
+			Boolean enabled, Integer status, String tel, Pageable paging
 		);
 		
 	//검색 리스트: 활성화상태(1) + 전화번호
