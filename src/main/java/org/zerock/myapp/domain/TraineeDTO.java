@@ -1,8 +1,10 @@
 package org.zerock.myapp.domain;
 
 import java.util.Date;
+import java.util.List;
 
 import org.zerock.myapp.entity.Course;
+import org.zerock.myapp.entity.Upfile;
 
 import lombok.Data;
 
@@ -18,7 +20,13 @@ public class TraineeDTO {
 	private Date crtDate;
 	private Date udtDate;
 	
-	private Course course;				//소속과정번호(FK)
+
+	// 받을 CourseId
+	private Long courseId;
+
+	// 돌려줄 객체 DTO
+	private Course course;
+	private List<Upfile> upfile;
 	
 //	private Integer page;
 //	private Integer PageSize;

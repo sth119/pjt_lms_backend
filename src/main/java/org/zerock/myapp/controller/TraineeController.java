@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.myapp.domain.TraineeDTO;
 import org.zerock.myapp.entity.Course;
+import org.zerock.myapp.entity.Instructor;
 import org.zerock.myapp.entity.Trainee;
 import org.zerock.myapp.persistence.CourseRepository;
 import org.zerock.myapp.persistence.TraineeRepository;
@@ -119,15 +120,17 @@ public class TraineeController {  // 훈련생 관리
 
 
 	
-	
 	@PutMapping // 등록
 	ResponseEntity<Trainee> register(
 //			@ModelAttribute TraineeDTO dto,	// String 으로 받아서 변환해야 한다
 			@RequestParam("name") String name, // String으로 받기
-		    @RequestParam("tel") String tel,   // String으로 받기
-			@RequestParam("upfiles") MultipartFile file) throws Exception, IOException {
+		    @RequestParam("tel") String tel   // String으로 받기
+//			,@RequestParam("upfiles") MultipartFile file) throws Exception, IOException
+	){
 //		log.info("register({}) invoked.",dto);
-		log.info("register(name={}, tel={}, file={}) invoked.", name, tel, file.getOriginalFilename());
+		log.info("register(name={}, tel={}, file={}) invoked.", name, tel
+//				, file.getOriginalFilename()
+				);
 		
 		TraineeDTO dto=new TraineeDTO();
 		dto.setName(name);
@@ -136,7 +139,10 @@ public class TraineeController {  // 훈련생 관리
 		Trainee trn = new Trainee(); // 코스 객체 생성
 		
 	    trn.setName(dto.getName());     
-	    trn.setTel(dto.getTel());	  
+	    trn.setTel(dto.getTel());	 
+	    trn.setStatus(1); //기본 값 (1=훈련중 2=중도탈락 3=중도포기 4=취업완료)
+	    trn.setEnabled(true); //기본값 true (1=true=존재함 0=false=삭제됨)
+	    trn.setCourse(null);  //기본은 null인데 명시적으로 표현
 //	    trn.setCourse(dto.getCourse()); //신청과정 (courseId)
 		
 
@@ -243,54 +249,81 @@ public class TraineeController {  // 훈련생 관리
 	*/
 
 	  
+	//필요없는 단일조회
 		@GetMapping("/{id}") // 단일 조회 화면
 		Trainee read(@PathVariable("id") Long traineeId){ // error fix -> ("id")로 명확히 표시
 			log.info("read({}) invoked.",traineeId);
 			
-			Optional<Trainee> optional = this.repo.findByEnabledAndTraineeId(true,traineeId); // error fix ->  주석처리
-			
-			Trainee read = optional.get();
-//					.orElseThrow(() -> new RuntimeException("해당 ID의 강사를 찾을 수 없습니다: " + traineeId));
+		      Trainee trn = this.repo.findById(traineeId)
+		              .orElseThrow(() -> new RuntimeException("해당 ID의 훈련생을 찾을 수 없습니다: " + traineeId));
+		      
 			
 			log.info("Read success");
-			return read;
+			return trn;
 		} // read
 		
 		// https://localhost/trainee/1
 		
 		
-		//update
-		@PostMapping(value = "/{id}", consumes = "application/json")
-		public ResponseEntity<Trainee> update(@PathVariable("id") Long traineeId, @RequestBody TraineeDTO dto) {
+		
+		
+		//update 단일 조회해서 그걸 변경
+		@PostMapping(value = "/{id}"
+//				, consumes = "application/json"
+				)
+		Trainee update(@PathVariable("id") Long traineeId, TraineeDTO dto) {
 		    log.info("update({},{}) invoked.", traineeId, dto);
+
+		      //1. 아이디를 찾아
+		      Trainee trn = this.repo.findById(traineeId)
+		              .orElseThrow(() -> new RuntimeException("해당 ID의 훈련생을 찾을 수 없습니다: " + traineeId));
+		   
+		      //2. DTO로 변경 값으로 덮어씌워
+		      trn.setName(dto.getName());
+		      trn.setTel(dto.getTel());
+		      
+		      if(dto.getStatus() != null) {//요청에서 null이 아닌 숫자가 들어왔다면
+		    	  trn.setStatus(dto.getStatus());//그걸 setStatus에 넣어라.
+		      }
+		      
+		      if(dto.getCourseId() != null)
+		    	  trn.setCourse(this.crsRepo.findById(dto.getCourseId()).orElse(new Course()));
+		     
+		      
+		      // 4. 저장 및 반환
+		      Trainee update = this.repo.save(trn);
+		      log.info("Update success: {}" , update);
+		      
+		     return update;
+		
 		    
-		    return this.repo.findByEnabledAndTraineeId(true, traineeId)
-		        .map(trn -> {
-		            trn.setName(dto.getName());
-		            trn.setTel(dto.getTel());
-		            trn.setStatus(dto.getStatus());
-		            
-		            if (dto.getCourse() != null && dto.getCourse().getCourseId() != null) {
-		                return this.crsRepo.findById(dto.getCourse().getCourseId())
-		                    .map(course -> {
-		                        trn.setCourse(course);
-		                        return this.repo.save(trn);
-		                    })
-		                    .orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + dto.getCourse().getCourseId()));
-		           //결과가 존재하면 map을 통해 처리하고, 존재하지 않으면 EntityNotFoundException을 던집니다.
-		            } else {
-		                trn.setCourse(null);
-		                return this.repo.save(trn);
-		            }
-		           
-		        })
-		        
-		        .map(updatedTrainee -> {
-		            log.info("Update success");
-		            return ResponseEntity.ok(updatedTrainee);
-//		           훈련생이 성공적으로 업데이트되면 ResponseEntity.ok(updatedTrainee)를 반환하여 업데이트된 훈련생을 응답으로 보냅니다.
-		        })
-		        .orElseThrow(() -> new EntityNotFoundException("Trainee not found with ID: " + traineeId));
+//		    return this.repo.findByEnabledAndTraineeId(true, traineeId)
+//		        .map(trn -> {
+//		            trn.setName(dto.getName());
+//		            trn.setTel(dto.getTel());
+//		            trn.setStatus(dto.getStatus());
+//		            
+//		            if (dto.getCourse() != null && dto.getCourse().getCourseId() != null) {
+//		                return this.crsRepo.findById(dto.getCourse().getCourseId())
+//		                    .map(course -> {
+//		                        trn.setCourse(course);
+//		                        return this.repo.save(trn);
+//		                    })
+//		                    .orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + dto.getCourse().getCourseId()));
+//		           //결과가 존재하면 map을 통해 처리하고, 존재하지 않으면 EntityNotFoundException을 던집니다.
+//		            } else {
+//		                trn.setCourse(null);
+//		                return this.repo.save(trn);
+//		            }
+//		           
+//		        })
+//		        
+//		        .map(updatedTrainee -> {
+//		            log.info("Update success");
+//		            return ResponseEntity.ok(updatedTrainee);
+////		           훈련생이 성공적으로 업데이트되면 ResponseEntity.ok(updatedTrainee)를 반환하여 업데이트된 훈련생을 응답으로 보냅니다.
+//		        })
+//		        .orElseThrow(() -> new EntityNotFoundException("Trainee not found with ID: " + traineeId));
 		   
 		}//update
 
