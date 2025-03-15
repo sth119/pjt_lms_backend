@@ -1,14 +1,13 @@
 package org.zerock.myapp.controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.myapp.domain.TraineeDTO;
+import org.zerock.myapp.entity.Course;
 import org.zerock.myapp.entity.Trainee;
-import org.zerock.myapp.entity.Upfile;
 import org.zerock.myapp.persistence.CourseRepository;
 import org.zerock.myapp.persistence.TraineeRepository;
 import org.zerock.myapp.persistence.UpFileRepository;
@@ -57,25 +56,54 @@ public class TraineeController {  // 훈련생 관리
 	    // 기본값 설정
 //	    Integer page = (dto.getPage() != null) ? dto.getPage() - 1 : 0;  // 페이지 시작 값은 0부터
 //	    Integer pageSize = (dto.getPageSize() != null) ? dto.getPageSize() : 10; // 기본 페이지 사이즈 10
-	    Pageable paging = PageRequest.of(page, pageSize); // Pageable 설정
+	    Pageable paging = PageRequest.of(page, pageSize, Sort.by(Sort.Order.asc("traineeId"))); // Pageable 설정
 
 	    // 검색 조건 적용
 	    Page<Trainee> result = null;
 
-	    if (dto.getSearchText() != null && dto.getSearchWord() != null) {
-	        switch (dto.getSearchWord()) {
-	            case "name":
-	                result = repo.findByEnabledAndNameContaining(true, dto.getSearchText(), paging);
-	                break;
-	            case "tel":
-	                result = repo.findByEnabledAndTelContaining(true, dto.getSearchText(), paging);
-	                break;
-	            default:
-	                result = repo.findByEnabled(true, paging);
-	                break;
+	    // status가 null이 아니면 status로 필터링
+	    if (dto.getStatus() != null) {
+	        // status 값이 1, 2, 3, 4 중 하나라면
+	        if (dto.getStatus() >= 1 && dto.getStatus() <= 4) {
+	            // status 조건을 추가한 검색
+	    
+	        	 if (dto.getSearchText() != null && dto.getSearchWord() != null) {
+				        switch (dto.getSearchWord()) {
+				            case "name":
+				                result = repo.findByEnabledAndStatusAndNameContaining(true,dto.getStatus(),dto.getSearchText(), paging);
+				                break;
+				            case "tel":
+				                result = repo.findByEnabledAndStatusAndTelContaining(true,dto.getStatus(), dto.getSearchText(), paging);
+				                break;
+				            default:
+				                result = repo.findByEnabledAndStatus(true,dto.getStatus(), paging);
+				                break;
+				        }
+	        	   } else {
+				        result = repo.findByEnabledAndStatus(true,dto.getStatus(), paging);
+				    }
+	        } else {
+	            // 유효하지 않은 status 값일 경우 기본적으로 모든 status를 받아들임// 넣는다면 1~4뿐이긴 하지만
+	            result = repo.findByEnabled(true, paging);
 	        }
-	    } else {
-	        result = repo.findByEnabled(true, paging);
+	        
+	    } else { //status를 선택 안하고 검색했을때
+			    if (dto.getSearchText() != null && dto.getSearchWord() != null) {
+			        switch (dto.getSearchWord()) {
+			            case "name":
+			                result = repo.findByEnabledAndNameContaining(true, dto.getSearchText(), paging);
+			                break;
+			            case "tel":
+			                result = repo.findByEnabledAndTelContaining(true, dto.getSearchText(), paging);
+			                break;
+			            default:
+			                result = repo.findByEnabled(true, paging);
+			                break;
+			        }           
+			        
+			    } else {
+			        result = repo.findByEnabled(true, paging);
+			    }
 	    }
 
 	    // 결과가 null이면 빈 Page 반환
@@ -84,72 +112,101 @@ public class TraineeController {  // 훈련생 관리
 	    result.forEach(seq -> log.info(seq.toString())); // 로그 출력
 	    return result;
 	}//list
-		
+		//test get https://localhost/trainee?searchWord=name&searchText=0
+	//https://localhost/trainee?searchWord=name&searchText=0&tel=00
+	//https://localhost/trainee?searchWord=tel&searchText=000
 
 
 
 	
 	
 	@PutMapping // 등록
-	Trainee register(
-			TraineeDTO dto, // String 으로 받아서 변환해야 한다
+	ResponseEntity<Trainee> register(
+//			@ModelAttribute TraineeDTO dto,	// String 으로 받아서 변환해야 한다
+			@RequestParam("name") String name, // String으로 받기
+		    @RequestParam("tel") String tel,   // String으로 받기
 			@RequestParam("upfiles") MultipartFile file) throws Exception, IOException {
-		log.info("register({}) invoked.",dto);
+//		log.info("register({}) invoked.",dto);
+		log.info("register(name={}, tel={}, file={}) invoked.", name, tel, file.getOriginalFilename());
+		
+		TraineeDTO dto=new TraineeDTO();
+		dto.setName(name);
+		dto.setTel(tel);
 		
 		Trainee trn = new Trainee(); // 코스 객체 생성
 		
 	    trn.setName(dto.getName());     
 	    trn.setTel(dto.getTel());	  
-	    trn.setCourse(dto.getCourse()); //신청과정
-		trn.setStatus(dto.getStatus()); //1.훈련중2.중도탈락3.중도포기4.취업완료
+//	    trn.setCourse(dto.getCourse()); //신청과정 (courseId)
 		
 
-		
-		Trainee result = this.repo.save(trn);
-		log.info("result:{}",result);
-		log.info("Regist success");
-		
-		
-		Upfile upfile = new Upfile();  // 1. 파일 객체 생성
-		upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
-		upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
-		upfile.setPath(CourseFileDirectory); // 주소
-		upfile.setEnabled(true); // 기본값
-		
-		upfile.setCourse(result); // 2. 연관 관계 설정, 자식이 부모객체 저장(set)
-		
-		log.info("upfile:{}",upfile);
-		this.fileRepo.save(upfile); // 파일 엔티티 저장
-		
-		
-		   // 파일 저장 처리
-	    if (file != null && !file.isEmpty()) {
-	        // 파일 저장 경로 생성
-	        String uploadDir = upfile.getPath();
-	        File targetDir = new File(uploadDir);
-	        if (!targetDir.exists()) {
-	            targetDir.mkdirs(); // 디렉토리가 없는 경우 생성
-	        } // if
 	    
-	        // 파일 저장 경로 및 이름 설정
-	        String filePath = upfile.getPath() + upfile.getUuid() + "." + upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
-	        File savedFile = new File(filePath);
-	        // 이후에 파일 받을때는 uuid에서 확장자를 뺴는 과정이 필요함.
-
-	        // 파일 저장
-	        file.transferTo(savedFile);
-	        log.info("File saved at: {}", filePath);
-	    } // if
+//	    trn.setStatus(dto.getStatus()); //1.훈련중2.중도탈락3.중도포기4.취업완료
+//	  	trn.setEnabled(dto.getEnabled()); //1=true 0=false
+	    
 		
 		
-		// 4. Course에 Upfile 추가
-		result.addUpfile(upfile); // 3. 연관 관계 설정, 부모에 자식객체 저장(add)
+//	    trn.setCourse(dto.getCourse());
+//	    trn.setStatus(2);
+//	    trn.setEnabled(true);
+	  
+//	    if(dto.getCourseId() != null) {
+//	    	Course course= crsRepo.findById(dto.getCourseId())
+//	    			.orElseThrow(()-> new RuntimeException("Course not found"));
+//	    	trn.setCourse(course);
+//	    }
+	    
+	    Trainee savedTrn= repo.save(trn);
+	    return ResponseEntity.ok(savedTrn);
 		
-		log.info("result:{}",result);
-		log.info("getFileCourse success");
+	    
+//		Trainee result = this.repo.save(trn);
+//		log.info("result:{}",result);
+//		log.info("Regist success");
 		
-		return result;
+		
+//		Upfile upfile = new Upfile();  // 1. 파일 객체 생성
+//		upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
+//		upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
+//		upfile.setPath(CourseFileDirectory); // 주소
+//		upfile.setEnabled(true); // 기본값
+//		
+//		upfile.setTrainee(result); // 2. 연관 관계 설정, 자식이 부모객체 저장(set)
+//		
+//		log.info("upfile:{}",upfile);
+//		this.fileRepo.save(upfile); // 파일 엔티티 저장
+//		
+//		
+//		   // 파일 저장 처리
+//	    if (file != null && !file.isEmpty()) {
+//	        // 파일 저장 경로 생성
+//	        String uploadDir = upfile.getPath();
+//	        File targetDir = new File(uploadDir);
+//	        if (!targetDir.exists()) {
+//	            targetDir.mkdirs(); // 디렉토리가 없는 경우 생성
+//	        } // if
+//	    
+//	        // 파일 저장 경로 및 이름 설정
+//	        String filePath = upfile.getPath() + upfile.getUuid() + "." + upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
+//	        File savedFile = new File(filePath);
+//	        // 이후에 파일 받을때는 uuid에서 확장자를 뺴는 과정이 필요함.
+//
+//	        // 파일 저장
+//	        file.transferTo(savedFile);
+//	        log.info("File saved at: {}", filePath);
+//	    } // if
+//		
+//		
+//		// 4. Course에 Upfile 추가
+//		result.addUpfile(upfile); // 3. 연관 관계 설정, 부모에 자식객체 저장(add)
+//		
+//		log.info("result:{}",result);
+//		log.info("getFileCourse success");
+		
+//		return result;
+	    
 	} // register
+	
 	
 	
 //	  @PutMapping 
@@ -162,7 +219,6 @@ public class TraineeController {  // 훈련생 관리
 //	      trn.setName(dto.getName());
 //	      trn.setTel(dto.getTel());	  
 //	      trn.setCourse(dto.getCourse());
-//	      trn.setStatus(dto.getStatus());
 //
 //
 //	      
@@ -203,6 +259,7 @@ public class TraineeController {  // 훈련생 관리
 		// https://localhost/trainee/1
 		
 		
+		//update
 		@PostMapping(value = "/{id}", consumes = "application/json")
 		public ResponseEntity<Trainee> update(@PathVariable("id") Long traineeId, @RequestBody TraineeDTO dto) {
 		    log.info("update({},{}) invoked.", traineeId, dto);
