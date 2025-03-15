@@ -3,10 +3,12 @@ package org.zerock.myapp.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -51,7 +53,7 @@ public class InstructorController { // 강사 관리
    //RESTfull   
    @PostMapping // 리스트 
    
-   Page<Instructor> list(
+   Page<InstructorDTO> list(
 		   @ModelAttribute CriteriaDTO dto, Pageable paging){
 	   // @ RequestParam : 단일 값 바인딩 할때 사용. (String , Integer 등)
 	   // @ ModelAttribute : 복합객체(DTO) 처리할 때 사용.
@@ -67,6 +69,24 @@ public class InstructorController { // 강사 관리
       
       // 기본적으로 모든 데이터를 조회
       Page<Instructor> list = this.repo.findByEnabled(true, paging);
+      List<InstructorDTO> dtoList = new ArrayList<>();
+      list.getContent().forEach(s -> {
+    	  InstructorDTO instructorDto = new InstructorDTO();
+    	  instructorDto.setInstructorId(s.getInstructorId());
+    	  instructorDto.setName(s.getName());				// 이름
+    	  instructorDto.setTel(s.getTel());					// 전화번호
+    	  instructorDto.setStatus(s.getStatus());				//	상태(등록=1,강의중=2,퇴사=3)
+    	  instructorDto.setEnabled(s.getEnabled());			//	삭제여부(1=유효,0=삭제)
+    	  instructorDto.setCrtDate(s.getCrtDate());
+    	  
+      	  // 조인 객체들
+    	  instructorDto.setCourse(s.getCourse());
+    	  instructorDto.setUpfile(s.getUpfiles());
+    	  dtoList.add(instructorDto);
+      }); // forEach
+      Page<InstructorDTO> result = new PageImpl<>(dtoList, list.getPageable(), list.getTotalElements());
+      // 위에서 DTO로 담은걸 Page로 다시 담음
+      
       
       //검색 리스트: 활성화상태(1) + status 
       Page<Instructor> list2 = this.repo.findByEnabledAndStatus(true, pageSize, paging);
@@ -83,7 +103,7 @@ public class InstructorController { // 강사 관리
       //검색 리스트: 활성화상태(1) + 전화번호
       Page<Instructor> list6 = this.repo.findByEnabledAndTelContaining(true, q, paging);
       
-      return list;
+      return result;
    } // list // 성공
    
 
