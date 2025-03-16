@@ -141,7 +141,8 @@ public class TraineeController {  // 훈련생 관리
 	    
 	    // "path": "C:\\Users\\chltj\\Desktop\\프로젝트\\깃버전\\pjt_lms_backend/src/main/resources/static/traineeFile/" 로 전송
 	    String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/traineeFile/"; // 백에서 저장할 주소
-	    String useDirectory = "/static/traineeFile/"; // 프론트로 보낼 주소
+	    //String useDirectory = "/static/traineeFile/"; // 프론트로 보낼 주소
+		String useDirectory = "/src/main/resources/static/traineeFile/"; // 프론트로 보낼 주소, 테스트중
 	    
 	    if(file != null && !file.isEmpty()) {
 			Upfile upfile = new Upfile();  // 1. 파일 객체 생성
@@ -230,7 +231,8 @@ public class TraineeController {  // 훈련생 관리
 		      trainee.setCourse(dto.getCourse());  // 담당과정
 		      
 		      String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/traineeFile/"; // 백에서 저장할 주소
-			  String useDirectory = "/static/traineeFile/"; // 프론트로 보낼 주소
+			  //String useDirectory = "/static/traineeFile/"; // 프론트로 보낼 주소
+			  String useDirectory = "/src/main/resources/static/traineeFile/"; // 프론트로 보낼 주소, 테스트중
 		      
 		      // 사진이 없는경우 대비를 위한 if-else 문.
 		      if(file != null && !file.isEmpty()) { 

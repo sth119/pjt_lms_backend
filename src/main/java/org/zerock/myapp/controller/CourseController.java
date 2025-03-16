@@ -178,7 +178,8 @@ public class CourseController {
 		log.info("Regist success");
 		
 		String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/courseFile/"; // 백에서 사용할 주소 
-		String useDirectory = "/static/courseFile/"; // 프론트로 보낼 주소
+		//String useDirectory = "/static/courseFile/"; // 프론트로 보낼 주소
+		String useDirectory = "/src/main/resources/static/courseFile/"; // 프론트로 보낼 주소, 테스트중
 		
 		
 		if(file != null && !file.isEmpty()) {
@@ -285,7 +286,8 @@ public class CourseController {
 		 Course result =  this.repo.save(course);
 		 
 		 String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/courseFile/"; // 백에서 사용할 주소 
-		 String useDirectory = "/static/courseFile/"; // 프론트로 보낼 주소
+		 //String useDirectory = "/static/courseFile/"; // 프론트로 보낼 주소
+		 String useDirectory = "/src/main/resources/static/courseFile/"; // 프론트로 보낼 주소, 실험중
 		 
         // 3. 기존 파일 처리
 		 if (file != null && !file.isEmpty()) {
