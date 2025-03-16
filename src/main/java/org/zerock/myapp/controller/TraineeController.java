@@ -3,11 +3,14 @@ package org.zerock.myapp.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Vector;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.myapp.domain.TraineeDTO;
@@ -47,153 +51,94 @@ public class TraineeController {  // 훈련생 관리
 	
 	
 	@PostMapping
-	public Page<Trainee> list(
+	public Page<TraineeDTO> list(
 	        @ModelAttribute TraineeDTO dto,
-	        @RequestParam(value = "page", defaultValue = "0") Integer page, // 페이지 시작 값은 0부터
-	        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize // 기본 페이지 사이즈 10
+			@RequestParam(defaultValue = "0") Integer currPage, // 페이지 시작 값은 0부터
+			@RequestParam(defaultValue = "10") Integer pageSize // 기본 페이지 사이즈 10
 	) {
-	    log.info("list({}) invoked.", dto);
+		log.info("list({}, {}, {}) invoked.", dto, currPage, pageSize);
 
-	    Pageable paging = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("traineeId"))); // Pageable 설정
-	    Page<Trainee> result;
+		Pageable paging = PageRequest.of(currPage, pageSize, Sort.by("crtDate").descending());	// Pageable 설정
+		
+		Page<Trainee> list = Page.empty(); // 기본 값 설정
 
-	    if (dto.getStatus() == null && dto.getSearchText() == null && dto.getSearchWord() == null) {
-	        // 1. 모든 조건이 없을 때
-	        result = this.repo.findByEnabled(true, paging);
-	    } else if (dto.getStatus() == null) {
-	        // 2. status가 없고 검색 조건만 있을 때
-	        switch (dto.getSearchWord()) {
+		if	   ( dto.getStatus() == null && dto.getSearchText() == null ) {
+			//검색 리스트: 활성화상태(true) 
+			list = this.repo.findByEnabled(true, paging);
+		}
+		else if( dto.getStatus() != null && dto.getSearchText() == null ) {
+			//검색 리스트: 활성화상태(true) + status
+			list = this.repo.findByEnabledAndStatus(true, dto.getStatus(), paging);
+		}
+		else if( dto.getStatus() == null && dto.getSearchText() != null ) {
+			switch (dto.getSearchWord()) {
 	            case "name":
-	                result = this.repo.findByEnabledAndNameContaining(true, dto.getSearchText(), paging);
+	            	list = this.repo.findByEnabledAndNameContaining(true, dto.getSearchText(), paging);
 	                break;
 	            case "tel":
-	                result = this.repo.findByEnabledAndTelContaining(true, dto.getSearchText(), paging);
+	            	list = this.repo.findByEnabledAndTelContaining(true, dto.getSearchText(), paging);
 	                break;
-	            default:
-	                result = this.repo.findByEnabled(true, paging);
-	                break;
-	        }
-	    } else if (dto.getSearchText() == null && dto.getSearchWord() == null) {
-	        // 3. status만 있고 검색어가 없는 경우
-	        result = this.repo.findByEnabledAndStatus(true, dto.getStatus(), paging);
-	    } else {
-	        // 4. status와 검색어가 모두 있는 경우
-	        switch (dto.getSearchWord()) {
+			}
+		}
+		else if( dto.getStatus() != null && dto.getSearchText() != null ) {
+			switch (dto.getSearchWord()) {
 	            case "name":
-	                result = this.repo.findByEnabledAndStatusAndNameContaining(true, dto.getStatus(), dto.getSearchText(), paging);
+	            	list = this.repo.findByEnabledAndStatusAndNameContaining(true, dto.getStatus(), dto.getSearchText(), paging);
 	                break;
 	            case "tel":
-	                result = this.repo.findByEnabledAndStatusAndTelContaining(true, dto.getStatus(), dto.getSearchText(), paging);
+	            	list = this.repo.findByEnabledAndStatusAndTelContaining(true, dto.getStatus(), dto.getSearchText(), paging);
 	                break;
-	            default:
-	                result = this.repo.findByEnabledAndStatus(true, dto.getStatus(), paging);
-	                break;
-	        }
-	    }
-
-	    // 결과가 null이면 빈 Page 반환 (불필요한 중복 제거)
-	    if (result == null) {
-	        result = Page.empty(paging);
-	    }
-
-	    result.forEach(seq -> log.info(seq.toString())); // 로그 출력
+			}
+		}
+		
+		List<TraineeDTO> resultList = new Vector<>();
+		list.forEach(t -> {
+			log.debug(t.toString());
+			
+			TraineeDTO tDto = new TraineeDTO();
+			tDto.setTraineeId(t.getTraineeId());	// 아이디
+		  	
+			tDto.setName(t.getName());				// 이름
+			tDto.setTel(t.getTel());					// 전화번호
+			tDto.setStatus(t.getStatus());			//	상태(등록=1,강의중=2,퇴사=3)
+			tDto.setEnabled(t.getEnabled());			//	삭제여부(1=유효,0=삭제)
+			tDto.setCrtDate(t.getCrtDate());
+			tDto.setUdtDate(t.getUdtDate());
+		  	  
+		  	// 조인 객체들
+			tDto.setCourse(t.getCourse());
+			tDto.setUpfile(t.getUpfiles());
+			
+			resultList.add(tDto);
+		});
+		
+		// 위에서 DTO로 담은걸 Page로 다시 담음
+	    Page<TraineeDTO> result = new PageImpl<>(resultList, list.getPageable(), list.getTotalElements());
+	    
 	    return result;
 	}//list
 	
-//	@PostMapping
-//	public Page<Trainee> list(@ModelAttribute TraineeDTO dto 
-//			 ,@RequestParam(value = "page", defaultValue = "0") Integer page // 페이지 시작 값은 0부터
-//			 ,@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize // 기본 페이지 사이즈 10
-//			) {
-//		
-//	    log.info("list({}) invoked.", dto);
-//
-//	    Pageable paging = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("traineeId"))); // Pageable 설정
-//
-//	    // 검색 조건 적용
-//	    Page<Trainee> result = null;
-//	    
-//
-//	    if (dto.getStatus() == null &&dto.getSearchText() == null && dto.getSearchWord() == null ) {//1.전부 아닐때부터 가장 어려운 모두 맞는
-//	    	 result = this.repo.findByEnabled(true, paging);//전부아니면 기본상태로만
-//	   
-//	    }else if(dto.getStatus() == null &&dto.getSearchText() != null && dto.getSearchWord() != null){//2.스테이트만 아닐때
-//	        // status를 선택하지 않았지만 검색어가 있는 경우
-//	        switch (dto.getSearchWord()) {
-//	            case "name"://status없고 이름
-//	            	 result = this.repo.findByEnabledAndNameContaining(true, dto.getSearchText(), paging);
-//	                    break;
-//	            case "tel"://텔만 있는
-//	                result = this.repo.findByEnabledAndTelContaining(true, dto.getSearchText(), paging);
-//                    break;
-//	            default://텔과 네임 말고는 들어올 수가 없지만...
-//	            	  result = this.repo.findByEnabled(true, paging);
-//	                    break;  
-//	        }//스위치
-//	      
-//	        //status가 잇는경우들 
-//	      //2의 반대.status만 있고 검색어 없는 경우
-//	    } else if(dto.getStatus() != null &&dto.getSearchText() == null && dto.getSearchWord() == null){
-//	    	result = this.repo.findByEnabledAndStatus(true,dto.getStatus(), paging);
-//	    
-//	    	//1의 반대. 전부 있을때
-//	    } else if(dto.getStatus() != null &&dto.getSearchText() != null && dto.getSearchWord() != null){
-//        switch (dto.getSearchWord()) {
-//            case "name":// 스테이터스+이름
-//            	 result = this.repo.findByEnabledAndStatusAndNameContaining(true, dto.getStatus(), dto.getSearchText(), paging);
-//                    break;
-//            case "tel":// 스테이터스+텔
-//                result = this.repo.findByEnabledAndStatusAndTelContaining(true, dto.getStatus(), dto.getSearchText(), paging);
-//                break;
-//            default://텔과 네임 말고는 들어올 수가 없지만...
-//            	  result = this.repo.findByEnabledAndStatus(true,dto.getStatus(), paging);
-//                    break;  
-//        }//switch
-//        }//if
-//	    
-//	    
-//	    result = this.repo.findByEnabledAndStatus(true, dto.getStatus(), paging);
-//	    
-//        result = this.repo.findByEnabledAndStatus(true, dto.getStatus(), paging);
-//	    
-//	    // 결과가 null이면 빈 Page 반환
-//	    result = (result != null) ? result : Page.empty(paging);
-//
-//	    result.forEach(seq -> log.info(seq.toString())); // 로그 출력
-//	    return result;
-//	}//list
-		//test get https://localhost/trainee?searchWord=name&searchText=0
-	//https://localhost/trainee?searchWord=name&searchText=0&tel=00
-	//https://localhost/trainee?searchWord=tel&searchText=000
 
 	
 	@PutMapping // 등록
 	Trainee register(
 			@ModelAttribute TraineeDTO dto,	
-			@RequestParam("upfiles") MultipartFile file) throws Exception, IOException {
-		log.info("register(dto={}, file={}) invoked.", dto, file.getOriginalFilename());
+			@RequestPart(value = "upfiles", required = false) MultipartFile file
+		) throws Exception, IOException {
+		log.info("register(dto={}, upfiles={}) invoked.", dto, file.getOriginalFilename());
 		
 		Trainee trainee =new Trainee();
 		trainee.setName(dto.getName()); // 훈련생이름
 		trainee.setTel(dto.getTel()); // 전화번호
 		trainee.setStatus(1);   // 기본값 등록(1), 상태(등록=1,강의중=2,퇴사=3)
 		trainee.setEnabled(true);// 기본값 true, 삭제여부(1=유효,0=삭제)
+		trainee.setCourse(this.crsRepo.findById(dto.getCourseId()).orElse(null));
 		
 		log.info("before success?");
-	      Trainee result = this.repo.save(trainee);
-	      
-	      // 중복값 체크가 필요하다
-	      if (dto.getCourseId() != null && dto.getCourseId() > 0) {
-	    	    Course course = this.crsRepo.findById(dto.getCourseId()).orElse(null);
-	    	    if (course != null) {
-	    	        trainee.setCourse(course); // 담당과정
-	    	        course.addTraninee(trainee); // course 개체에 trainee 저장
-	    	        this.crsRepo.save(course); // course도 저장해야 함
-	    	    } // if
-	    	} // if
-	      
-	      log.info("result:{}",result);
-	      log.info("Regist success");
+	    Trainee result = this.repo.save(trainee);
+
+	    log.info("Regist success!!!  result:{}",result);
+
 	      if(file != null && !file.isEmpty()) {
 				Upfile upfile = new Upfile();  // 1. 파일 객체 생성
 				upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
@@ -264,9 +209,10 @@ public class TraineeController {  // 훈련생 관리
 
 		//update 
 		@PostMapping(value = "/{id}")
-		Trainee update(@PathVariable("id") Long traineeId,
-				TraineeDTO dto,
-				@RequestParam("upfiles") MultipartFile file
+		Trainee update(
+					@PathVariable("id") Long traineeId,
+					TraineeDTO dto,
+					@RequestPart(value = "upfiles", required = false) MultipartFile file
 				) throws IllegalStateException, IOException {
 		    log.info("update({},{}) invoked.", traineeId, dto);
 
