@@ -45,70 +45,123 @@ public class TraineeController {  // 훈련생 관리
 
 	
 	
+	
 	@PostMapping
-	public Page<Trainee> list(@ModelAttribute TraineeDTO dto 
-			 ,@RequestParam(value = "page", defaultValue = "0") Integer page // 페이지 시작 값은 0부터
-			 ,@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize // 기본 페이지 사이즈 10
-			) {
-		
+	public Page<Trainee> list(
+	        @ModelAttribute TraineeDTO dto,
+	        @RequestParam(value = "page", defaultValue = "0") Integer page, // 페이지 시작 값은 0부터
+	        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize // 기본 페이지 사이즈 10
+	) {
 	    log.info("list({}) invoked.", dto);
 
-	    Pageable paging = PageRequest.of(page, pageSize, Sort.by(Sort.Order.asc("traineeId"))); // Pageable 설정
+	    Pageable paging = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("traineeId"))); // Pageable 설정
+	    Page<Trainee> result;
 
-	    // 검색 조건 적용
-	    Page<Trainee> result = null;
-
-	    // status가 null이 아니면 status로 필터링
-	    if (dto.getStatus() != null) {
-	        // status 값이 1, 2, 3, 4 중 하나라면
-	        if (dto.getStatus() >= 1 && dto.getStatus() <= 4) {
-	            // status 조건을 추가한 검색
-	    
-	        	 if (dto.getSearchText() != null && dto.getSearchWord() != null) {
-				        switch (dto.getSearchWord()) {
-				            case "name":
-				                result = this.repo.findByEnabledAndStatusAndNameContaining(true,dto.getStatus(),dto.getSearchText(), paging);
-				                break;
-				            case "tel":
-				                result = this.repo.findByEnabledAndStatusAndTelContaining(true,dto.getStatus(), dto.getSearchText(), paging);
-				                break;
-				            default:
-				                result = this.repo.findByEnabledAndStatus(true,dto.getStatus(), paging);
-				                break;
-				        }
-	        	   } else {
-				        result = this.repo.findByEnabledAndStatus(true,dto.getStatus(), paging);
-				    }
-	        } else {
-	            // 유효하지 않은 status 값일 경우 기본적으로 모든 status를 받아들임// 넣는다면 1~4뿐이긴 하지만
-	            result = this.repo.findByEnabled(true, paging);
+	    if (dto.getStatus() == null && dto.getSearchText() == null && dto.getSearchWord() == null) {
+	        // 1. 모든 조건이 없을 때
+	        result = this.repo.findByEnabled(true, paging);
+	    } else if (dto.getStatus() == null) {
+	        // 2. status가 없고 검색 조건만 있을 때
+	        switch (dto.getSearchWord()) {
+	            case "name":
+	                result = this.repo.findByEnabledAndNameContaining(true, dto.getSearchText(), paging);
+	                break;
+	            case "tel":
+	                result = this.repo.findByEnabledAndTelContaining(true, dto.getSearchText(), paging);
+	                break;
+	            default:
+	                result = this.repo.findByEnabled(true, paging);
+	                break;
 	        }
-	        
-	    } else { //status를 선택 안하고 검색했을때
-			    if (dto.getSearchText() != null && dto.getSearchWord() != null) {
-			        switch (dto.getSearchWord()) {
-			            case "name":
-			                result = this.repo.findByEnabledAndNameContaining(true, dto.getSearchText(), paging);
-			                break;
-			            case "tel":
-			                result = this.repo.findByEnabledAndTelContaining(true, dto.getSearchText(), paging);
-			                break;
-			            default:
-			                result = this.repo.findByEnabled(true, paging);
-			                break;
-			        }           
-			        
-			    } else {
-			        result = repo.findByEnabled(true, paging);
-			    }
+	    } else if (dto.getSearchText() == null && dto.getSearchWord() == null) {
+	        // 3. status만 있고 검색어가 없는 경우
+	        result = this.repo.findByEnabledAndStatus(true, dto.getStatus(), paging);
+	    } else {
+	        // 4. status와 검색어가 모두 있는 경우
+	        switch (dto.getSearchWord()) {
+	            case "name":
+	                result = this.repo.findByEnabledAndStatusAndNameContaining(true, dto.getStatus(), dto.getSearchText(), paging);
+	                break;
+	            case "tel":
+	                result = this.repo.findByEnabledAndStatusAndTelContaining(true, dto.getStatus(), dto.getSearchText(), paging);
+	                break;
+	            default:
+	                result = this.repo.findByEnabledAndStatus(true, dto.getStatus(), paging);
+	                break;
+	        }
 	    }
 
-	    // 결과가 null이면 빈 Page 반환
-	    result = (result != null) ? result : Page.empty(paging);
+	    // 결과가 null이면 빈 Page 반환 (불필요한 중복 제거)
+	    if (result == null) {
+	        result = Page.empty(paging);
+	    }
 
 	    result.forEach(seq -> log.info(seq.toString())); // 로그 출력
 	    return result;
 	}//list
+	
+//	@PostMapping
+//	public Page<Trainee> list(@ModelAttribute TraineeDTO dto 
+//			 ,@RequestParam(value = "page", defaultValue = "0") Integer page // 페이지 시작 값은 0부터
+//			 ,@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize // 기본 페이지 사이즈 10
+//			) {
+//		
+//	    log.info("list({}) invoked.", dto);
+//
+//	    Pageable paging = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("traineeId"))); // Pageable 설정
+//
+//	    // 검색 조건 적용
+//	    Page<Trainee> result = null;
+//	    
+//
+//	    if (dto.getStatus() == null &&dto.getSearchText() == null && dto.getSearchWord() == null ) {//1.전부 아닐때부터 가장 어려운 모두 맞는
+//	    	 result = this.repo.findByEnabled(true, paging);//전부아니면 기본상태로만
+//	   
+//	    }else if(dto.getStatus() == null &&dto.getSearchText() != null && dto.getSearchWord() != null){//2.스테이트만 아닐때
+//	        // status를 선택하지 않았지만 검색어가 있는 경우
+//	        switch (dto.getSearchWord()) {
+//	            case "name"://status없고 이름
+//	            	 result = this.repo.findByEnabledAndNameContaining(true, dto.getSearchText(), paging);
+//	                    break;
+//	            case "tel"://텔만 있는
+//	                result = this.repo.findByEnabledAndTelContaining(true, dto.getSearchText(), paging);
+//                    break;
+//	            default://텔과 네임 말고는 들어올 수가 없지만...
+//	            	  result = this.repo.findByEnabled(true, paging);
+//	                    break;  
+//	        }//스위치
+//	      
+//	        //status가 잇는경우들 
+//	      //2의 반대.status만 있고 검색어 없는 경우
+//	    } else if(dto.getStatus() != null &&dto.getSearchText() == null && dto.getSearchWord() == null){
+//	    	result = this.repo.findByEnabledAndStatus(true,dto.getStatus(), paging);
+//	    
+//	    	//1의 반대. 전부 있을때
+//	    } else if(dto.getStatus() != null &&dto.getSearchText() != null && dto.getSearchWord() != null){
+//        switch (dto.getSearchWord()) {
+//            case "name":// 스테이터스+이름
+//            	 result = this.repo.findByEnabledAndStatusAndNameContaining(true, dto.getStatus(), dto.getSearchText(), paging);
+//                    break;
+//            case "tel":// 스테이터스+텔
+//                result = this.repo.findByEnabledAndStatusAndTelContaining(true, dto.getStatus(), dto.getSearchText(), paging);
+//                break;
+//            default://텔과 네임 말고는 들어올 수가 없지만...
+//            	  result = this.repo.findByEnabledAndStatus(true,dto.getStatus(), paging);
+//                    break;  
+//        }//switch
+//        }//if
+//	    
+//	    
+//	    result = this.repo.findByEnabledAndStatus(true, dto.getStatus(), paging);
+//	    
+//        result = this.repo.findByEnabledAndStatus(true, dto.getStatus(), paging);
+//	    
+//	    // 결과가 null이면 빈 Page 반환
+//	    result = (result != null) ? result : Page.empty(paging);
+//
+//	    result.forEach(seq -> log.info(seq.toString())); // 로그 출력
+//	    return result;
+//	}//list
 		//test get https://localhost/trainee?searchWord=name&searchText=0
 	//https://localhost/trainee?searchWord=name&searchText=0&tel=00
 	//https://localhost/trainee?searchWord=tel&searchText=000
