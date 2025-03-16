@@ -1,6 +1,7 @@
 package org.zerock.myapp.controller;
 
 
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import org.zerock.myapp.persistence.CourseRepository;
 import org.zerock.myapp.persistence.InstructorRepository;
 import org.zerock.myapp.persistence.UpFileRepository;
 
+import jakarta.servlet.ServletContext;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,16 +48,11 @@ public class InstructorController { // 강사 관리
    @Autowired InstructorRepository repo;
    @Autowired CourseRepository crsRepo; 
    @Autowired UpFileRepository fileRepo;
-
-   String fileDirectory = "C:/temp/projectFiles/instructor/";
-//   String InstructorFileDirectory = "/Users/host/workspaces/tmep/";
-
-   
+   //String fileDirectory = "C:/temp/projectFiles/instructor/";
 
 
    //RESTfull   
    @PostMapping // 리스트 
-   
    Page<InstructorDTO> list(
          @ModelAttribute InstructorDTO dto,
          @RequestParam(name = "currPage", required = false, defaultValue = "0") Integer currPage,
@@ -152,6 +149,10 @@ public class InstructorController { // 강사 관리
 
       log.info("result:{}",result);
       log.info("Regist success");
+      
+      String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/instructorFile/"; 
+      // "path": "C:\\Users\\chltj\\Desktop\\프로젝트\\깃버전\\pjt_lms_backend/src/main/resources/static/instructorFile/" 로 전송
+      
 
       if(file != null && !file.isEmpty()) {
 	      Upfile upfiles = new Upfile();  // 1. 파일 객체 생성
@@ -167,8 +168,7 @@ public class InstructorController { // 강사 관리
 
 	      // 파일 저장 처리
            // 파일 저장 경로 생성
-           String uploadDir = upfiles.getPath();
-           File targetDir = new File(uploadDir);
+           File targetDir = new File(fileDirectory);
            if (!targetDir.exists()) {
                targetDir.mkdirs(); // 디렉토리가 없는 경우 생성
            } // if
@@ -178,8 +178,6 @@ public class InstructorController { // 강사 관리
            // error 수정 중.
            String extension = upfiles.getOriginal().substring(upfiles.getOriginal().lastIndexOf('.') + 1);
            String filePath = upfiles.getPath() + upfiles.getUuid() + "." + extension;
-           
-//           String filePath = upfile.getPath() + upfile.getUuid() + "." + upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
            File savedFile = new File(filePath);
            // 이후에 파일 받을때는 uuid에서 확장자를 뺴는 과정이 필요함.
 
@@ -243,6 +241,9 @@ public class InstructorController { // 강사 관리
       instructor.setStatus(dto.getStatus());
       instructor.setCourse(dto.getCourse());
       
+      String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/instructorFile/"; 
+      // "path": "C:\\Users\\chltj\\Desktop\\프로젝트\\깃버전\\pjt_lms_backend/src/main/resources/static/instructorFile/" 로 전송
+      
       // 4. 파일 처리 // fix16
       if (file != null && !file.isEmpty()) { 
 	      //  기존 파일 처리
@@ -269,14 +270,19 @@ public class InstructorController { // 강사 관리
 	      if (!targetDir.exists()) {
 	          targetDir.mkdirs(); // 디렉토리가 없는 경우 생성
 	      } // if
-	  
+	      
 	      // 파일 저장 경로 및 이름 설정
 	      String filePath = upfile.getPath() + upfile.getUuid() + "." + upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
 	      File savedFile = new File(filePath);
 	
-	      // 파일 저장
-	      file.transferTo(savedFile);
-	      log.info("File saved at: {}", filePath); 
+	      
+		   // 임시 파일을 실제 경로로 복사
+		   try {
+		       file.transferTo(savedFile);
+		       log.info("File saved at: {}", filePath);
+		   } catch (IOException e) {
+		       log.error("Failed to save file", e);
+		   } // try-catch
 	      
 		  // Course 엔티티에 새로운 파일 추가
 	      instructor.addUpfile(upfile);

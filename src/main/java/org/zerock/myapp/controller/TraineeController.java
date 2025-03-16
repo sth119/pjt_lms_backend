@@ -45,7 +45,7 @@ public class TraineeController {  // 훈련생 관리
 	@Autowired TraineeRepository repo;
 	@Autowired CourseRepository crsRepo;  // fix
 	@Autowired UpFileRepository fileRepo;
-	String fileDirectory = "C:/temp/projectFiles/trainee/";
+	//String fileDirectory = "C:/temp/projectFiles/trainee/";
 
 	
 	
@@ -139,6 +139,8 @@ public class TraineeController {  // 훈련생 관리
 	    
 	    log.info("Regist success!!!  result:{}",result);
 	    
+	    String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/traineeFile/"; 
+	    
 	    if(file != null && !file.isEmpty()) {
 			Upfile upfile = new Upfile();  // 1. 파일 객체 생성
 			upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
@@ -223,6 +225,8 @@ public class TraineeController {  // 훈련생 관리
 		    	  
 		      // 3. Course 설정 (register와 동일한 방식)
 		      trainee.setCourse(dto.getCourse());  // 담당과정
+		      
+		      String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/traineeFile/"; 
 		      
 		      // 사진이 없는경우 대비를 위한 if-else 문.
 		      if(file != null && !file.isEmpty()) { 

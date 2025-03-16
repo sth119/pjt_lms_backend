@@ -48,7 +48,8 @@ public class CourseController {
 	@Autowired InstructorRepository insRepo;
 	@Autowired TraineeRepository trnRepo;
 	@Autowired UpFileRepository fileRepo;
-	String fileDirectory = "C:/temp/projectFiles/course/";
+	//String fileDirectory = "C:/temp/projectFiles/course/";
+	//String fileDirectory = "src/main/webapp/resources/courseFile/";
 	
 	//RESTfull
 	
@@ -142,6 +143,8 @@ public class CourseController {
 		Course result = this.repo.save(course); // DTO로 받아온 값 저장해서 DB에 올림
 		log.info("result:{}",result);
 		log.info("Regist success");
+		
+		String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/courseFile/"; 
 		
 		if(file != null && !file.isEmpty()) {
 		Upfile upfile = new Upfile();  // 1. 파일 객체 생성
@@ -243,6 +246,8 @@ public class CourseController {
 		 course.setTraninees(course.getTraninees());
 
 		 Course result =  this.repo.save(course);
+		 
+		 String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/courseFile/"; 
 		 
         // 3. 기존 파일 처리
 		 if (file != null && !file.isEmpty()) {
