@@ -152,13 +152,16 @@ public class InstructorController { // 강사 관리
       
       // "path": "C:\\Users\\chltj\\Desktop\\프로젝트\\깃버전\\pjt_lms_backend/src/main/resources/static/instructorFile/" 로 전송
       String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/instructorFile/"; // 백에서 저장할 주소
-      String useDirectory = "/src/main/resources/static/instructorFile/"; // 프론트로 보낼 주소
+      String useDirectory = "/instructorFile/"; // 프론트로 보낼 주소
       
 
       if(file != null && !file.isEmpty()) {
 	      Upfile upfiles = new Upfile();  // 1. 파일 객체 생성
 	      upfiles.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
-	      upfiles.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
+	      
+	      String extension = upfiles.getOriginal().substring(upfiles.getOriginal().lastIndexOf('.') + 1);
+	      
+	      upfiles.setUuid(UUID.randomUUID().toString()+"."+extension); // 고유 식별자 생성
 	      upfiles.setPath(useDirectory); // 주소
 	      upfiles.setEnabled(true); // 기본값
 	      
@@ -175,7 +178,7 @@ public class InstructorController { // 강사 관리
            } // if
        
            // 파일 저장 경로 및 이름 설정
-           String extension = upfiles.getOriginal().substring(upfiles.getOriginal().lastIndexOf('.') + 1);
+           
            String filePath = fileDirectory + upfiles.getUuid() + "." + extension;
            File savedFile = new File(filePath);
            
@@ -240,7 +243,7 @@ public class InstructorController { // 강사 관리
       instructor.setCourse(dto.getCourse());
       
       String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/instructorFile/"; // 백에서 저장할 주소
-      String useDirectory = "/src/main/resources/static/instructorFile/"; // 프론트로 보낼 주소
+      String useDirectory = "/instructorFile/"; // 프론트로 보낼 주소
       
       // 4. 파일 처리 // fix16
       if (file != null && !file.isEmpty()) { 
@@ -255,7 +258,10 @@ public class InstructorController { // 강사 관리
 	      Upfile upfile = new Upfile();  // 1. 파일 객체 생성
 			 
 	      upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
-	      upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
+	      
+	      String extension = upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
+	      
+	      upfile.setUuid(UUID.randomUUID().toString()+"."+extension); // 고유 식별자 생성
 	      upfile.setPath(useDirectory); // 주소
 	      upfile.setEnabled(true); // 기본값
 			
@@ -269,7 +275,6 @@ public class InstructorController { // 강사 관리
 	      } // if
 	      
 	      // 파일 저장 경로 및 이름 설정
-          String extension = upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
           String filePath = fileDirectory + upfile.getUuid() + "." + extension;
           File savedFile = new File(filePath);
 	
