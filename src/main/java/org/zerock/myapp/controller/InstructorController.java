@@ -46,7 +46,7 @@ public class InstructorController { // 강사 관리
    @Autowired InstructorRepository repo;
    @Autowired CourseRepository crsRepo; 
    @Autowired UpFileRepository fileRepo;
-   String InstructorFileDirectory = "C:/temp/instructor/";
+   String fileDirectory = "C:/temp/projectFiles/instructor/";
 //   String InstructorFileDirectory = "/Users/host/workspaces/tmep/";
    
 
@@ -141,7 +141,7 @@ public class InstructorController { // 강사 관리
 	      Upfile upfiles = new Upfile();  // 1. 파일 객체 생성
 	      upfiles.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
 	      upfiles.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
-	      upfiles.setPath(InstructorFileDirectory); // 주소
+	      upfiles.setPath(fileDirectory); // 주소
 	      upfiles.setEnabled(true); // 기본값
 	      
 	      upfiles.setInstructor(result); // 2. 연관 관계 설정, 자식이 부모객체 저장(set)
@@ -241,7 +241,7 @@ public class InstructorController { // 강사 관리
 			 
 	      upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
 	      upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
-	      upfile.setPath(InstructorFileDirectory); // 주소
+	      upfile.setPath(fileDirectory); // 주소
 	      upfile.setEnabled(true); // 기본값
 			
 	      log.info("New upfile created: {}", upfile);
