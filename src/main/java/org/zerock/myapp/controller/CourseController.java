@@ -32,7 +32,6 @@ import org.zerock.myapp.persistence.InstructorRepository;
 import org.zerock.myapp.persistence.TraineeRepository;
 import org.zerock.myapp.persistence.UpFileRepository;
 
-import jakarta.inject.Named;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -359,8 +358,6 @@ public class CourseController {
 	public List<Course> selectCourseListTrainee(){
 		log.info("selectCourseList() invoked.");
 		
-		List<CourseDTO> dtoList = new Vector<>(); // 값을 담을 DTO객체 생성
-		
 		List<Course> list = this.repo.findByEnabledAndStatusInOrderByStartDate(true, List.of(1, 2));
 		
 		// 수강 인원이 정원보다 작은 과정만 필터링
@@ -368,28 +365,6 @@ public class CourseController {
 		.peek(c -> c.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, c))) // peek: currCount를 설정하기 위해 사용. forEach 대신 중간 연산으로 처리.
 		.filter(c -> c.getCurrCount() < c.getCapacity()) // 정원 미만인 경우만 포함
 		.collect(Collectors.toList());
-		
-//		list.forEach(course -> { // 순회해서 하나씩 넣기
-//			CourseDTO dto = new CourseDTO(); // DTO객체 생성해서 원하는 값만 전달하기 + 조인한 객체들
-//			
-//			// 기존 Course 엔티티 값을 DTO에 셋팅
-//			dto.setCourseId(course.getCourseId());
-//			dto.setType(course.getType());
-//			dto.setName(course.getName());
-//			dto.setCapacity(course.getCapacity());
-//			dto.setDetail(course.getDetail());
-//			dto.setStartDate(course.getStartDate());
-//			dto.setEndDate(course.getEndDate());
-//			dto.setStatus(course.getStatus());
-//			dto.setEnabled(course.getEnabled());
-//			dto.setCrtDate(course.getCrtDate());
-//			dto.setCurrCount(course.getCurrCount());
-//			
-//			// 조인 객체들
-//			dto.setInstructor(course.getInstructor());
-//			
-//			dtoList.add(dto); // DTOList에 객체 하나씩 넣기
-//		}); // list.forEach
 
 		return list;
 	} // 훈련생 수강정원 필터
@@ -397,38 +372,16 @@ public class CourseController {
 	
 	// 강사 등록 화면: 담당과정 선택 리스트, 강사 수강정원 필터.
 	@GetMapping("/selectCourseIns") 
-	public List<Course> selectCourseListInstructor(){
+	public List<Course> selectCourseListInstructor(Integer instructorId){
 		log.info("selectCourseListInstructor() invoked.");
 		
-//		List<CourseDTO> dtoList = new Vector<>(); // 값을 담을 DTO객체 생성
+		List<Course> list = new Vector<>();
 		
-		List<Course> list = this.repo.findCoursesByNotInstructorName(true); // enabled + status가 1,2인 course를 가져옴
-//		list.forEach(course -> { // 순회해서 하나씩 넣기
-//			CourseDTO dto = new CourseDTO(); // DTO객체 생성해서 원하는 값만 전달하기 + 조인한 객체들
-//			
-//			// 기존 Course 엔티티 값을 DTO에 셋팅
-//			dto.setCourseId(course.getCourseId());
-//			dto.setType(course.getType());
-//			dto.setName(course.getName());
-//			dto.setCapacity(course.getCapacity());
-//			dto.setDetail(course.getDetail());
-//			dto.setStartDate(course.getStartDate());
-//			dto.setEndDate(course.getEndDate());
-//			dto.setStatus(course.getStatus());
-//			dto.setEnabled(course.getEnabled());
-//			dto.setCrtDate(course.getCrtDate());
-//			
-//			Integer currCount = this.trnRepo.countByEnabledAndCourse(true, course);
-//			dto.setCurrCount(currCount);
-//			
-//			// 조인 객체들
-////			dto.setInstructor(course.getInstructor());
-//			
-//			dtoList.add(dto); // DTOList에 객체 하나씩 넣기
-//		}); // list.forEach
-		
-		// 이거 그냥 /list에 넣어서 조건부 조회하게 하면 안 되는건가요?
-		
+		if(instructorId != null && instructorId > 0)
+			list = this.repo.findCoursesByNotInstructorNameAndInsId(true, instructorId);
+		else
+			list = this.repo.findCoursesByNotInstructorName(true); // enabled + status가 1,2인 course를 가져옴
+
 		return list;
 	} // 강사 수강정원 필터.
 	

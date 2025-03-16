@@ -105,6 +105,23 @@ public interface CourseRepository extends JpaRepository<Course, Long>, JpaSpecif
 			@Param("enabled") Boolean enabled
 		);
 	
+	
+	//강사 수정 화면: 담당과정 선택 리스트
+	final String nativeSQL_InsRegCourseListAndInsId = """
+			SELECT c.* 
+			FROM t_courses c 
+				LEFT JOIN t_instructors i ON c.id = i.crs_id 
+			WHERE c.enabled = 1 AND c.status in (1, 2) --상태(등록=1,진행중=2,폐지=3,종료=4)
+                AND (i.id = :instructorId or i.name is null) 	
+			ORDER BY c.INSERT_TS DESC
+			
+		""";
+	@Query(value = nativeSQL_InsRegCourseListAndInsId, nativeQuery = true)
+	List<Course> findCoursesByNotInstructorNameAndInsId(
+			@Param("enabled") Boolean enabled,
+			@Param("instructorId") Integer instructorId
+		);
+	
 
 	
 	//단건 조회 :

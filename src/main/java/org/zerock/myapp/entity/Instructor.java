@@ -72,7 +72,7 @@ public class Instructor implements Serializable {
 	@JsonBackReference("course-instructor")
 	//bi-directional one-to-one association to TCours
 	@OneToOne
-	@JoinColumn(name="CRS_ID")
+	@JoinColumn(name="CRS_ID", unique=true)
 //	private Course course;		//담당과정번호(FK)
 	private Course course;
 	

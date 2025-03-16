@@ -55,7 +55,7 @@ public class InstructorController { // 강사 관리
    //RESTfull   
    @PostMapping // 리스트 
    
-   Page<Instructor> list(
+   Page<InstructorDTO> list(
 		   @ModelAttribute InstructorDTO dto,
 		   @RequestParam(name = "status1", required = false)  Integer status1,
 		   @RequestParam(name = "currPage", required = false, defaultValue = "0") Integer currPage,
@@ -74,7 +74,8 @@ public class InstructorController { // 강사 관리
       
       if(dto.getStatus() == null && dto.getSearchText() == null) {
       // 기본적으로 모든 데이터를 조회
-      list = this.repo.findByEnabled(true, paging);
+
+     list = this.repo.findByEnabled( true, paging);
       }
       else if(dto.getStatus() != null && dto.getSearchText() == null) {
     	  //검색 리스트: 활성화상태(1) + status 
@@ -117,10 +118,9 @@ public class InstructorController { // 강사 관리
       }); // forEach
       Page<InstructorDTO> result = new PageImpl<>(dtoList, list.getPageable(), list.getTotalElements());
       // 위에서 DTO로 담은걸 Page로 다시 담음
-      
-      
 
-      return list;
+      return result;
+
    } // list // 성공
    
 

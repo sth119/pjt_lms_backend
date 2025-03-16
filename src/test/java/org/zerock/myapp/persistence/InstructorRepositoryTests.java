@@ -64,8 +64,8 @@ public class InstructorRepositoryTests {
 		Optional<Course> course = this.crsRepo.findById(40L);
 		course.ifPresent(foundCourse -> {
 			Instructor instructor = new Instructor();
-			instructor.setName("홍길동1111");
-			instructor.setTel("01012341111");
+			instructor.setName("홍길동3333");
+			instructor.setTel("01012343333");
 			instructor.setCourse(foundCourse);
 			instructor.setStatus(1);
 //			instructor.setEnabled(true);
