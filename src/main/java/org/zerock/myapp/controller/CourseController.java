@@ -54,70 +54,102 @@ public class CourseController {
 	//RESTfull
 	
 	
-	@PostMapping(path = "/list/{status1}")	//리스트
-	Page<Course> list(
-			CourseDTO dto,
-			@PathVariable Integer status1,
-			@RequestParam(defaultValue = "0") Integer currPage, 
-			@RequestParam(defaultValue = "10") Integer pageSize
-		){
-			log.debug("Course - list({}, {}, {}, {}) invoked.", dto, status1, currPage, pageSize);
-			
-			dto.setStatus(status1);
-			
-			//쿼리메소드 사용 시
-			Pageable paging = PageRequest.of(currPage, pageSize, Sort.by("crtDate").descending().and(Sort.by("status").ascending()));
-			//nativeSQL  사용 시
-			Pageable paging2 = PageRequest.of(currPage, pageSize, Sort.Direction.DESC, "INSERT_TS");
-					
-			/* 리스트 검색 조건
-			 * 1. dto.getEnabled();	// null, true 기본으로 셋팅
-			 * 2. dto.getStatus();	// 네브바 검색으로 필수로 들어옴
-			 * 
-			 * 3. dto.getType(); //null 확인
-			 * 
-			 * 4. dto.getSearchWord();
-			 * 	  dto.getSearchText();	//null 확인
-			 * */
-			
-			Page<Course> list = Page.empty(); // 기본 값 설정
-			
-			if	   ( dto.getType() == null && dto.getSearchText() == null ) {
-				//기본 검색 : 활성화상태(true) + 진행여부 
-				list = this.repo.findByEnabledAndStatus(true, dto.getStatus(), paging);
-			}
-			else if( dto.getType() != null && dto.getSearchText() == null ) {
-				//검색 리스트: 활성화상태(true) + 진행여부 + 과정구분
-				list = this.repo.findByEnabledAndStatusAndType(true, dto.getStatus(), dto.getType(), paging);
-			}
-			else if( dto.getType() == null && dto.getSearchText() != null ) {
-				if(dto.getSearchWord().equals("name")) {
-					//검색 리스트: 활성화상태(true) + 진행상태 + 과정명
-					list = this.repo.findByEnabledAndStatusAndNameContaining(true, dto.getStatus(), dto.getSearchText(), paging);
-				}
-				else if(dto.getSearchWord().equals("instructorName")) {	
-					list = this.repo.findCoursesByInstructorName(true, dto.getStatus(), dto.getSearchText(), paging2);
-				}
-			}
-			else if( dto.getType() != null && dto.getSearchText() != null ) {
-				if(dto.getSearchWord().equals("name")) {
-					//검색 리스트: 활성화상태(true) + 진행여부 + 과정구분 + 과정명
-					list = this.repo.findByEnabledAndStatusAndTypeAndNameContaining(true, dto.getStatus(), dto.getType(), dto.getSearchText(), paging);
-				}
-				else if(dto.getSearchWord().equals("instructorName")) {
-					list = this.repo.findCoursesByTypeAndInstructorName(true, dto.getStatus(), dto.getType(), dto.getSearchText(), paging2);
-					
-				}
-			}
-			
-			//과정 리스트에 현재 수강생 수 담기 
-			list.forEach(s -> {
-				s.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, s));
-				log.info(s.toString());
-			}); // forEach
-		
-		return list;
-	} // list
+	@PostMapping(path = "/list/{status1}")   //리스트
+	   Page<CourseDTO> list(
+	         CourseDTO dto,
+	         @PathVariable Integer status1,
+	         @RequestParam(defaultValue = "0") Integer currPage, 
+	         @RequestParam(defaultValue = "10") Integer pageSize
+	      ){
+	         log.debug("Course - list({}, {}, {}, {}) invoked.", dto, status1, currPage, pageSize);
+	         
+	         dto.setStatus(status1);
+	         
+	         //쿼리메소드 사용 시
+	         Pageable paging = PageRequest.of(currPage, pageSize, Sort.by("crtDate").descending().and(Sort.by("status").ascending()));
+	         //nativeSQL  사용 시
+	         Pageable paging2 = PageRequest.of(currPage, pageSize, Sort.Direction.DESC, "INSERT_TS");
+	               
+	         /* 리스트 검색 조건
+	          * 1. dto.getEnabled();   // null, true 기본으로 셋팅
+	          * 2. dto.getStatus();   // 네브바 검색으로 필수로 들어옴
+	          * 
+	          * 3. dto.getType(); //null 확인
+	          * 
+	          * 4. dto.getSearchWord();
+	          *      dto.getSearchText();   //null 확인
+	          * */
+	         
+	         Page<Course> list = Page.empty(); // 기본 값 설정
+	         
+	         if      ( dto.getType() == null && dto.getSearchText() == null ) {
+	            //기본 검색 : 활성화상태(true) + 진행여부 
+	            list = this.repo.findByEnabledAndStatus(true, dto.getStatus(), paging);
+	         }
+	         else if( dto.getType() != null && dto.getSearchText() == null ) {
+	            //검색 리스트: 활성화상태(true) + 진행여부 + 과정구분
+	            list = this.repo.findByEnabledAndStatusAndType(true, dto.getStatus(), dto.getType(), paging);
+	         }
+	         else if( dto.getType() == null && dto.getSearchText() != null ) {
+	            if(dto.getSearchWord().equals("name")) {
+	               //검색 리스트: 활성화상태(true) + 진행상태 + 과정명
+	               list = this.repo.findByEnabledAndStatusAndNameContaining(true, dto.getStatus(), dto.getSearchText(), paging);
+	            }
+	            else if(dto.getSearchWord().equals("instructorName")) {   
+	               list = this.repo.findCoursesByInstructorName(true, dto.getStatus(), dto.getSearchText(), paging2);
+	            }
+	         }
+	         else if( dto.getType() != null && dto.getSearchText() != null ) {
+	            if(dto.getSearchWord().equals("name")) {
+	               //검색 리스트: 활성화상태(true) + 진행여부 + 과정구분 + 과정명
+	               list = this.repo.findByEnabledAndStatusAndTypeAndNameContaining(true, dto.getStatus(), dto.getType(), dto.getSearchText(), paging);
+	            }
+	            else if(dto.getSearchWord().equals("instructorName")) {
+	               list = this.repo.findCoursesByTypeAndInstructorName(true, dto.getStatus(), dto.getType(), dto.getSearchText(), paging2);
+	               
+	            }
+	         }
+	         
+	         List<CourseDTO> dtoList = new ArrayList<>();
+	         
+	         list.forEach(s -> {
+	            CourseDTO cDto = new CourseDTO();
+	            
+	            cDto.setCourseId(s.getCourseId());
+	            cDto.setType(s.getType());
+	            cDto.setName(s.getName());
+	            cDto.setCapacity(s.getCapacity());
+	            cDto.setDetail(s.getDetail());
+	            cDto.setStartDate(s.getStartDate());
+	            cDto.setEndDate(s.getEndDate());
+	            cDto.setStatus(s.getStatus());
+	            cDto.setEnabled(s.getEnabled());
+	            cDto.setCrtDate(s.getCrtDate());
+	            
+	            // 테이블엔 없고, 직접 계산해야 하는 값
+	            cDto.setCurrCount(this.trnRepo.countByEnabledAndCourse(true, s));   //과정 리스트에 현재 수강생 수 담기
+
+	            // 조인 객체들
+	            cDto.setUpfile(s.getUpfiles());
+	            
+	            Optional<Instructor> op = this.insRepo.findByEnabledAndCrsId(true, s.getCourseId());
+	            op.ifPresent(o -> {
+	               cDto.setInstructor(o);
+	            });            
+	            
+	            cDto.setTrainees(s.getTraninees());
+	            
+	            log.info(cDto.toString());
+	            
+	            dtoList.add(cDto);
+	         }); // forEach
+	         
+	         // 위에서 DTO로 담은걸 Page로 다시 담음
+	          Page<CourseDTO> result = new PageImpl<>(dtoList, list.getPageable(), list.getTotalElements());
+	          
+	      
+	      return result;
+	   } // list
 
 
 	@PutMapping // 등록
