@@ -36,7 +36,7 @@ import lombok.ToString;
 //"crtDate",
 "udtDate",
 //"course", fix -> 강사 리스트에서 과정목록 보이도록 활성화.
-"upfiles"
+//"upfiles" //fix16
 })
 @Entity
 @Table(name="T_INSTRUCTORS")

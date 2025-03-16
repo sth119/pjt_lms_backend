@@ -32,6 +32,10 @@ public class InstructorDTO {
 	private List<Upfile> upfile;
 	
 	
+	private String searchWord;
+	private String searchText; // 검색
+	
+	
 
 	
 

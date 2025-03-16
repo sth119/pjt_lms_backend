@@ -49,9 +49,11 @@ public class SecurityController {  // 보안 관리 ( 로그인 & 로그아웃 )
                       .body("로그인 성공");
    } // User login end
    
-   @PostMapping(value = "/logout", params = "logout")
-   public String logout() {
-       return "redirect:/login";
+   @PostMapping("/logout")
+   public ResponseEntity<String> logout() {
+      log.info("로그아웃 성공");
+       return ResponseEntity.status(HttpStatus.OK)
+                         .body("{\"message\":\"로그아웃 성공\"}");
    } // 로그아웃.
    
 } // end class
