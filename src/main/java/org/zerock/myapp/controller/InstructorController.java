@@ -47,26 +47,27 @@ public class InstructorController { // 강사 관리
    @Autowired InstructorRepository repo;
    @Autowired CourseRepository crsRepo; 
    @Autowired UpFileRepository fileRepo;
-   String InstructorFileDirectory = "C:/temp/instructor/";
-//   String InstructorFileDirectory = "/Users/host/workspaces/tmep/";
+//   String InstructorFileDirectory = "C:/temp/instructor/";
+   String InstructorFileDirectory = "/Users/host/workspaces/tmep/";
    
 
 
    //RESTfull   
    @PostMapping // 리스트 
+   
    Page<InstructorDTO> list(
-
          @ModelAttribute InstructorDTO dto,
-
+         
          @RequestParam(name = "currPage", required = false, defaultValue = "0") Integer currPage,
          @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize){
       // @ RequestParam : 단일 값 바인딩 할때 사용. (String , Integer 등)
       // @ ModelAttribute : 복합객체(DTO) 처리할 때 사용.
-
-		
       log.info("list({}, {}, {}) invoked.", dto, currPage, pageSize);
 
+      
       Pageable paging = PageRequest.of(currPage, pageSize, Sort.by("crtDate").descending());
+      
+
       
       Page<Instructor> list = Page.empty();
       
@@ -84,7 +85,6 @@ public class InstructorController { // 강사 관리
          list = this.repo.findByEnabledAndNameContaining(true, dto.getName(),  paging);
       }
       else if(dto.getStatus() != null && dto.getSearchText() != null) {
-
        
          if(dto.getName() != null && !dto.getName().isEmpty()) {
          //검색 리스트: 활성화상태(1) + status + 이름 
@@ -97,7 +97,6 @@ public class InstructorController { // 강사 관리
             list = this.repo.findByEnabledAndStatus(true, dto.getStatus(), paging);
          } 
          
-    	
       } // if  
 
       List<InstructorDTO> dtoList = new ArrayList<>();
@@ -120,7 +119,10 @@ public class InstructorController { // 강사 관리
       // 위에서 DTO로 담은걸 Page로 다시 담음
 
       return result;
+
    } // list // 성공
+   
+
    
    @PutMapping // 등록
 //   @PostMapping
@@ -130,6 +132,8 @@ public class InstructorController { // 강사 관리
       )throws Exception, IOException {
       
       log.info("register({}) invoked.",dto);
+      
+      
       
       Instructor instructor = new Instructor();
       
@@ -155,7 +159,6 @@ public class InstructorController { // 강사 관리
       log.info("Regist success");
 
       if(file != null && !file.isEmpty()) {
-
       Upfile upfiles = new Upfile();  // 1. 파일 객체 생성
       upfiles.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
       upfiles.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
@@ -205,7 +208,6 @@ public class InstructorController { // 강사 관리
       }
       
 
-
       return result;
    } // register // 성공
    
@@ -217,6 +219,11 @@ public class InstructorController { // 강사 관리
       
       Instructor Instructor = this.repo.findById(instructorId)
               .orElseThrow(() -> new RuntimeException("해당 ID의 강사를 찾을 수 없습니다: " + instructorId));
+      
+      
+   // 연관 객체 강제 로드. 프록시 객체가 아닌 실제 데이터를 가져오게. // fix 16
+      Hibernate.initialize(Instructor.getCourse());
+      Hibernate.initialize(Instructor.getUpfiles());
       
       InstructorDTO dto = new InstructorDTO();
        dto.setInstructorId(Instructor.getInstructorId());         // 아이디
@@ -240,21 +247,25 @@ public class InstructorController { // 강사 관리
 
    
    @PostMapping(value = "/{id}")
+//   @PutMapping(value = "/{id}")
    Instructor update(@PathVariable("id") Long instructorId, 
-
+                   InstructorDTO dto,
+                  @RequestParam(value = "upfiles" , required = false) MultipartFile file) throws IllegalStateException, IOException {
       log.info("update({},{}) invoked.",instructorId,dto);
       
       // 1. 기존 Instructor 조회 (없으면 예외 발생)
       Instructor instructor = this.repo.findById(instructorId).orElseThrow(() -> new RuntimeException("해당 ID의 강사를 찾을 수 없습니다: " + instructorId));
       
+   // 연관 객체 강제 로드 // fix 16
+      Hibernate.initialize(instructor.getCourse());
+      Hibernate.initialize(instructor.getUpfiles());
+      
       // 2. DTO에서 받은 값으로 업데이트
       instructor.setName(dto.getName());
       instructor.setTel(dto.getTel());
       
-      // status는 null이 없기 때문에 필요 없는 조건문이다
-      //if(dto.getStatus() != null) { // 상태값 유지 (register에서는 status=1로 고정, update에서는 DTO에서 받음)
+      if(dto.getStatus() != null) { // 상태값 유지 (register에서는 status=1로 고정, update에서는 DTO에서 받음)
          instructor.setStatus(dto.getStatus());
-
       } // if
       
       // 3. Course 설정 (register와 동일한 방식)
@@ -276,7 +287,7 @@ public class InstructorController { // 강사 관리
          }
       }
 
-
+      
    // 4. 파일 처리 // fix16
       if (file != null && !file.isEmpty()) {
           // 기존 파일이 있으면 제거
@@ -292,7 +303,23 @@ public class InstructorController { // 강사 관리
               }
           }
 
-
+      
+//      if (file != null && !file.isEmpty()) {
+//          // 기존 파일이 null이 아닌지 먼저 확인
+//          if (instructor.getUpfiles() != null && !instructor.getUpfiles().isEmpty()) {
+//             Upfile existingFile = instructor.getUpfiles().get(0);
+//             String existingFileName = existingFile.getOriginal();
+//             // 새로운 파일과 기존 파일명이 다를 경우에만 기존 파일 제거
+//             if (!existingFileName.equals(file.getOriginalFilename())) {
+//                instructor.removeUpfile(existingFile);
+//                log.info("Existing file removed: {}", existingFile);
+//                this.fileRepo.save(existingFile);
+//             } else {
+//                log.info("Same file detected, skipping file update.");
+//                return instructor;
+//             }
+//          }
+          
           // 새 파일 저장
           Upfile upfiles = new Upfile();
           upfiles.setOriginal(file.getOriginalFilename());
@@ -305,7 +332,7 @@ public class InstructorController { // 강사 관리
           File targetDir = new File(InstructorFileDirectory);
           if (!targetDir.exists()) {
              targetDir.mkdirs();
-          } // if
+          }
           
           String extension = upfiles.getOriginal().substring(upfiles.getOriginal().lastIndexOf('.') + 1);
           String filePath = upfiles.getPath() + upfiles.getUuid() + "." + extension;
@@ -313,17 +340,16 @@ public class InstructorController { // 강사 관리
           file.transferTo(savedFile);
           log.info("File saved at: {}", filePath);
           
-
-
           instructor.addUpfile(upfiles);
           this.fileRepo.save(upfiles);
        } else {
           log.info("파일이 수정되지 않았습니다.");
-       } // if-else
+       }
        
        Instructor updated = this.repo.save(instructor);
        log.info("Update success: {}", updated);
        return updated;
+      
     } // update // 성공
    
 
