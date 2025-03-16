@@ -170,10 +170,8 @@ public class TraineeController {  // 훈련생 관리
 			
 			// 4. Instructor에 Upfile 추가
 			result.addUpfile(upfile); // 3. 연관 관계 설정, 부모에 자식객체 저장(add)
-			
 			return result; 
 	      } else {
-	    	 
 	    	return result; 
 	      } // if-else	
 		} // register
@@ -221,35 +219,31 @@ public class TraineeController {  // 훈련생 관리
 		      // 2. DTO에서 받은 값으로 업데이트
 		      trainee.setName(dto.getName());
 		      trainee.setTel(dto.getTel());
-		      
-		      if(dto.getStatus() != null) { // 상태값 유지 (register에서는 status=1로 고정, update에서는 DTO에서 받음)
-		    	  trainee.setStatus(dto.getStatus());
-		      } // if
-		      
+		      trainee.setStatus(dto.getStatus());
+		    	  
 		      // 3. Course 설정 (register와 동일한 방식)
-		      if(dto.getCourseId() != null)
-		    	  trainee.setCourse(this.crsRepo.findById(dto.getCourseId()).orElse(new Course()));  // 담당과정
-		      if(file != null && !file.isEmpty()) { // 사진이 없는경우 대비를 위한 if-else 문.
+		      trainee.setCourse(dto.getCourse());  // 담당과정
 		      
+		      // 사진이 없는경우 대비를 위한 if-else 문.
+		      if(file != null && !file.isEmpty()) { 
 		      //  기존 파일 처리
-		      if (file != null && !file.isEmpty()) {
-		          Upfile existingFile = trainee.getUpfiles().get(0); // 첫 번째 파일 가져오기
-	        	  trainee.removeUpfile(existingFile);
-	              log.info("Existing file removed: {}", existingFile);
-	              this.fileRepo.save(existingFile); // 변경된 상태 저장
-		      } // if
-		      
-				Upfile upfile = new Upfile();  // 1. 파일 객체 생성
+		    	  if (trainee.getUpfiles() != null && !trainee.getUpfiles().isEmpty()) {
+		              Upfile existingFile = trainee.getUpfiles().get(0);
+		              trainee.removeUpfile(existingFile);
+		              log.info("Existing file removed: {}", existingFile);
+		              this.fileRepo.save(existingFile);
+		          } // if
+	              
+	          Upfile upfile = new Upfile();  // 1. 파일 객체 생성
 				 
-				upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
-				upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
-				upfile.setPath(traineeFileDirectory); // 주소
-				upfile.setEnabled(true); // 기본값
+	          upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
+	          upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
+	          upfile.setPath(traineeFileDirectory); // 주소
+	          upfile.setEnabled(true); // 기본값
 				
-				log.info("New upfile created: {}", upfile);
+	          log.info("New upfile created: {}", upfile);
 
-				// 파일 저장 처리
-				
+			  // 파일 저장 처리
 		      // 파일 저장 경로 생성
 		      String uploadDir = upfile.getPath();
 		      File targetDir = new File(uploadDir);
@@ -268,30 +262,15 @@ public class TraineeController {  // 훈련생 관리
 			  // Course 엔티티에 새로운 파일 추가
 		      trainee.addUpfile(upfile);
 		      this.fileRepo.save(upfile); // // 새 파일 엔티티 저장
-		      
 		      } else {
 		    	  log.info("사진이 수정되지 않았습니다.");
 		      } // if-else
 		          
-		      
 		      // 4. 저장 및 반환
 		      Trainee update = this.repo.save(trainee);
 		      log.info("Update success: {}" , update);
-		      
 		      return update; 
 		}//update
-
-	// Post https://localhost/trainee/2385
-		/**
-		 {
-    "name": "홍길동사사"
-    ,"tel": "0101234444"
-    ,"course": {
-        "courseId": 4
-    }
-    ,"status":4
-}
-		 */
 
 
 		@DeleteMapping("/{id}")
