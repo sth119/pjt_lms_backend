@@ -236,6 +236,7 @@ public class CourseController {
 			 course.setType(dto.getType());
 			 course.setName(dto.getName());
 			 course.setDetail(dto.getDetail());
+			 course.setStatus(dto.getStatus());
 			 course.setStartDate(dto.getStartDate());
 			 course.setEndDate(dto.getEndDate());
 			 
