@@ -45,7 +45,7 @@ public class TraineeController {  // 훈련생 관리
 	@Autowired TraineeRepository repo;
 	@Autowired CourseRepository crsRepo;  // fix
 	@Autowired UpFileRepository fileRepo;
-	String traineeFileDirectory = "C:/temp/trainee/";
+	String fileDirectory = "C:/temp/projectFiles/trainee/";
 
 	
 	
@@ -53,8 +53,8 @@ public class TraineeController {  // 훈련생 관리
 	@PostMapping
 	public Page<TraineeDTO> list(
 	        @ModelAttribute TraineeDTO dto,
-			@RequestParam(defaultValue = "0") Integer currPage, // 페이지 시작 값은 0부터
-			@RequestParam(defaultValue = "10") Integer pageSize // 기본 페이지 사이즈 10
+			@RequestParam(name = "currPage", required = false, defaultValue = "0") Integer currPage, // 페이지 시작 값은 0부터
+			@RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize // 기본 페이지 사이즈 10
 	) {
 		log.info("list({}, {}, {}) invoked.", dto, currPage, pageSize);
 
@@ -143,7 +143,7 @@ public class TraineeController {  // 훈련생 관리
 			Upfile upfile = new Upfile();  // 1. 파일 객체 생성
 			upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
 			upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
-			upfile.setPath(traineeFileDirectory); // 주소
+			upfile.setPath(fileDirectory); // 주소
 			upfile.setEnabled(true); // 기본값
 			
 			upfile.setTrainee(trainee); // 2. 연관 관계 설정, 자식이 부모객체 저장(set)
@@ -238,7 +238,7 @@ public class TraineeController {  // 훈련생 관리
 				 
 	          upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
 	          upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
-	          upfile.setPath(traineeFileDirectory); // 주소
+	          upfile.setPath(fileDirectory); // 주소
 	          upfile.setEnabled(true); // 기본값
 				
 	          log.info("New upfile created: {}", upfile);

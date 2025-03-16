@@ -48,14 +48,12 @@ public class CourseController {
 	@Autowired InstructorRepository insRepo;
 	@Autowired TraineeRepository trnRepo;
 	@Autowired UpFileRepository fileRepo;
-	String CourseFileDirectory = "C:/temp/course/";
+	String fileDirectory = "C:/temp/projectFiles/course/";
 	
 	//RESTfull
 	
 	
-	//== 리스트 =============================== 
-	//RequestParameter 확인 필요
-	@PostMapping(path = "/list/{status1}")
+	@PostMapping(path = "/list/{status1}")	//리스트
 	Page<Course> list(
 			CourseDTO dto,
 			@PathVariable Integer status1,
@@ -119,8 +117,8 @@ public class CourseController {
 		
 		return list;
 	} // list
-	
-	//RequestParameter 확인 완료
+
+
 	@PutMapping // 등록
 	Course register(
 			CourseDTO dto, // String 으로 받아서 변환해야 한다
@@ -149,7 +147,7 @@ public class CourseController {
 		Upfile upfile = new Upfile();  // 1. 파일 객체 생성
 		upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
 		upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
-		upfile.setPath(CourseFileDirectory); // 주소
+		upfile.setPath(fileDirectory); // 주소
 		upfile.setEnabled(true); // 기본값
 		
 		upfile.setCourse(result); // 2. 연관 관계 설정, 자식이 부모객체 저장(set)
@@ -257,7 +255,7 @@ public class CourseController {
    		 
     		upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
     		upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
-    		upfile.setPath(CourseFileDirectory); // 주소
+    		upfile.setPath(fileDirectory); // 주소
     		upfile.setEnabled(true); // 기본값
     		
     		log.info("New upfile created: {}", upfile);
@@ -289,7 +287,6 @@ public class CourseController {
 	} // update
 	
 	
-	//RequestParameter 확인 OK
 	//Delete
 	@DeleteMapping("/{id}")
 	Course delete(@PathVariable(name="id") Long id) {
