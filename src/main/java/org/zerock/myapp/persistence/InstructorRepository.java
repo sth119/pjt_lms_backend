@@ -60,16 +60,16 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> , 
 	//	삭제를 Enabled false로 지정하였기 때문에 조회도 Enabled를 기본 조건으로 검색해야한다.
 	public abstract Optional<Instructor> findByEnabledAndInstructorId(Boolean enabled, Long instructorId);
 	
-	
-	//과정 아이디로 강사정보 찾기
-	final String nativeSQL_findCrsId = """
-		select * 
-		from t_instructors 
-		where enabled = :enabled and crs_id = :crsId
-	""";
-	@Query(value = nativeSQL_findCrsId, nativeQuery = true)
-	public abstract Optional<Instructor> findByEnabledAndCrsId(Boolean enabled, @Param("crsId") Long crsId);
-	
+//  프로그램 실행시에 오류나서 잠시 주석처리
+//	//과정 아이디로 강사정보 찾기
+//	final String nativeSQL_findCrsId = """
+//		select * 
+//		from t_instructors 
+//		where enabled = :enabled and crs_id = :crsId
+//	""";
+//	@Query(value = nativeSQL_findCrsId, nativeQuery = true)
+//	public abstract Optional<Instructor> findByEnabledAndCrsId(Boolean enabled, @Param("crsId") Long crsId);
+
 	
 	// 과정을 강사명으로 찾을때 native 쿼리문 명령어
 //	final String nativeSQL = """

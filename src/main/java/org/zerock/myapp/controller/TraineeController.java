@@ -139,13 +139,15 @@ public class TraineeController {  // 훈련생 관리
 	    
 	    log.info("Regist success!!!  result:{}",result);
 	    
-	    String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/traineeFile/"; 
+	    // "path": "C:\\Users\\chltj\\Desktop\\프로젝트\\깃버전\\pjt_lms_backend/src/main/resources/static/traineeFile/" 로 전송
+	    String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/traineeFile/"; // 백에서 저장할 주소
+	    String useDirectory = "/src/main/resources/static/traineeFile/"; // 프론트로 보낼 주소
 	    
 	    if(file != null && !file.isEmpty()) {
 			Upfile upfile = new Upfile();  // 1. 파일 객체 생성
 			upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
 			upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
-			upfile.setPath(fileDirectory); // 주소
+			upfile.setPath(useDirectory); // 주소
 			upfile.setEnabled(true); // 기본값
 			
 			upfile.setTrainee(trainee); // 2. 연관 관계 설정, 자식이 부모객체 저장(set)
@@ -154,16 +156,15 @@ public class TraineeController {  // 훈련생 관리
 			this.fileRepo.save(upfile); // 파일 엔티티 저장
 			
 
-	        String uploadDir = upfile.getPath();
-	        File targetDir = new File(uploadDir);
+	        File targetDir = new File(fileDirectory);
 	        if (!targetDir.exists()) {
 	            targetDir.mkdirs(); // 디렉토리가 없는 경우 생성
 	        } // if
 	    
 	        // 파일 저장 경로 및 이름 설정
-	        String filePath = upfile.getPath() + upfile.getUuid() + "." + upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
+	        String extension = upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
+	        String filePath = fileDirectory + upfile.getUuid() + "." + extension;
 	        File savedFile = new File(filePath);
-	        // 이후에 파일 받을때는 uuid에서 확장자를 뺴는 과정이 필요함.
 
 	        // 파일 저장
 	        file.transferTo(savedFile);
@@ -172,10 +173,10 @@ public class TraineeController {  // 훈련생 관리
 			
 			// 4. Instructor에 Upfile 추가
 			result.addUpfile(upfile); // 3. 연관 관계 설정, 부모에 자식객체 저장(add)
-			return result; 
+			this.repo.save(result); // fix16
 	      } else {
-	    	return result; 
 	      } // if-else	
+	    	return result; 
 		} // register
 	
 	
@@ -226,7 +227,8 @@ public class TraineeController {  // 훈련생 관리
 		      // 3. Course 설정 (register와 동일한 방식)
 		      trainee.setCourse(dto.getCourse());  // 담당과정
 		      
-		      String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/traineeFile/"; 
+		      String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/traineeFile/"; // 백에서 저장할 주소
+			  String useDirectory = "/src/main/resources/static/traineeFile/"; // 프론트로 보낼 주소
 		      
 		      // 사진이 없는경우 대비를 위한 if-else 문.
 		      if(file != null && !file.isEmpty()) { 
@@ -239,24 +241,24 @@ public class TraineeController {  // 훈련생 관리
 		          } // if
 	              
 	          Upfile upfile = new Upfile();  // 1. 파일 객체 생성
-				 
+	          
 	          upfile.setOriginal(file.getOriginalFilename()); // DTO에서 파일 이름 가져오기
 	          upfile.setUuid(UUID.randomUUID().toString()); // 고유 식별자 생성
-	          upfile.setPath(fileDirectory); // 주소
+	          upfile.setPath(useDirectory); // 주소
 	          upfile.setEnabled(true); // 기본값
 				
 	          log.info("New upfile created: {}", upfile);
 
 			  // 파일 저장 처리
 		      // 파일 저장 경로 생성
-		      String uploadDir = upfile.getPath();
-		      File targetDir = new File(uploadDir);
+		      File targetDir = new File(fileDirectory);
 		      if (!targetDir.exists()) {
 		          targetDir.mkdirs(); // 디렉토리가 없는 경우 생성
 		      } // if
 		  
 		      // 파일 저장 경로 및 이름 설정
-		      String filePath = upfile.getPath() + upfile.getUuid() + "." + upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
+		      String extension = upfile.getOriginal().substring(upfile.getOriginal().lastIndexOf('.') + 1);
+		      String filePath = fileDirectory + upfile.getUuid() + "." + extension;
 		      File savedFile = new File(filePath);
 
 		      // 파일 저장
