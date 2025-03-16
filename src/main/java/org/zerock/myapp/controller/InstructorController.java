@@ -152,7 +152,7 @@ public class InstructorController { // 강사 관리
       
       // "path": "C:\\Users\\chltj\\Desktop\\프로젝트\\깃버전\\pjt_lms_backend/src/main/resources/static/instructorFile/" 로 전송
       String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/instructorFile/"; // 백에서 저장할 주소
-      String useDirectory = "/instructorFile/"; // 프론트로 보낼 주소
+      String useDirectory = "/static/instructorFile/"; // 프론트로 보낼 주소
       
 
       if(file != null && !file.isEmpty()) {
@@ -243,7 +243,7 @@ public class InstructorController { // 강사 관리
       instructor.setCourse(dto.getCourse());
       
       String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/instructorFile/"; // 백에서 저장할 주소
-      String useDirectory = "/instructorFile/"; // 프론트로 보낼 주소
+      String useDirectory = "/static/instructorFile/"; // 프론트로 보낼 주소
       
       // 4. 파일 처리 // fix16
       if (file != null && !file.isEmpty()) { 
