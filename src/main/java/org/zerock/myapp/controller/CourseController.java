@@ -247,21 +247,12 @@ public class CourseController {
 			 course.setTraninees(course.getTraninees());
 
 	        // 3. 기존 파일 처리
-	        //if (!course.getUpfiles().isEmpty()) {
+			 if (file != null && !file.isEmpty()) {
 	            Upfile existingFile = course.getUpfiles().get(0); // 첫 번째 파일 가져오기
-	          //  String existingFileName = existingFile.getOriginal(); // 기존 파일명 가져오기
-
-	            // 새로운 파일명과 비교
-	            //if (!existingFileName.equals(file.getOriginalFilename())) {
-	                // 기존 파일 비활성화 및 연관 관계 제거
-	                course.removeUpfile(existingFile);
-	                log.info("Existing file removed: {}", existingFile);
-	                this.fileRepo.save(existingFile); // 변경된 상태 저장
-	           // } else {
-	             //   log.info("Same file detected, skipping removal.");
-	               // return course; // 동일한 경우 업데이트 중단
-	           // } // if-else
-	       // } // if
+                course.removeUpfile(existingFile);
+                log.info("Existing file removed: {}", existingFile);
+                this.fileRepo.save(existingFile); // 변경된 상태 저장
+	        } // if
 			 
 			 Upfile upfile = new Upfile();  // 1. 파일 객체 생성
 			 
