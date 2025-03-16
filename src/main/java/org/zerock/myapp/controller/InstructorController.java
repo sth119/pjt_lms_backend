@@ -144,7 +144,6 @@ public class InstructorController { // 강사 관리
       instructor.setEnabled(true);// 기본값 true, 삭제여부(1=유효,0=삭제)
       
       log.info("before success?");
-      Instructor result = this.repo.save(instructor);
       
       // 중복값 체크가 필요하다
       if (dto.getCourseId() != null && dto.getCourseId() > 0) {
@@ -156,8 +155,9 @@ public class InstructorController { // 강사 관리
     	    } // if
     	} // if
       
-      log.info("result:{}",result);
+      Instructor result = this.repo.save(instructor);
       log.info("Regist success");
+      log.info("result:{}",result);
 
       if(file != null && !file.isEmpty()) {
 		Upfile upfiles = new Upfile();  // 1. 파일 객체 생성
@@ -341,6 +341,7 @@ public class InstructorController { // 강사 관리
           file.transferTo(savedFile);
           log.info("File saved at: {}", filePath);
           
+          upfiles.setInstructor(instructor);   // fix16      
           instructor.addUpfile(upfiles);
           this.fileRepo.save(upfiles);
        } else {
