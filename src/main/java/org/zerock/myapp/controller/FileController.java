@@ -22,26 +22,26 @@ import lombok.extern.slf4j.Slf4j;
 public class FileController {
 	@Autowired UpFileRepository repo;
 	
-	@GetMapping(value = "/instructor/{fileId}")
-	public ModelAndView instructorImg(@PathVariable Integer fileId) {
-		Optional<Upfile> optionalFile = repo.findByEnabledAndFileId(true, fileId);
-		if (optionalFile.isPresent()) {
-			Upfile file = optionalFile.get();
-			return file;
-		};
-		return setFileResource(file);
-	}
+//	@GetMapping(value = "/instructor/{fileId}")
+//	public ModelAndView instructorImg(@PathVariable Integer fileId) {
+//		Optional<Upfile> optionalFile = repo.findByEnabledAndFileId(true, fileId);
+//		if (optionalFile.isPresent()) {
+//			Upfile file = optionalFile.get();
+//			return file;
+//		};
+//		return setFileResource(file);
+//	}
 	
 
 	
-	public ModelAndView setFileResource(Upfile file) {
-		if (new File(file.getPath()).exists()) { 
-			ModelAndView mv = new ModelAndView(fileResourceView);
-			mv.addObject("file", file);
-			return mv;
-		}
-		else {
-			throw new ResourceNotFoundException();
-		}
-	}
+//	public ModelAndView setFileResource(Upfile file) {
+//		if (new File(file.getPath()).exists()) { 
+//			ModelAndView mv = new ModelAndView(fileResourceView);
+//			mv.addObject("file", file);
+//			return mv;
+//		}
+//		else {
+//			throw new ResourceNotFoundException();
+//		}
+//	}
 }
