@@ -57,14 +57,14 @@ public class InstructorController { // 강사 관리
    
    Page<InstructorDTO> list(
 		   @ModelAttribute InstructorDTO dto,
-		   @RequestParam(name = "status1", required = false)  Integer status1,
+
 		   @RequestParam(name = "currPage", required = false, defaultValue = "0") Integer currPage,
 		   @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize){
 	   // @ RequestParam : 단일 값 바인딩 할때 사용. (String , Integer 등)
 	   // @ ModelAttribute : 복합객체(DTO) 처리할 때 사용.
-      log.info("list({}, {}, {}) invoked.", dto, status1, currPage, pageSize);
+      log.info("list({}, {}, {}) invoked.", dto, currPage, pageSize);
 
-      dto.setStatus(status1);
+
       
       Pageable paging = PageRequest.of(currPage, pageSize, Sort.by("crtDate").descending());
       
