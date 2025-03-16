@@ -46,8 +46,8 @@ public class InstructorController { // 강사 관리
    @Autowired InstructorRepository repo;
    @Autowired CourseRepository crsRepo; 
    @Autowired UpFileRepository fileRepo;
-   String InstructorFileDirectory = "C:/temp/instructor/";
-//   String InstructorFileDirectory = "/Users/host/workspaces/tmep/";
+//   String InstructorFileDirectory = "C:/temp/instructor/";
+   String InstructorFileDirectory = "/Users/host/workspaces/tmep/";
    
 
 
@@ -68,30 +68,44 @@ public class InstructorController { // 강사 관리
       
       if(dto.getStatus() == null && dto.getSearchText() == null) {
       // 기본적으로 모든 데이터를 조회
-
+    	  
+    	  log.info("기본적으로 모든 데이터를 조회");
      list = this.repo.findByEnabled( true, paging);
       }
       else if(dto.getStatus() != null && dto.getSearchText() == null) {
          //검색 리스트: 활성화상태(1) + status 
+    	  log.info("활성화상태 + status");
          list = this.repo.findByEnabledAndStatus(true, dto.getStatus(), paging);
       }
       else if(dto.getStatus() == null && dto.getSearchText() != null ) {
+    	  
+    	  if(dto.getSearchWord().equals("name")) {
          //검색 리스트: 활성화상태(1) + 이름
-         list = this.repo.findByEnabledAndNameContaining(true, dto.getName(),  paging);
+    		  log.info("활성화상태(1) + 이름");  
+         list = this.repo.findByEnabledAndNameContaining(true, dto.getSearchText(),  paging);
+    	  } 
+    	  else if (dto.getSearchWord().equals("tel")) {
+    		  log.info("활성화상태(1) + 전화."); 
+    		  list = this.repo.findByEnabledAndTelContaining(true, dto.getSearchText(), paging);
+    	  }
+    	  
       }
       else if(dto.getStatus() != null && dto.getSearchText() != null) {
-       
-         if(dto.getName() != null && !dto.getName().isEmpty()) {
-         //검색 리스트: 활성화상태(1) + status + 이름 
-         list = this.repo.findByEnabledAndStatusAndNameContaining(true, dto.getStatus(), dto.getName(), paging);
-         } else if  (dto.getTel() != null && !dto.getTel().isEmpty()) {
-            //검색 리스트: 활성화상태(1) + status + 전화번호
-            list = this.repo.findByEnabledAndStatusAndTelContaining(true, dto.getStatus(), dto.getTel(), paging);         
-         } else {
-            //검색 리스트: 활성화상태(1) + status 
-            list = this.repo.findByEnabledAndStatus(true, dto.getStatus(), paging);
-         } 
-      } // if  
+    	  
+    	 if(dto.getSearchWord().equals("name")) {
+    		 //검색 리스트: 활성화상태(1) + status + 이름 
+    		 log.info("활성화상태(1) + status + 이름" );
+    		 list = this.repo.findByEnabledAndStatusAndNameContaining(true, dto.getStatus(), dto.getSearchText(), paging);
+    	 } else if (dto.getSearchWord().equals("tel")) {
+    		 //검색 리스트: 활성화상태(1) + status + 전화번호
+    		 log.info("활성화상태(1) + status + 전화번호" );
+    		 list = this.repo.findByEnabledAndStatusAndTelContaining(true, dto.getStatus(), dto.getSearchText(), paging);  
+    	 }
+    	 
+      } // if
+    	  
+    	  
+
 
       List<InstructorDTO> dtoList = new ArrayList<>();
       list.getContent().forEach(s -> {
