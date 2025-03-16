@@ -294,15 +294,15 @@ public class InstructorController { // 강사 관리
           // 기존 파일이 있으면 제거
           if (instructor.getUpfiles() != null && !instructor.getUpfiles().isEmpty()) {
               Upfile existingFile = instructor.getUpfiles().get(0);
-              if (!existingFile.getOriginal().equals(file.getOriginalFilename())) {
+             // if (!existingFile.getOriginal().equals(file.getOriginalFilename())) {
                   instructor.removeUpfile(existingFile);
                   log.info("Existing file removed: {}", existingFile);
                   this.fileRepo.save(existingFile);
-              } else {
-                  log.info("Same file detected, skipping file update.");
-                  return instructor;
-              }
-          }
+             // } else {
+              //    log.info("Same file detected, skipping file update.");
+               //   return instructor;
+              //}
+          } // if
 
       
 //      if (file != null && !file.isEmpty()) {

@@ -233,21 +233,21 @@ public class TraineeController {  // 훈련생 관리
 		      if(file != null && !file.isEmpty()) { // 사진이 없는경우 대비를 위한 if-else 문.
 		      
 		      //  기존 파일 처리
-		      if (!trainee.getUpfiles().isEmpty()) {
+		     // if (!trainee.getUpfiles().isEmpty()) {
 		          Upfile existingFile = trainee.getUpfiles().get(0); // 첫 번째 파일 가져오기
-		          String existingFileName = existingFile.getOriginal(); // 기존 파일명 가져오기
+		       //   String existingFileName = existingFile.getOriginal(); // 기존 파일명 가져오기
 
 		          // 새로운 파일명과 비교
-		          if (!existingFileName.equals(file.getOriginalFilename())) {
+		        //  if (!existingFileName.equals(file.getOriginalFilename())) {
 		              // 기존 파일 비활성화 및 연관 관계 제거
 		        	  trainee.removeUpfile(existingFile);
 		              log.info("Existing file removed: {}", existingFile);
 		              this.fileRepo.save(existingFile); // 변경된 상태 저장
-		          } else {
-		              log.info("Same file detected, skipping removal.");
-		              return trainee; // 동일한 경우 업데이트 중단
-		          } // if-else
-		      } // if
+		        //  } else {
+		         //     log.info("Same file detected, skipping removal.");
+		        //      return trainee; // 동일한 경우 업데이트 중단
+		        //  } // if-else
+		   //   } // if
 		      
 				Upfile upfile = new Upfile();  // 1. 파일 객체 생성
 				 
