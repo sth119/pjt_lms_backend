@@ -47,8 +47,8 @@ public class InstructorController { // 강사 관리
    @Autowired InstructorRepository repo;
    @Autowired CourseRepository crsRepo; 
    @Autowired UpFileRepository fileRepo;
-//   String InstructorFileDirectory = "C:/temp/instructor/";
-   String InstructorFileDirectory = "/Users/host/workspaces/tmep/";
+   String InstructorFileDirectory = "C:/temp/instructor/";
+//   String InstructorFileDirectory = "/Users/host/workspaces/tmep/";
    
 
 

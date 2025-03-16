@@ -33,13 +33,7 @@ public class InstructorDTO {
 	private Course course;
 	private List<Upfile> upfile;
 
-	
 	private String searchWord;
 	private String searchText; // 검색
-	
-	
-
-	
-
 
 } // end class
