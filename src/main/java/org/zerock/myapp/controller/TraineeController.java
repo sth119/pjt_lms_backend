@@ -45,11 +45,8 @@ public class TraineeController {  // 훈련생 관리
 	@Autowired TraineeRepository repo;
 	@Autowired CourseRepository crsRepo;  // fix
 	@Autowired UpFileRepository fileRepo;
-	//String fileDirectory = "C:/temp/projectFiles/trainee/";
 
-	
-	
-	
+
 	@PostMapping
 	public Page<TraineeDTO> list(
 	        @ModelAttribute TraineeDTO dto,
@@ -141,8 +138,7 @@ public class TraineeController {  // 훈련생 관리
 	    
 	    // "path": "C:\\Users\\chltj\\Desktop\\프로젝트\\깃버전\\pjt_lms_backend/src/main/resources/static/traineeFile/" 로 전송
 	    String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/traineeFile/"; // 백에서 저장할 주소
-	    //String useDirectory = "/static/traineeFile/"; // 프론트로 보낼 주소
-		String useDirectory = "/src/main/resources/static/traineeFile/"; // 프론트로 보낼 주소, 테스트중
+		String useDirectory = "/traineeFile/"; // 프론트로 보낼 주소, 테스트중
 	    
 	    if(file != null && !file.isEmpty()) {
 			Upfile upfile = new Upfile();  // 1. 파일 객체 생성
@@ -166,7 +162,7 @@ public class TraineeController {  // 훈련생 관리
 	        } // if
 	    
 	        // 파일 저장 경로 및 이름 설정
-	        String filePath = fileDirectory + upfile.getUuid() + "." + extension;
+	        String filePath = fileDirectory + upfile.getOriginal();
 	        File savedFile = new File(filePath);
 
 	        // 파일 저장
@@ -231,8 +227,7 @@ public class TraineeController {  // 훈련생 관리
 		      trainee.setCourse(this.crsRepo.findById(dto.getCourseId()).orElse(null));	// 담당과정
 		      
 		      String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/traineeFile/"; // 백에서 저장할 주소
-			  //String useDirectory = "/static/traineeFile/"; // 프론트로 보낼 주소
-			  String useDirectory = "/src/main/resources/static/traineeFile/"; // 프론트로 보낼 주소, 테스트중
+			  String useDirectory = "/traineeFile/"; // 프론트로 보낼 주소, 테스트중
 		      
 		      // 사진이 없는경우 대비를 위한 if-else 문.
 		      if(file != null && !file.isEmpty()) { 
@@ -264,7 +259,7 @@ public class TraineeController {  // 훈련생 관리
 		      } // if
 		  
 		      // 파일 저장 경로 및 이름 설정
-		      String filePath = fileDirectory + upfile.getUuid() + "." + extension;
+		      String filePath = fileDirectory + upfile.getOriginal();
 		      File savedFile = new File(filePath);
 
 		      // 파일 저장
