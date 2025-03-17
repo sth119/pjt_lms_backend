@@ -56,8 +56,8 @@ public class CourseController {
 	   Page<CourseDTO> list(
 	         CourseDTO dto,
 	         @PathVariable Integer status1,
-	         @RequestParam(defaultValue = "0") Integer currPage, 
-	         @RequestParam(defaultValue = "10") Integer pageSize
+	         @RequestParam(name = "currPage", required = false, defaultValue = "0") Integer currPage,
+	         @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize
 	      ){
 	         log.debug("Course - list({}, {}, {}, {}) invoked.", dto, status1, currPage, pageSize);
 	         

@@ -241,7 +241,7 @@ public class InstructorController { // 강사 관리
       instructor.setName(dto.getName());
       instructor.setTel(dto.getTel());
       instructor.setStatus(dto.getStatus());
-      instructor.setCourse(dto.getCourse());
+      instructor.setCourse(this.crsRepo.findById(dto.getCourseId()).orElse(null));
       
       String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/instructorFile/"; // 백에서 저장할 주소
       //String useDirectory = "/static/instructorFile/"; // 프론트로 보낼 주소

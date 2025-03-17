@@ -228,7 +228,7 @@ public class TraineeController {  // 훈련생 관리
 		      trainee.setStatus(dto.getStatus());
 		    	  
 		      // 3. Course 설정 (register와 동일한 방식)
-		      trainee.setCourse(dto.getCourse());  // 담당과정
+		      trainee.setCourse(this.crsRepo.findById(dto.getCourseId()).orElse(null));	// 담당과정
 		      
 		      String fileDirectory = System.getProperty("user.dir") + "/src/main/resources/static/traineeFile/"; // 백에서 저장할 주소
 			  //String useDirectory = "/static/traineeFile/"; // 프론트로 보낼 주소
