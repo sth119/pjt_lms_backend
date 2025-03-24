@@ -39,7 +39,7 @@ import lombok.ToString;
 "udtDate",
 
 //"course",
-"upfiles"
+//"upfiles"
 })
 
 @Entity

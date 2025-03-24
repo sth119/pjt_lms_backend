@@ -180,7 +180,9 @@ public class TraineeController {  // 훈련생 관리
 	
 	
 	@GetMapping("/{id}") // 단일 조회 화면
-	TraineeDTO read(@PathVariable("id") Long traineeId){ // error fix -> ("id")로 명확히 표시
+	TraineeDTO 
+//	Trainee 
+	read(@PathVariable("id") Long traineeId){ // error fix -> ("id")로 명확히 표시
 		log.info("read({}) invoked.",traineeId);
 		
 		Optional<Trainee> optional = this.repo.findByEnabledAndTraineeId(true,traineeId); // error fix ->  주석처리
